@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة التحكم </title>
+    <title>لوحة التحكم | عطور الشرق</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
@@ -22,7 +22,7 @@
     <!-- Login -->
     <div id="login-screen" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-95 backdrop-blur-sm">
         <div class="bg-white p-10 rounded-3xl shadow-2xl w-full max-w-sm border-t-4 border-yellow-500">
-            <div class="text-center mb-8"><div class="w-20 h-20 bg-yellow-50 text-yellow-500 rounded-full flex items-center justify-center mx-auto mb-4 text-4xl shadow-inner"><i class="fa-solid fa-spray-can-sparkles"></i></div><h2 class="text-3xl font-bold text-gray-800"></h2></div>
+            <div class="text-center mb-8"><div class="w-20 h-20 bg-yellow-50 text-yellow-500 rounded-full flex items-center justify-center mx-auto mb-4 text-4xl shadow-inner"><i class="fa-solid fa-spray-can-sparkles"></i></div><h2 class="text-3xl font-bold text-gray-800">عطور الشرق</h2></div>
             <form id="login-form" class="space-y-5">
                 <input type="email" id="email" placeholder="الإيميل" required class="w-full border border-gray-300 p-4 rounded-xl focus:ring-2 focus:ring-yellow-500 bg-gray-50 outline-none">
                 <input type="password" id="password" placeholder="الباسورد" required class="w-full border border-gray-300 p-4 rounded-xl focus:ring-2 focus:ring-yellow-500 bg-gray-50 outline-none">
@@ -35,7 +35,7 @@
     <!-- Dashboard -->
     <div id="dashboard" class="hidden w-full h-full flex">
         <aside class="w-72 bg-gray-900 text-white flex flex-col shadow-2xl z-20">
-            <div class="h-24 flex items-center justify-center border-b border-gray-800 bg-gray-950"><h1 class="text-2xl font-bold text-yellow-500"><i class="fa-solid fa-spray-can-sparkles mr-3"></i> </h1></div>
+            <div class="h-24 flex items-center justify-center border-b border-gray-800 bg-gray-950"><h1 class="text-2xl font-bold text-yellow-500"><i class="fa-solid fa-spray-can-sparkles mr-3"></i> عطور الشرق</h1></div>
             <nav class="flex-1 py-8 space-y-2 overflow-y-auto px-4">
                 <button onclick="switchView('overview', this)" class="nav-btn w-full flex items-center px-6 py-4 text-gray-400 hover:bg-gray-800 hover:text-yellow-400 rounded-xl transition-all"><i class="fa-solid fa-chart-pie w-6 mr-3"></i> نظرة عامة</button>
                 <button onclick="switchView('orders', this)" class="nav-btn w-full flex items-center px-6 py-4 text-gray-400 hover:bg-gray-800 hover:text-yellow-400 rounded-xl transition-all"><i class="fa-solid fa-box w-6 mr-3"></i> الطلبات</button>
@@ -203,7 +203,8 @@
     </div>
 
     <script>
-        const SUPABASE_URL = 'https://icmvrjmkyokexkfvw.supabase.co';
+        // ✅ تم تصحيح الرابط هنا
+        const SUPABASE_URL = 'https://icmvrjmkcyjuoxekvvfw.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_M05JYZ9LKlIfeDjuCJqzxQ_Ay6EbRKj';
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         let salesChartInstance = null, visitsChartInstance = null, allOrders = [], currentOrderId = null;
@@ -319,8 +320,6 @@
             
             const btn = event.target; btn.innerText = 'جاري المسح...'; btn.disabled = true;
 
-            // مسح الجداول بالترتيب
-            await supabaseClient.from('order_items').delete().neq('id', 0); // لو موجود
             await supabaseClient.from('orders').delete().neq('id', 0);
             await supabaseClient.from('reviews').delete().neq('id', 0);
             await supabaseClient.from('visits').delete().neq('id', 0);
