@@ -145,7 +145,7 @@
         // 1. سحب الإعدادات والمنتجات
         async function initPage() {
             // سحب الإعدادات
-            const { data: settings, error: setErr } = await supabaseClient.from('settings').select('*').eq('id', 1).single();
+            const { data: settings } = await supabaseClient.from('settings').select('*').eq('id', 1).single();
             if (settings) {
                 document.getElementById('site-name').innerText = settings.site_name || 'عطور الشرق';
                 document.getElementById('footer-name').innerText = settings.site_name || 'عطور الشرق';
@@ -296,24 +296,30 @@
             btn.disabled = false;
         }
 
+        // --- تسجيل الزيارات الحقيقية ---
+        async function logVisit() {
+            // نتأكد إنه مسجلش زيارة في آخر 30 دقيقة لنفس الشخص
+            const lastVisit = sessionStorage.getItem('lastVisit');
+            const now = Date.now();
+            
+            if (!lastVisit || now - lastVisit > 30 * 60 * 1000) {
+                await supabaseClient.from('visits').insert([{}]);
+                sessionStorage.setItem('lastVisit', now);
+                console.log('تم تسجيل زيارة جديدة للموقع');
+            }
+        }
+
         // --- التحديث اللحظي (Real-time) ---
         const channel = supabaseClient.channel('store-realtime');
         channel
-            .on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, (payload) => {
-                console.log('تحديث المنتجات:', payload);
-                initPage(); 
-            })
-            .on('postgres_changes', { event: '*', schema: 'public', table: 'settings' }, (payload) => {
-                console.log('تحديث الإعدادات:', payload);
-                initPage(); 
-            })
-            .subscribe((status) => {
-                console.log('حالة الاتصال بالتحديث اللحظي:', status);
-            });
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, () => initPage())
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'settings' }, () => initPage())
+            .subscribe();
 
         // التشغيل
         initPage();
         updateCartUI();
+        logVisit(); // تسجيل الزيارة
     </script>
 </body>
 </html>
