@@ -3,115 +3,182 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>عطور الشرق | متجر العطور الفاخرة</title>
+    <title>عطور الشرق | الفخامة والتميز</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
+    <!-- خطوط عربية فخمة -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;800&family=Amiri:wght@700&display=swap" rel="stylesheet">
     <!-- مكتبة Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        gold: '#D4AF37',
+                        dark: '#0a0a0a',
+                        darker: '#050505',
+                        card: '#111111'
+                    },
+                    fontFamily: {
+                        cairo: ['Cairo', 'sans-serif'],
+                        amiri: ['Amiri', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        body { font-family: 'Cairo', sans-serif; }
+        body { font-family: 'Cairo', sans-serif; background-color: #0a0a0a; color: #f3f4f6; }
+        .gold-text { font-family: 'Amiri', serif; color: #D4AF37; }
         .cart-open { transform: translateX(0) !important; }
-        .overlay { display: none; }
-        .overlay.active { display: block; }
+        .modal-open { opacity: 1 !important; pointer-events: auto !important; }
+        .modal-content { transform: translateY(0) !important; }
+        /* تخصيص شكل الـ Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #111; }
+        ::-webkit-scrollbar-thumb { background: #D4AF37; border-radius: 4px; }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 relative">
+<body class="relative min-h-screen flex flex-col">
 
     <!-- شريط التنقل -->
-    <nav class="bg-black text-white p-4 sticky top-0 z-40 shadow-md">
+    <nav class="bg-darker bg-opacity-90 backdrop-blur-md text-white p-4 sticky top-0 z-40 border-b border-gray-800">
         <div class="container mx-auto flex justify-between items-center">
-            <h1 class="text-2xl font-bold text-yellow-500">عطور الشرق</h1>
-            <div class="flex space-x-4 space-x-reverse items-center cursor-pointer bg-gray-800 px-4 py-2 rounded-full hover:bg-gray-700 transition" onclick="toggleCart()">
-                <span class="text-xl">🛒</span>
-                <span id="cart-count" class="bg-yellow-500 text-black px-2 py-0.5 rounded-full text-xs font-bold">0</span>
+            <h1 class="text-3xl font-bold gold-text tracking-wide">عطور الشرق</h1>
+            <div class="flex items-center gap-6">
+                <a href="#" class="hover:text-gold transition hidden md:block">الرئيسية</a>
+                <a href="#products" class="hover:text-gold transition hidden md:block">المتجر</a>
+                <div class="relative cursor-pointer group" onclick="toggleCart()">
+                    <span class="text-2xl group-hover:text-gold transition">🛒</span>
+                    <span id="cart-count" class="absolute -top-2 -right-2 bg-gold text-black text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full">0</span>
+                </div>
             </div>
         </div>
     </nav>
 
     <!-- البانر الرئيسي -->
-    <header class="bg-black text-white text-center py-20 px-4 border-b-4 border-yellow-500">
-        <h2 class="text-4xl md:text-5xl font-bold mb-4">اكتشف عطرك المميز</h2>
-        <p class="text-gray-400 text-lg mb-8">أفخم العطور الشرقية والفرنسية بين يديك</p>
-        <button onclick="document.getElementById('products-grid').scrollIntoView({behavior: 'smooth'})" class="bg-yellow-500 text-black px-8 py-3 rounded-full font-bold hover:bg-yellow-400 transition text-lg">تسوق الآن</button>
+    <header class="relative bg-darker text-center py-24 px-4 overflow-hidden">
+        <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1616949755610-8c9bbc08f138?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center opacity-20"></div>
+        <div class="relative z-10">
+            <h2 class="text-5xl md:text-7xl font-bold mb-6 gold-text drop-shadow-lg">اكتشف عطرك المميز</h2>
+            <p class="text-gray-300 text-lg md:text-xl mb-10 max-w-2xl mx-auto font-light leading-relaxed">نقدم لك أفخم العطور الشرقية والفرنسية، المصنوعة من أجود المكونات لتعكس شخصيتك الفريدة.</p>
+            <button onclick="document.getElementById('products').scrollIntoView({behavior: 'smooth'})" class="bg-gold text-dark px-10 py-4 rounded-full font-bold hover:bg-yellow-500 transition-all duration-300 transform hover:scale-105 shadow-[0_0_20px_rgba(212,175,55,0.4)]">تسوق الآن</button>
+        </div>
     </header>
 
-    <!-- المنتجات -->
-    <main class="container mx-auto py-12 px-4" id="products-section">
-        <h3 class="text-2xl font-bold mb-8 text-center border-b-2 border-yellow-500 inline-block pb-2">الأكثر مبيعاً</h3>
+    <!-- شبكة المنتجات -->
+    <main class="container mx-auto py-20 px-4 flex-grow" id="products">
+        <div class="text-center mb-12">
+            <h3 class="text-3xl font-bold inline-block pb-2 border-b-2 border-gold gold-text">الأكثر مبيعاً</h3>
+        </div>
         
-        <div id="products-grid" class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
+        <div id="products-grid" class="grid grid-cols-1 md:grid-cols-3 gap-8">
             <p class="text-center col-span-3 text-gray-500 text-xl">جاري تحميل العطور...</p>
         </div>
     </main>
 
-    <!-- طبقة تعتيم الخلفية -->
-    <div id="overlay" class="overlay fixed inset-0 bg-black bg-opacity-50 z-40" onclick="toggleCart()"></div>
+    <!-- الفوتر -->
+    <footer class="bg-darker border-t border-gray-800 text-center text-gray-500 py-8 mt-auto">
+        <p class="font-light">جميع الحقوق محفوظة &copy; 2024 عطور الشرق</p>
+    </footer>
+
+    <!-- طبقة تعتيم الخلفية للسلة -->
+    <div id="overlay" class="fixed inset-0 bg-black bg-opacity-70 z-40 hidden" onclick="toggleCart()"></div>
 
     <!-- السلة الجانبية -->
-    <div id="cart-sidebar" class="fixed inset-y-0 left-0 w-80 md:w-96 bg-white shadow-2xl transform -translate-x-full transition-transform duration-300 z-50 flex flex-col">
-        <div class="p-4 bg-black text-white flex justify-between items-center">
-            <h3 class="text-xl font-bold">سلة المشتريات</h3>
-            <button onclick="toggleCart()" class="text-3xl leading-none hover:text-yellow-500">&times;</button>
+    <div id="cart-sidebar" class="fixed inset-y-0 left-0 w-full md:w-96 bg-card shadow-2xl transform -translate-x-full transition-transform duration-300 z-50 flex flex-col border-l border-gray-800">
+        <div class="p-5 border-b border-gray-800 flex justify-between items-center bg-darker">
+            <h3 class="text-2xl font-bold gold-text">سلة المشتريات</h3>
+            <button onclick="toggleCart()" class="text-3xl text-gray-400 hover:text-white">&times;</button>
         </div>
         
-        <div id="cart-items" class="flex-1 p-4 overflow-y-auto">
-            <p class="text-center text-gray-500 mt-10">السلة فارغة</p>
+        <div id="cart-items" class="flex-1 p-5 overflow-y-auto">
+            <!-- محتوى السلة -->
         </div>
         
-        <div class="p-4 border-t bg-gray-50">
-            <div class="flex justify-between font-bold text-lg mb-4 text-black">
+        <div class="p-5 border-t border-gray-800 bg-darker">
+            <div class="flex justify-between font-bold text-xl mb-5">
                 <span>الإجمالي:</span>
-                <span id="cart-total" class="text-yellow-600">0 ج.م</span>
+                <span id="cart-total" class="text-gold">0 ج.م</span>
             </div>
-            <button onclick="checkout()" class="w-full bg-black text-white font-bold py-3 rounded hover:bg-gray-800 transition">إتمام الطلب (الدفع عند الاستلام)</button>
+            <button onclick="openCheckoutModal()" class="w-full bg-gold text-dark font-bold py-3 rounded-lg hover:bg-yellow-500 transition-colors text-lg">متابعة الطلب</button>
         </div>
     </div>
 
-    <!-- الفوتر -->
-    <footer class="bg-black text-center text-gray-500 py-6 mt-12">
-        <p>جميع الحقوق محفوظة &copy; 2024 عطور الشرق</p>
-    </footer>
+    <!-- نافذة إتمام الطلب (Form Modal) -->
+    <div id="checkout-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80 opacity-0 pointer-events-none transition-opacity duration-300 p-4">
+        <div class="bg-card w-full max-w-lg rounded-2xl shadow-2xl border border-gray-800 overflow-hidden transform translate-y-10 transition-transform duration-300 modal-content flex flex-col max-h-[90vh]">
+            
+            <div class="bg-darker p-4 border-b border-gray-800 flex justify-between items-center">
+                <h3 class="text-xl font-bold gold-text">بيانات الشحن</h3>
+                <button onclick="closeCheckoutModal()" class="text-2xl text-gray-400 hover:text-white">&times;</button>
+            </div>
+
+            <div class="p-6 overflow-y-auto">
+                <form id="checkout-form" onsubmit="submitOrder(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-1">الاسم بالكامل</label>
+                        <input type="text" id="customer_name" required class="w-full bg-darker border border-gray-700 rounded-lg p-3 text-white focus:outline-none focus:border-gold transition">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-1">رقم الهاتف</label>
+                        <input type="tel" id="phone" required class="w-full bg-darker border border-gray-700 rounded-lg p-3 text-white focus:outline-none focus:border-gold transition">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400 mb-1">المحافظة / المدينة</label>
+                            <input type="text" id="city" required class="w-full bg-darker border border-gray-700 rounded-lg p-3 text-white focus:outline-none focus:border-gold transition">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400 mb-1">العنوان بالتفصيل</label>
+                            <input type="text" id="address" required class="w-full bg-darker border border-gray-700 rounded-lg p-3 text-white focus:outline-none focus:border-gold transition">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-1">ملاحظات إضافية (اختياري)</label>
+                        <textarea id="notes" rows="2" class="w-full bg-darker border border-gray-700 rounded-lg p-3 text-white focus:outline-none focus:border-gold transition"></textarea>
+                    </div>
+                    
+                    <div class="pt-4 border-t border-gray-800 mt-6">
+                        <button type="submit" id="submit-btn" class="w-full bg-gold text-dark font-bold py-3 rounded-lg hover:bg-yellow-500 transition-colors text-lg">تأكيد الطلب (الدفع عند الاستلام)</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <!-- سكربت الجافاسكريبت -->
     <script>
-        // ✅ مفاتيح Supabase بتاعتك
+        // ✅ مفاتيح Supabase
         const SUPABASE_URL = 'https://icmvrjmkcyjuoxekvvfw.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_M05JYZ9LKlIfeDjuCJqzxQ_Ay6EbRKj';
-
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        
         let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
-        // 1. سحب المنتجات من الداتابيز
+        // 1. سحب المنتجات
         async function fetchProducts() {
             const { data: products, error } = await supabaseClient.from('products').select('*');
-            
-            if (error) {
-                console.error('Error fetching:', error);
-                document.getElementById('products-grid').innerHTML = '<p class="text-center col-span-3 text-red-500">حدث خطأ في تحميل المنتجات.</p>';
-                return;
-            }
+            if (error) { console.error(error); return; }
 
             const grid = document.getElementById('products-grid');
             grid.innerHTML = '';
 
-            if (products.length === 0) {
-                grid.innerHTML = '<p class="text-center col-span-3 text-gray-500">لا توجد منتجات حالياً.</p>';
-                return;
-            }
-
             products.forEach(product => {
                 grid.innerHTML += `
-                    <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-2xl transition duration-300 transform hover:-translate-y-1">
-                        <img src="${product.image_url}" alt="${product.name}" class="w-full h-64 object-cover">
-                        <div class="p-5">
-                            <div class="flex justify-between items-start mb-2">
-                                <h4 class="text-xl font-bold text-gray-900">${product.name}</h4>
-                                <span class="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded">${product.brand}</span>
-                            </div>
-                            <p class="text-gray-600 text-sm mb-4 leading-relaxed">${product.notes}</p>
-                            <div class="flex justify-between items-center mt-4 border-t pt-4">
-                                <span class="text-yellow-600 font-bold text-xl">${product.price} ج.م</span>
-                                <button onclick="addToCart(${product.id}, '${product.name}', ${product.price})" class="bg-black text-white px-5 py-2 rounded-lg hover:bg-yellow-500 hover:text-black transition font-bold">أضف للسلة</button>
+                    <div class="bg-card rounded-2xl border border-gray-800 overflow-hidden hover:border-gold transition-colors duration-300 group">
+                        <div class="relative overflow-hidden h-72">
+                            <img src="${product.image_url}" alt="${product.name}" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500">
+                            <div class="absolute top-4 right-4 bg-black bg-opacity-70 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-gold border border-gray-700">${product.brand}</div>
+                        </div>
+                        <div class="p-6">
+                            <h4 class="text-2xl font-bold mb-2 gold-text">${product.name}</h4>
+                            <p class="text-gray-400 text-sm mb-6 leading-relaxed h-10">${product.notes}</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-white font-bold text-2xl">${product.price} <span class="text-sm text-gray-500">ج.م</span></span>
+                                <button onclick="addToCart(${product.id}, '${product.name}', ${product.price})" class="bg-darker border border-gray-700 text-gold px-5 py-2 rounded-lg hover:bg-gold hover:text-dark transition-all duration-300 font-bold">أضف للسلة</button>
                             </div>
                         </div>
                     </div>
@@ -122,15 +189,10 @@
         // 2. وظائف السلة
         function addToCart(id, name, price) {
             const existing = cart.find(item => item.id === id);
-            if (existing) {
-                existing.qty += 1;
-            } else {
-                cart.push({ id, name, price, qty: 1 });
-            }
+            if (existing) { existing.qty += 1; } 
+            else { cart.push({ id, name, price, qty: 1 }); }
             saveCart();
-            if (!document.getElementById('cart-sidebar').classList.contains('cart-open')) {
-                toggleCart(); 
-            }
+            if (!document.getElementById('cart-sidebar').classList.contains('cart-open')) { toggleCart(); }
         }
 
         function saveCart() {
@@ -139,7 +201,6 @@
         }
 
         function updateCartUI() {
-            // تحديث العداد
             const totalCount = cart.reduce((total, item) => total + item.qty, 0);
             document.getElementById('cart-count').innerText = totalCount;
             
@@ -156,89 +217,91 @@
             cart.forEach((item, index) => {
                 totalPrice += item.price * item.qty;
                 cartItemsDiv.innerHTML += `
-                    <div class="flex justify-between items-center border-b border-gray-200 pb-3 mb-3">
+                    <div class="flex justify-between items-center border-b border-gray-800 pb-4 mb-4">
                         <div class="flex-1">
-                            <p class="font-bold text-gray-800">${item.name}</p>
-                            <p class="text-sm text-gray-500">${item.price} ج.م × ${item.qty}</p>
+                            <p class="font-bold text-lg text-white">${item.name}</p>
+                            <p class="text-sm text-gold mt-1">${item.price} ج.م × ${item.qty}</p>
                         </div>
-                        <button onclick="removeFromCart(${index})" class="text-red-500 hover:text-red-700 text-sm font-bold bg-red-50 px-2 py-1 rounded">حذف</button>
+                        <button onclick="removeFromCart(${index})" class="text-red-500 hover:text-red-400 text-sm font-bold border border-red-500/30 px-3 py-1 rounded">حذف</button>
                     </div>
                 `;
             });
-
             document.getElementById('cart-total').innerText = totalPrice + ' ج.م';
         }
 
-        function removeFromCart(index) {
-            cart.splice(index, 1);
-            saveCart();
-        }
+        function removeFromCart(index) { cart.splice(index, 1); saveCart(); }
 
         function toggleCart() {
             const sidebar = document.getElementById('cart-sidebar');
             const overlay = document.getElementById('overlay');
-            
             if (sidebar.classList.contains('cart-open')) {
                 sidebar.classList.remove('cart-open');
-                overlay.classList.remove('active');
+                overlay.classList.add('hidden');
             } else {
                 sidebar.classList.add('cart-open');
-                overlay.classList.add('active');
+                overlay.classList.remove('hidden');
             }
         }
 
-        // 3. إتمام الطلب وحفظه في Supabase
-        async function checkout() {
-            if (cart.length === 0) return alert('السلة فارغة! أضف بعض العطور أولاً.');
-            
-            const name = prompt('ادخل اسمك بالكامل:');
-            if (!name || name.trim() === '') return;
-            
-            const phone = prompt('ادخل رقم تليفونك:');
-            if (!phone || phone.trim() === '') return;
+        // 3. وظائف الـ Checkout Form
+        function openCheckoutModal() {
+            if (cart.length === 0) return alert('السلة فارغة!');
+            document.getElementById('checkout-modal').classList.add('modal-open');
+            // إخفاء السلة عشان الفورمة تبان
+            document.getElementById('cart-sidebar').classList.remove('cart-open');
+            document.getElementById('overlay').classList.add('hidden');
+        }
+
+        function closeCheckoutModal() {
+            document.getElementById('checkout-modal').classList.remove('modal-open');
+        }
+
+        async function submitOrder(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submit-btn');
+            const originalText = btn.innerText;
+            btn.innerText = 'جاري تأكيد الطلب...';
+            btn.disabled = true;
 
             const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            
+            // تجميع بيانات الفورمة
+            const orderData = {
+                customer_name: document.getElementById('customer_name').value,
+                phone: document.getElementById('phone').value,
+                city: document.getElementById('city').value,
+                address: document.getElementById('address').value,
+                notes: document.getElementById('notes').value,
+                total_price: totalPrice,
+                items: cart,
+                status: 'pending'
+            };
 
-            // إظهار مؤشر تحميل (اختياري)
-            const checkoutBtn = document.querySelector('button[onclick="checkout()"]');
-            const originalText = checkoutBtn.innerText;
-            checkoutBtn.innerText = 'جاري تأكيد الطلب...';
-            checkoutBtn.disabled = true;
-
-            // حفظ الطلب في Supabase
-            const { data, error } = await supabaseClient
-                .from('orders')
-                .insert([
-                    { 
-                        customer_name: name, 
-                        phone: phone, 
-                        total_price: totalPrice, 
-                        items: cart 
-                    }
-                ]);
+            // الإدخال في الداتابيز
+            const { error } = await supabaseClient.from('orders').insert([orderData]);
 
             if (error) {
-                console.error('Error saving order:', error);
-                alert('حدث خطأ أثناء حفظ الطلب. يرجى المحاولة مرة أخرى.');
-                checkoutBtn.innerText = originalText;
-                checkoutBtn.disabled = false;
+                console.error(error);
+                alert('حدث خطأ أثناء حفظ الطلب. تأكد من اتصالك بالإنترنت.');
+                btn.innerText = originalText;
+                btn.disabled = false;
                 return;
             }
 
             // نجاح
-            alert(`شكراً لك يا ${name}!\nتم استلام طلبك بنجاح بإجمالي ${totalPrice} ج.م.\nسيتم التواصل معك قريباً على ${phone}.`);
+            alert(`تم استلام طلبك بنجاح يا ${orderData.customer_name}! جاري تجهيزه.`);
             
-            // تفريغ السلة
+            // تصفير السلة وإغلاق الفورمة
             cart = [];
             saveCart();
-            toggleCart();
+            closeCheckoutModal();
+            document.getElementById('checkout-form').reset();
             
-            // إرجاع الزرار لحالته
-            checkoutBtn.innerText = originalText;
-            checkoutBtn.disabled = false;
+            btn.innerText = originalText;
+            btn.disabled = false;
         }
 
-        // تشغيل الدوال أول ما الصفحة تفتح
+        // التشغيل
         fetchProducts();
         updateCartUI();
     </script>
