@@ -69,8 +69,21 @@
         <div id="products-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"></div>
     </main>
 
+    <!-- قسم آراء العملاء (تحت خالص) -->
+    <section class="bg-darker py-16 border-t border-gray-800">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-10">
+                <h3 class="text-3xl font-bold gold-text">آخر آراء العملاء</h3>
+                <p class="text-gray-400 mt-2 text-sm">ماذا يقول عملاؤنا عن عطورنا؟</p>
+            </div>
+            <div id="latest-reviews-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- التقييمات هتظهر هنا -->
+            </div>
+        </div>
+    </section>
+
     <!-- الفوتر -->
-    <footer class="bg-darker border-t border-gray-800 py-10 mt-auto">
+    <footer class="bg-black border-t border-gray-800 py-10 mt-auto">
         <div class="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-6">
             <p class="font-light text-gray-500 text-sm"><span id="footer-text">جميع الحقوق محفوظة</span> &copy; 2024 <span id="footer-name" class="text-gold font-bold">عطور الشرق</span></p>
             <div id="social-links" class="flex gap-5 text-2xl"></div>
@@ -148,15 +161,15 @@
         </div>
     </div>
 
-    <!-- 4. التقييمات -->
+    <!-- 4. نافذة إضافة تقييم (Modal) -->
     <div id="reviews-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-90 opacity-0 pointer-events-none transition-opacity p-4">
         <div class="bg-card w-full max-w-lg rounded-3xl shadow-2xl border border-gray-800 overflow-hidden flex flex-col max-h-[90vh] modal-content">
             <div class="bg-darker p-6 flex justify-between items-center">
-                <h3 class="text-2xl font-bold gold-text">آراء العملاء</h3>
+                <h3 class="text-2xl font-bold gold-text">أضف تقييمك</h3>
                 <button onclick="document.getElementById('reviews-modal').classList.remove('modal-open')" class="text-gray-400 hover:text-white text-2xl">&times;</button>
             </div>
             <div class="p-6 overflow-y-auto">
-                <form onsubmit="submitReview(event)" class="mb-8 bg-darker p-5 rounded-xl border border-gray-800">
+                <form onsubmit="submitReview(event)" class="mb-4 bg-darker p-5 rounded-xl border border-gray-800">
                     <input type="hidden" id="review-product-id">
                     <div class="flex items-center gap-3 mb-3">
                         <span class="text-sm font-bold text-gray-300">تقييمك:</span>
@@ -172,7 +185,6 @@
                     <textarea id="review-comment" placeholder="اكتب تجربتك مع العطر..." required class="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 text-white text-sm mb-3 outline-none focus:border-gold" rows="3"></textarea>
                     <button type="submit" class="bg-gold text-black font-bold py-2 px-6 rounded-lg text-sm hover:bg-white transition">إرسال التقييم</button>
                 </form>
-                <div id="reviews-list" class="space-y-4"></div>
             </div>
         </div>
     </div>
@@ -184,19 +196,16 @@
         
         let cart = JSON.parse(localStorage.getItem('cart')) || [];
         let allProducts = [];
+        let allReviews = [];
         let appliedDiscount = 0;
         let dynamicTexts = {};
 
-        // 🚫 فلتر الكلمات الخارجة (عربي ومصري وإنجليزي)
+        // فلتر الكلمات
         const badWords = ['كسم', 'خرا', 'زبالة', 'حيوان', 'غبي', 'عبيط', 'كلب', 'عرص', 'شرموط', 'قحب', 'خول', 'لبوة', 'طيز', 'كس', 'نيك', 'متناك', 'شرموطة', 'fuck', 'shit', 'bitch', 'asshole', 'pussy'];
-
         function censorText(text) {
             if (!text) return '';
             let clean = text;
-            badWords.forEach(word => {
-                const regex = new RegExp(word, 'gi');
-                clean = clean.replace(regex, '***');
-            });
+            badWords.forEach(word => { const regex = new RegExp(word, 'gi'); clean = clean.replace(regex, '***'); });
             return clean;
         }
 
@@ -219,10 +228,7 @@
                 if(settings.hero_image) document.getElementById('hero-bg').style.backgroundImage = `url('${settings.hero_image}')`;
                 
                 const waBtn = document.getElementById('whatsapp-btn');
-                if(settings.whatsapp_number) {
-                    waBtn.href = `https://wa.me/${settings.whatsapp_number}`;
-                    waBtn.classList.remove('hidden');
-                }
+                if(settings.whatsapp_number) { waBtn.href = `https://wa.me/${settings.whatsapp_number}`; waBtn.classList.remove('hidden'); }
 
                 const socialDiv = document.getElementById('social-links');
                 socialDiv.innerHTML = '';
@@ -231,11 +237,48 @@
                 if(settings.tiktok_url) socialDiv.innerHTML += `<a href="${settings.tiktok_url}" target="_blank" class="hover:text-white transition"><i class="fa-brands fa-tiktok"></i></a>`;
             }
 
+            // سحب المنتجات
             const { data: products } = await supabaseClient.from('products').select('*');
-            if(products) {
-                allProducts = products;
-                renderProducts();
+            if(products) allProducts = products;
+
+            // سحب التقييمات المعتمدة فقط
+            const { data: reviews } = await supabaseClient.from('reviews').select('*').eq('status', 'approved');
+            if(reviews) allReviews = reviews;
+
+            renderProducts();
+            renderLatestReviews(); // عرض التقييمات في آخر الصفحة
+        }
+
+        // دالة لعرض التقييمات في آخر الصفحة
+        function renderLatestReviews() {
+            const container = document.getElementById('latest-reviews-container');
+            container.innerHTML = '';
+            
+            // أحدث 6 تقييمات
+            const latest = allReviews.slice(-6).reverse(); 
+            
+            if(latest.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 col-span-3 text-center">لا توجد آراء بعد. كن أول من يشاركنا رأيه!</p>';
+                return;
             }
+
+            latest.forEach(r => {
+                const product = allProducts.find(p => p.id === r.product_id);
+                const productName = product ? censorText(product.name) : 'منتج';
+                
+                container.innerHTML += `
+                    <div class="bg-card p-6 rounded-2xl border border-gray-800">
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="font-bold text-gold">${censorText(r.customer_name)}</span>
+                            <span class="text-yellow-500 text-sm">${'⭐'.repeat(r.rating)}</span>
+                        </div>
+                        <p class="text-gray-300 text-sm italic mb-4 leading-relaxed">"${censorText(r.comment)}"</p>
+                        <div class="text-xs text-gray-500 border-t border-gray-800 pt-3 flex items-center gap-2">
+                            <i class="fa-solid fa-bottle-droplet text-gold"></i> اشترى: ${productName}
+                        </div>
+                    </div>
+                `;
+            });
         }
 
         function renderProducts() {
@@ -249,6 +292,21 @@
                 const isOutOfStock = product.stock <= 0;
                 const addToCartText = dynamicTexts.btn_add_to_cart || 'أضف للسلة';
                 
+                // حساب متوسط التقييم للمنتج
+                const productReviews = allReviews.filter(r => r.product_id === product.id);
+                let ratingHTML = '';
+                if (productReviews.length > 0) {
+                    const avgRating = (productReviews.reduce((sum, r) => sum + r.rating, 0) / productReviews.length).toFixed(1);
+                    ratingHTML = `
+                        <div class="flex items-center gap-1 mt-1 mb-2">
+                            <span class="text-yellow-500 text-sm"><i class="fa-solid fa-star"></i> ${avgRating}</span>
+                            <span class="text-xs text-gray-500">(${productReviews.length} تقييم)</span>
+                        </div>
+                    `;
+                } else {
+                    ratingHTML = `<div class="mt-1 mb-2 h-5"><span class="text-xs text-gray-600">لا يوجد تقييمات</span></div>`;
+                }
+                
                 grid.innerHTML += `
                     <div class="bg-card rounded-2xl border border-gray-800 overflow-hidden hover:border-gold hover:shadow-[0_0_30px_rgba(212,175,55,0.1)] transition-all duration-500 group flex flex-col ${isOutOfStock ? 'opacity-60 grayscale' : ''}">
                         <div class="relative overflow-hidden h-72">
@@ -258,15 +316,16 @@
                         </div>
                         <div class="p-6 flex-1 flex flex-col justify-between">
                             <div>
-                                <div class="flex justify-between items-start mb-2">
-                                    <h4 class="text-2xl font-bold gold-text truncate">${censorText(product.name)}</h4>
-                                    <button onclick="openReviews(${product.id})" class="text-gray-500 hover:text-gold transition text-sm"><i class="fa-solid fa-star"></i></button>
-                                </div>
+                                <h4 class="text-2xl font-bold gold-text truncate">${censorText(product.name)}</h4>
+                                ${ratingHTML}
                                 <p class="text-gray-400 text-sm mb-4 line-clamp-2">${censorText(product.notes)}</p>
                             </div>
                             <div class="flex justify-between items-center mt-4 pt-4 border-t border-gray-800">
                                 <span class="text-white font-bold text-2xl">${product.price} <span class="text-sm text-gray-500">ج.م</span></span>
-                                <button onclick="addToCart(${product.id}, '${censorText(product.name)}', ${product.price})" ${isOutOfStock ? 'disabled' : ''} class="bg-darker border border-gray-700 text-gold px-5 py-2.5 rounded-xl hover:bg-gold hover:text-dark transition-all duration-300 font-bold ${isOutOfStock ? 'cursor-not-allowed' : ''}">${addToCartText}</button>
+                                <div class="flex gap-2">
+                                    <button onclick="openReviews(${product.id})" class="text-gray-400 hover:text-gold transition bg-gray-800 w-10 h-10 rounded-xl flex items-center justify-center" title="أضف تقييم"><i class="fa-solid fa-pen"></i></button>
+                                    <button onclick="addToCart(${product.id}, '${censorText(product.name)}', ${product.price})" ${isOutOfStock ? 'disabled' : ''} class="bg-darker border border-gray-700 text-gold px-4 py-2 rounded-xl hover:bg-gold hover:text-dark transition-all duration-300 font-bold ${isOutOfStock ? 'cursor-not-allowed' : ''}">${addToCartText}</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -276,14 +335,11 @@
         
         document.getElementById('search-input').addEventListener('input', renderProducts);
 
-        async function openReviews(productId) {
+        function openReviews(productId) {
             document.getElementById('reviews-modal').classList.add('modal-open');
             document.getElementById('review-product-id').value = productId;
-            const listDiv = document.getElementById('reviews-list');
-            listDiv.innerHTML = '<p class="text-center text-gray-500 text-sm">جاري التحميل...</p>';
-            const { data: reviews } = await supabaseClient.from('reviews').select('*').eq('product_id', productId).eq('status', 'approved').order('created_at', { ascending: false });
-            if(!reviews || reviews.length === 0) { listDiv.innerHTML = '<p class="text-center text-gray-500 text-sm">لا يوجد تقييمات بعد.</p>'; return; }
-            listDiv.innerHTML = reviews.map(r => `<div class="border-b border-gray-800 pb-3"><div class="flex justify-between items-center mb-1"><span class="font-bold text-sm text-gray-300">${censorText(r.customer_name)}</span><span class="text-yellow-500 text-xs">${'⭐'.repeat(r.rating)}</span></div><p class="text-gray-400 text-sm">${censorText(r.comment)}</p></div>`).join('');
+            document.getElementById('review-name').value = '';
+            document.getElementById('review-comment').value = '';
         }
 
         async function submitReview(e) {
@@ -300,9 +356,7 @@
                 console.error(error);
                 alert('حدث خطأ! يرجى المحاولة لاحقاً.');
             } else { 
-                alert('شكراً لتقييمك! سيظهر بعد المراجعة.'); 
-                document.getElementById('review-comment').value = ''; 
-                document.getElementById('review-name').value = ''; 
+                alert('شكراً لتقييمك! سيظهر في الموقع بعد مراجعته من الإدارة.'); 
                 document.getElementById('reviews-modal').classList.remove('modal-open'); 
             }
         }
@@ -344,7 +398,6 @@
             const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.qty), 0); 
             const finalTotal = totalPrice - ((totalPrice * appliedDiscount) / 100); 
             
-            // تطبيق الفلتر على بيانات العميل
             const orderData = { 
                 customer_name: censorText(document.getElementById('customer_name').value), 
                 phone: document.getElementById('phone').value, 
@@ -362,6 +415,12 @@
         }
         
         async function logVisit() { const lastVisit = sessionStorage.getItem('lastVisit'); if (!lastVisit || Date.now() - lastVisit > 30 * 60 * 1000) { await supabaseClient.from('visits').insert([{}]); sessionStorage.setItem('lastVisit', Date.now()); } }
+
+        // التحديث اللحظي (لو الأدمن وافق على تقييم أو ضاف منتج)
+        supabaseClient.channel('store-realtime')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, () => initPage())
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'reviews' }, () => initPage())
+            .subscribe();
 
         initPage(); updateCartUI(); logVisit();
     </script>
