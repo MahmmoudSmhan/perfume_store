@@ -10,14 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <script>
-        tailwind.config = { 
-            theme: { 
-                extend: { 
-                    colors: { gold: '#D4AF37', dark: '#0a0a0a', darker: '#050505', card: '#111111' }, 
-                    fontFamily: { cairo: ['Cairo', 'sans-serif'], playfair: ['Playfair Display', 'serif'] } 
-                } 
-            } 
-        }
+        tailwind.config = { theme: { extend: { colors: { gold: '#D4AF37', dark: '#0a0a0a', darker: '#050505', card: '#111111' }, fontFamily: { cairo: ['Cairo', 'sans-serif'], playfair: ['Playfair Display', 'serif'] } } } }
     </script>
     <style>
         body { font-family: 'Cairo', sans-serif; background-color: #0a0a0a; color: #f3f4f6; }
@@ -41,12 +34,10 @@
             </div>
 
             <div class="flex items-center gap-4 md:gap-6">
-                <!-- تتبع الطلب -->
                 <button onclick="openTrackingModal()" class="text-sm font-bold text-gray-300 hover:text-gold transition flex items-center gap-2">
                     <i class="fa-solid fa-truck-fast"></i> <span id="nav-track" class="hidden md:inline">تتبع طلبك</span>
                 </button>
 
-                <!-- السلة -->
                 <div class="relative cursor-pointer group" onclick="toggleCart()">
                     <span class="text-2xl group-hover:text-gold transition"><i class="fa-solid fa-cart-shopping"></i></span>
                     <span id="cart-count" class="absolute -top-2 -right-2 bg-gold text-black text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full">0</span>
@@ -149,12 +140,10 @@
                 <div class="w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4 text-gold text-2xl"><i class="fa-solid fa-truck-fast"></i></div>
                 <h3 class="text-2xl font-bold gold-text">تتبع طلبك</h3>
             </div>
-            
             <div class="flex flex-col gap-3 mb-6">
                 <input type="tel" id="track-phone" placeholder="اكتب رقم تليفونك هنا" class="w-full bg-darker border border-gray-700 rounded-xl p-4 text-white text-center focus:border-gold outline-none">
                 <button onclick="trackOrder()" class="w-full bg-gold text-dark py-3 rounded-xl font-bold hover:bg-white transition">بحث عن الطلب</button>
             </div>
-            
             <div id="tracking-result" class="hidden space-y-3"></div>
         </div>
     </div>
@@ -196,26 +185,36 @@
         let cart = JSON.parse(localStorage.getItem('cart')) || [];
         let allProducts = [];
         let appliedDiscount = 0;
-        let dynamicTexts = {}; // لحفظ النصوص عشان نستخدمها في الكروت
+        let dynamicTexts = {};
+
+        // 🚫 فلتر الكلمات الخارجة (عربي ومصري وإنجليزي)
+        const badWords = ['كسم', 'خرا', 'زبالة', 'حيوان', 'غبي', 'عبيط', 'كلب', 'عرص', 'شرموط', 'قحب', 'خول', 'لبوة', 'طيز', 'كس', 'نيك', 'متناك', 'شرموطة', 'fuck', 'shit', 'bitch', 'asshole', 'pussy'];
+
+        function censorText(text) {
+            if (!text) return '';
+            let clean = text;
+            badWords.forEach(word => {
+                const regex = new RegExp(word, 'gi');
+                clean = clean.replace(regex, '***');
+            });
+            return clean;
+        }
 
         async function initPage() {
-            // 1. سحب الإعدادات (النصوص والصور)
             const { data: settings } = await supabaseClient.from('settings').select('*').eq('id', 1).single();
             if (settings) {
-                dynamicTexts = settings; // حفظ الإعدادات
-                
-                // تحديث النصوص في الـ HTML
-                document.getElementById('site-name').innerText = settings.site_name || 'عطور الشرق';
-                document.getElementById('footer-name').innerText = settings.site_name || 'عطور الشرق';
-                document.getElementById('hero-title').innerText = settings.hero_title || '';
-                document.getElementById('hero-subtitle').innerText = settings.hero_subtitle || '';
+                dynamicTexts = settings; 
+                document.getElementById('site-name').innerText = censorText(settings.site_name) || 'عطور الشرق';
+                document.getElementById('footer-name').innerText = censorText(settings.site_name) || 'عطور الشرق';
+                document.getElementById('hero-title').innerText = censorText(settings.hero_title) || '';
+                document.getElementById('hero-subtitle').innerText = censorText(settings.hero_subtitle) || '';
                 document.getElementById('nav-home').innerText = settings.nav_home || 'الرئيسية';
                 document.getElementById('nav-shop').innerText = settings.nav_shop || 'المتجر';
                 document.getElementById('nav-track').innerText = settings.nav_track || 'تتبع طلبك';
-                document.getElementById('hero-btn').innerText = settings.hero_btn || 'تسوق الآن';
-                document.getElementById('section-title').innerText = settings.section_title || 'تصفح العطور';
-                document.getElementById('btn-checkout-dyn').innerText = settings.btn_checkout || 'متابعة الطلب';
-                document.getElementById('footer-text').innerText = settings.footer_text || 'جميع الحقوق محفوظة';
+                document.getElementById('hero-btn').innerText = censorText(settings.hero_btn) || 'تسوق الآن';
+                document.getElementById('section-title').innerText = censorText(settings.section_title) || 'تصفح العطور';
+                document.getElementById('btn-checkout-dyn').innerText = censorText(settings.btn_checkout) || 'متابعة الطلب';
+                document.getElementById('footer-text').innerText = censorText(settings.footer_text) || 'جميع الحقوق محفوظة';
 
                 if(settings.hero_image) document.getElementById('hero-bg').style.backgroundImage = `url('${settings.hero_image}')`;
                 
@@ -232,7 +231,6 @@
                 if(settings.tiktok_url) socialDiv.innerHTML += `<a href="${settings.tiktok_url}" target="_blank" class="hover:text-white transition"><i class="fa-brands fa-tiktok"></i></a>`;
             }
 
-            // 2. سحب المنتجات
             const { data: products } = await supabaseClient.from('products').select('*');
             if(products) {
                 allProducts = products;
@@ -255,20 +253,20 @@
                     <div class="bg-card rounded-2xl border border-gray-800 overflow-hidden hover:border-gold hover:shadow-[0_0_30px_rgba(212,175,55,0.1)] transition-all duration-500 group flex flex-col ${isOutOfStock ? 'opacity-60 grayscale' : ''}">
                         <div class="relative overflow-hidden h-72">
                             <img src="${product.image_url}" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
-                            <div class="absolute top-4 right-4 bg-black/80 backdrop-blur-md px-4 py-1.5 rounded-full text-xs font-bold text-gold border border-gray-700">${product.brand}</div>
+                            <div class="absolute top-4 right-4 bg-black/80 backdrop-blur-md px-4 py-1.5 rounded-full text-xs font-bold text-gold border border-gray-700">${censorText(product.brand)}</div>
                             ${isOutOfStock ? '<div class="absolute inset-0 bg-black/60 flex items-center justify-center"><span class="bg-red-600 px-6 py-2 rounded-xl font-bold text-white shadow-lg">نفذت الكمية</span></div>' : ''}
                         </div>
                         <div class="p-6 flex-1 flex flex-col justify-between">
                             <div>
                                 <div class="flex justify-between items-start mb-2">
-                                    <h4 class="text-2xl font-bold gold-text truncate">${product.name}</h4>
+                                    <h4 class="text-2xl font-bold gold-text truncate">${censorText(product.name)}</h4>
                                     <button onclick="openReviews(${product.id})" class="text-gray-500 hover:text-gold transition text-sm"><i class="fa-solid fa-star"></i></button>
                                 </div>
-                                <p class="text-gray-400 text-sm mb-4 line-clamp-2">${product.notes}</p>
+                                <p class="text-gray-400 text-sm mb-4 line-clamp-2">${censorText(product.notes)}</p>
                             </div>
                             <div class="flex justify-between items-center mt-4 pt-4 border-t border-gray-800">
                                 <span class="text-white font-bold text-2xl">${product.price} <span class="text-sm text-gray-500">ج.م</span></span>
-                                <button onclick="addToCart(${product.id}, '${product.name}', ${product.price})" ${isOutOfStock ? 'disabled' : ''} class="bg-darker border border-gray-700 text-gold px-5 py-2.5 rounded-xl hover:bg-gold hover:text-dark transition-all duration-300 font-bold ${isOutOfStock ? 'cursor-not-allowed' : ''}">${addToCartText}</button>
+                                <button onclick="addToCart(${product.id}, '${censorText(product.name)}', ${product.price})" ${isOutOfStock ? 'disabled' : ''} class="bg-darker border border-gray-700 text-gold px-5 py-2.5 rounded-xl hover:bg-gold hover:text-dark transition-all duration-300 font-bold ${isOutOfStock ? 'cursor-not-allowed' : ''}">${addToCartText}</button>
                             </div>
                         </div>
                     </div>
@@ -278,7 +276,6 @@
         
         document.getElementById('search-input').addEventListener('input', renderProducts);
 
-        // ... باقي الدوال زي ما هي (السلة، التتبع، التقييمات) ...
         async function openReviews(productId) {
             document.getElementById('reviews-modal').classList.add('modal-open');
             document.getElementById('review-product-id').value = productId;
@@ -286,15 +283,28 @@
             listDiv.innerHTML = '<p class="text-center text-gray-500 text-sm">جاري التحميل...</p>';
             const { data: reviews } = await supabaseClient.from('reviews').select('*').eq('product_id', productId).eq('status', 'approved').order('created_at', { ascending: false });
             if(!reviews || reviews.length === 0) { listDiv.innerHTML = '<p class="text-center text-gray-500 text-sm">لا يوجد تقييمات بعد.</p>'; return; }
-            listDiv.innerHTML = reviews.map(r => `<div class="border-b border-gray-800 pb-3"><div class="flex justify-between items-center mb-1"><span class="font-bold text-sm text-gray-300">${r.customer_name}</span><span class="text-yellow-500 text-xs">${'⭐'.repeat(r.rating)}</span></div><p class="text-gray-400 text-sm">${r.comment}</p></div>`).join('');
+            listDiv.innerHTML = reviews.map(r => `<div class="border-b border-gray-800 pb-3"><div class="flex justify-between items-center mb-1"><span class="font-bold text-sm text-gray-300">${censorText(r.customer_name)}</span><span class="text-yellow-500 text-xs">${'⭐'.repeat(r.rating)}</span></div><p class="text-gray-400 text-sm">${censorText(r.comment)}</p></div>`).join('');
         }
 
         async function submitReview(e) {
             e.preventDefault();
-            const pId = document.getElementById('review-product-id').value;
-            const data = { product_id: pId, rating: parseInt(document.getElementById('review-rating').value), customer_name: document.getElementById('review-name').value, comment: document.getElementById('review-comment').value };
+            const pId = parseInt(document.getElementById('review-product-id').value);
+            const data = { 
+                product_id: pId, 
+                rating: parseInt(document.getElementById('review-rating').value), 
+                customer_name: censorText(document.getElementById('review-name').value), 
+                comment: censorText(document.getElementById('review-comment').value) 
+            };
             const { error } = await supabaseClient.from('reviews').insert([data]);
-            if(error) alert('حدث خطأ!'); else { alert('شكراً لتقييمك! سيظهر بعد المراجعة.'); document.getElementById('review-comment').value = ''; document.getElementById('reviews-modal').classList.remove('modal-open'); }
+            if(error) {
+                console.error(error);
+                alert('حدث خطأ! يرجى المحاولة لاحقاً.');
+            } else { 
+                alert('شكراً لتقييمك! سيظهر بعد المراجعة.'); 
+                document.getElementById('review-comment').value = ''; 
+                document.getElementById('review-name').value = ''; 
+                document.getElementById('reviews-modal').classList.remove('modal-open'); 
+            }
         }
 
         function openTrackingModal() { document.getElementById('tracking-modal').classList.add('modal-open'); }
@@ -307,7 +317,7 @@
             const order = orders[0];
             let statusText = order.status === 'pending' ? 'قيد التجهيز' : order.status === 'shipped' ? 'تم الشحن' : 'تم التسليم';
             let statusColor = order.status === 'pending' ? 'text-yellow-500' : order.status === 'shipped' ? 'text-blue-500' : 'text-green-500';
-            resultDiv.innerHTML = `<div class="bg-darker p-5 rounded-xl border border-gray-800 text-center mt-4"><p class="text-gray-400 text-sm mb-1">الطلب #${order.id}</p><p class="text-2xl font-bold ${statusColor} mb-2">${statusText}</p><p class="text-sm text-gray-300">الإجمالي: <strong class="text-gold">${order.total_price} ج.م</strong></p>${order.shipping_company ? `<p class="text-xs text-gray-400 mt-2">شركة الشحن: ${order.shipping_company}</p>` : ''}${order.tracking_number ? `<p class="text-xs text-gray-400">رقم التتبع: <span class="text-blue-400" dir="ltr">${order.tracking_number}</span></p>` : ''}</div>`;
+            resultDiv.innerHTML = `<div class="bg-darker p-5 rounded-xl border border-gray-800 text-center mt-4"><p class="text-gray-400 text-sm mb-1">الطلب #${order.id}</p><p class="text-2xl font-bold ${statusColor} mb-2">${statusText}</p><p class="text-sm text-gray-300">الإجمالي: <strong class="text-gold">${order.total_price} ج.م</strong></p>${order.shipping_company ? `<p class="text-xs text-gray-400 mt-2">شركة الشحن: ${censorText(order.shipping_company)}</p>` : ''}${order.tracking_number ? `<p class="text-xs text-gray-400">رقم التتبع: <span class="text-blue-400" dir="ltr">${order.tracking_number}</span></p>` : ''}</div>`;
         }
 
         function addToCart(id, name, price) { const existing = cart.find(item => item.id === id); if (existing) { existing.qty += 1; } else { cart.push({ id, name, price, qty: 1 }); } saveCart(); toggleCart(); }
@@ -317,7 +327,7 @@
             const cartItemsDiv = document.getElementById('cart-items'); let totalPrice = 0;
             if (cart.length === 0) { cartItemsDiv.innerHTML = '<p class="text-center text-gray-500 mt-10">السلة فارغة</p>'; document.getElementById('cart-total').innerText = '0 ج.م'; return; }
             cartItemsDiv.innerHTML = '';
-            cart.forEach((item, index) => { totalPrice += item.price * item.qty; cartItemsDiv.innerHTML += `<div class="flex justify-between items-center border-b border-gray-800 pb-4 mb-4"><div><p class="font-bold text-white">${item.name}</p><p class="text-sm text-gold">${item.price} × ${item.qty}</p></div><button onclick="removeFromCart(${index})" class="text-red-500 font-bold text-sm">حذف</button></div>`; });
+            cart.forEach((item, index) => { totalPrice += item.price * item.qty; cartItemsDiv.innerHTML += `<div class="flex justify-between items-center border-b border-gray-800 pb-4 mb-4"><div><p class="font-bold text-white">${censorText(item.name)}</p><p class="text-sm text-gold">${item.price} × ${item.qty}</p></div><button onclick="removeFromCart(${index})" class="text-red-500 font-bold text-sm">حذف</button></div>`; });
             let discountAmount = (totalPrice * appliedDiscount) / 100;
             document.getElementById('cart-total').innerText = (totalPrice - discountAmount).toFixed(0) + ' ج.م';
             if(appliedDiscount > 0) { document.getElementById('discount-row').classList.remove('hidden'); document.getElementById('discount-amount').innerText = discountAmount.toFixed(0) + ' ج.م'; } else { document.getElementById('discount-row').classList.add('hidden'); }
@@ -327,7 +337,30 @@
         function openCheckoutModal() { if (cart.length === 0) return alert('السلة فارغة!'); document.getElementById('checkout-modal').classList.add('modal-open'); document.getElementById('cart-sidebar').classList.remove('cart-open'); document.getElementById('overlay').classList.add('hidden'); }
         function closeCheckoutModal() { document.getElementById('checkout-modal').classList.remove('modal-open'); }
         async function applyCoupon() { const code = document.getElementById('coupon-input').value.trim().toUpperCase(); const { data } = await supabaseClient.from('coupons').select('*').eq('code', code).eq('active', true).single(); if(data) { appliedDiscount = data.discount_percent; document.getElementById('coupon-msg').innerText = `خصم ${appliedDiscount}%`; document.getElementById('coupon-msg').className = 'text-green-500 text-xs mb-2'; updateCartUI(); } else { appliedDiscount = 0; document.getElementById('coupon-msg').innerText = 'كود غير صحيح'; document.getElementById('coupon-msg').className = 'text-red-500 text-xs mb-2'; updateCartUI(); } }
-        async function submitOrder(e) { e.preventDefault(); const btn = document.getElementById('submit-btn'); btn.innerText = 'جاري...'; btn.disabled = true; const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.qty), 0); const finalTotal = totalPrice - ((totalPrice * appliedDiscount) / 100); const orderData = { customer_name: document.getElementById('customer_name').value, phone: document.getElementById('phone').value, city: document.getElementById('city').value, address: document.getElementById('address').value, total_price: finalTotal, items: cart, status: 'pending' }; const { error } = await supabaseClient.from('orders').insert([orderData]); if (error) { alert('خطأ!'); btn.innerText = 'تأكيد'; btn.disabled = false; return; } alert(`تم استلام طلبك!`); cart = []; appliedDiscount = 0; saveCart(); closeCheckoutModal(); document.getElementById('checkout-form').reset(); btn.innerText = 'تأكيد'; btn.disabled = false; }
+        
+        async function submitOrder(e) { 
+            e.preventDefault(); 
+            const btn = document.getElementById('submit-btn'); btn.innerText = 'جاري...'; btn.disabled = true; 
+            const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.qty), 0); 
+            const finalTotal = totalPrice - ((totalPrice * appliedDiscount) / 100); 
+            
+            // تطبيق الفلتر على بيانات العميل
+            const orderData = { 
+                customer_name: censorText(document.getElementById('customer_name').value), 
+                phone: document.getElementById('phone').value, 
+                city: censorText(document.getElementById('city').value), 
+                address: censorText(document.getElementById('address').value), 
+                total_price: finalTotal, 
+                items: cart, 
+                status: 'pending' 
+            }; 
+            
+            const { error } = await supabaseClient.from('orders').insert([orderData]); 
+            if (error) { alert('خطأ!'); btn.innerText = 'تأكيد'; btn.disabled = false; return; } 
+            alert(`تم استلام طلبك!`); 
+            cart = []; appliedDiscount = 0; saveCart(); closeCheckoutModal(); document.getElementById('checkout-form').reset(); btn.innerText = 'تأكيد'; btn.disabled = false; 
+        }
+        
         async function logVisit() { const lastVisit = sessionStorage.getItem('lastVisit'); if (!lastVisit || Date.now() - lastVisit > 30 * 60 * 1000) { await supabaseClient.from('visits').insert([{}]); sessionStorage.setItem('lastVisit', Date.now()); } }
 
         initPage(); updateCartUI(); logVisit();
