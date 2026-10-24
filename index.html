@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>عطور الشرق | متجر العطور الفاخرة</title>
+    <!-- استدعاء Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- استدعاء خط عربي أنيق -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Cairo', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <!-- شريط التنقل -->
+    <nav class="bg-black text-white p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-yellow-500">عطور الشرق</h1>
+            <ul class="flex space-x-6 space-x-reverse text-sm">
+                <li><a href="#" class="hover:text-yellow-500">الرئيسية</a></li>
+                <li><a href="#" class="hover:text-yellow-500">المتجر</a></li>
+                <li><a href="#" class="hover:text-yellow-500">عروض</a></li>
+                <li><a href="#" class="hover:text-yellow-500">تواصل معنا</a></li>
+            </ul>
+            <div class="flex space-x-4 space-x-reverse">
+                <span class="cursor-pointer">🛒</span>
+                <span class="cursor-pointer">👤</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- قسم البانر الرئيسي -->
+    <header class="bg-black text-white text-center py-20 px-4 border-b-4 border-yellow-500">
+        <h2 class="text-4xl md:text-5xl font-bold mb-4">اكتشف عطرك المميز</h2>
+        <p class="text-gray-400 text-lg mb-8">أفخم العطور الشرقية والفرنسية بين يديك</p>
+        <button class="bg-yellow-500 text-black px-8 py-3 rounded-full font-bold hover:bg-yellow-400 transition">تسوق الآن</button>
+    </header>
+
+    <!-- شبكة المنتجات -->
+    <main class="container mx-auto py-12 px-4">
+        <h3 class="text-2xl font-bold mb-8 text-center border-b-2 border-yellow-500 inline-block pb-2">الأكثر مبيعاً</h3>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
+            <!-- منتج 1 -->
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition">
+                <img src="https://images.unsplash.com/photo-1594035910387-fea47794261f?w=500&auto=format&fit=crop" alt="عطر" class="w-full h-64 object-cover">
+                <div class="p-4">
+                    <h4 class="text-xl font-bold mb-2">عود ملكي</h4>
+                    <p class="text-gray-500 text-sm mb-4">مقدمة: برغموت | قلب: عود | قاعدة: مسك</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-yellow-600 font-bold text-lg">1500 ج.م</span>
+                        <button class="bg-black text-white px-4 py-2 rounded hover:bg-gray-800">أضف للسلة</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- منتج 2 -->
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition">
+                <img src="https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?w=500&auto=format&fit=crop" alt="عطر" class="w-full h-64 object-cover">
+                <div class="p-4">
+                    <h4 class="text-xl font-bold mb-2">مسك الليل</h4>
+                    <p class="text-gray-500 text-sm mb-4">مقدمة: ياسمين | قلب: ورد | قاعدة: عنبر</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-yellow-600 font-bold text-lg">950 ج.م</span>
+                        <button class="bg-black text-white px-4 py-2 rounded hover:bg-gray-800">أضف للسلة</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- منتج 3 -->
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition">
+                <img src="https://images.unsplash.com/photo-1523293182086-7651a899d37f?w=500&auto=format&fit=crop" alt="عطر" class="w-full h-64 object-cover">
+                <div class="p-4">
+                    <h4 class="text-xl font-bold mb-2">صندل فاخر</h4>
+                    <p class="text-gray-500 text-sm mb-4">مقدمة: ليمون | قلب: صندل | قاعدة: فانيليا</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-yellow-600 font-bold text-lg">1200 ج.م</span>
+                        <button class="bg-black text-white px-4 py-2 rounded hover:bg-gray-800">أضف للسلة</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- الفوتر -->
+    <footer class="bg-black text-center text-gray-500 py-6 mt-12">
+        <p>جميع الحقوق محفوظة &copy; 2024 عطور الشرق</p>
+    </footer>
+
+</body>
+</html>
