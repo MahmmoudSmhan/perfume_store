@@ -154,7 +154,7 @@
         </div>
     </div>
 
-    <!-- 3. شاشة نجاح الطلب (بدل الـ Alert) -->
+    <!-- 3. شاشة نجاح الطلب -->
     <div id="success-modal" class="fixed inset-0 z-[60] flex items-center justify-center bg-black bg-opacity-90 opacity-0 pointer-events-none transition-opacity p-4">
         <div class="bg-card w-full max-w-sm rounded-3xl shadow-2xl border border-gray-800 p-8 text-center transform scale-90 transition-transform duration-300 modal-content">
             <div class="w-24 h-24 bg-green-500/20 text-green-500 rounded-full flex items-center justify-center mx-auto mb-6 text-5xl">
@@ -210,7 +210,8 @@
     </div>
 
     <script>
-        const SUPABASE_URL = 'https://icmvrjmkyokexkfvw.supabase.co'; // تأكد من صحة رابط مشروعك
+        // ✅ تم تصحيح الرابط هنا
+        const SUPABASE_URL = 'https://icmvrjmkcyjuoxekvvfw.supabase.co'; 
         const SUPABASE_KEY = 'sb_publishable_M05JYZ9LKlIfeDjuCJqzxQ_Ay6EbRKj';
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         
@@ -457,7 +458,7 @@
             const { error } = await supabaseClient.from('orders').insert([orderData]); 
             if (error) { showToast('حدث خطأ!'); btn.innerText = 'تأكيد'; btn.disabled = false; return; } 
             
-            // إظهار شاشة النجاح الفخمة بدل الـ alert
+            // إظهار شاشة النجاح الفخمة
             closeCheckoutModal();
             document.getElementById('success-modal').classList.add('modal-open');
             
