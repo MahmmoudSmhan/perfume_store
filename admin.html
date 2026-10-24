@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة التحكم | عطور الشرق</title>
+    <title>لوحة التحكم</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- مكتبة ضغط الصور -->
     <script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -27,7 +26,6 @@
                 <div class="w-16 h-16 bg-yellow-100 text-yellow-600 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
                     <i class="fa-solid fa-spray-can-sparkles"></i>
                 </div>
-                <h2 class="text-2xl font-bold text-gray-800">عطور الشرق</h2>
             </div>
             <form id="login-form" class="space-y-4">
                 <input type="email" id="email" placeholder="الإيميل" required class="w-full border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 bg-gray-50">
@@ -79,7 +77,6 @@
                 </div>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                    <!-- كروت الإحصائيات -->
                     <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4 relative overflow-hidden group">
                         <div class="w-14 h-14 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-2xl group-hover:scale-110 transition"><i class="fa-solid fa-shopping-bag"></i></div>
                         <div><p class="text-gray-500 text-xs font-bold mb-1">إجمالي الطلبات</p><h3 id="stat-orders" class="text-2xl font-bold text-gray-800">0</h3></div>
@@ -154,16 +151,28 @@
                 <div id="coupons-list" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
             </div>
 
-            <!-- 5. Settings -->
+            <!-- 5. Settings (تم إضافة السوشيال والواتساب هنا) -->
             <div id="view-settings" class="view-section">
                 <h2 class="text-2xl font-bold text-gray-800 mb-6">إعدادات الموقع</h2>
                 <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-200 max-w-3xl">
                     <form id="settings-form" onsubmit="saveSettings(event)" class="space-y-5">
-                        <div><label class="block text-sm font-bold text-gray-700 mb-1">اسم الموقع</label><input type="text" id="set-name" class="w-full border p-3 rounded-lg focus:ring-2 focus:ring-yellow-500 bg-gray-50"></div>
-                        <div><label class="block text-sm font-bold text-gray-700 mb-1">العنوان الرئيسي</label><input type="text" id="set-title" class="w-full border p-3 rounded-lg focus:ring-2 focus:ring-yellow-500 bg-gray-50"></div>
+                        <h3 class="font-bold text-lg text-gray-800 border-b pb-2">المعلومات الأساسية</h3>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div><label class="block text-sm font-bold text-gray-700 mb-1">اسم الموقع</label><input type="text" id="set-name" class="w-full border p-3 rounded-lg focus:ring-2 focus:ring-yellow-500 bg-gray-50"></div>
+                            <div><label class="block text-sm font-bold text-gray-700 mb-1">العنوان الرئيسي</label><input type="text" id="set-title" class="w-full border p-3 rounded-lg focus:ring-2 focus:ring-yellow-500 bg-gray-50"></div>
+                        </div>
                         <div><label class="block text-sm font-bold text-gray-700 mb-1">الوصف</label><input type="text" id="set-subtitle" class="w-full border p-3 rounded-lg focus:ring-2 focus:ring-yellow-500 bg-gray-50"></div>
                         <div><label class="block text-sm font-bold text-gray-700 mb-1">رابط صورة البانر</label><input type="text" id="set-image" dir="ltr" class="w-full border p-3 rounded-lg focus:ring-2 focus:ring-yellow-500 bg-gray-50 text-left"></div>
-                        <button type="submit" class="bg-black text-white px-8 py-3 rounded-lg font-bold shadow hover:bg-gray-800 transition">حفظ</button>
+                        
+                        <h3 class="font-bold text-lg text-gray-800 border-b pb-2 mt-8">التواصل والسوشيال ميديا</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div><label class="block text-sm font-bold text-gray-700 mb-1"><i class="fa-brands fa-whatsapp text-green-500 mr-1"></i> رقم الواتساب (بصيغة دولية بدون +)</label><input type="text" id="set-whatsapp" placeholder="201012345678" dir="ltr" class="w-full border p-3 rounded-lg focus:ring-2 focus:ring-yellow-500 bg-gray-50 text-left"></div>
+                            <div><label class="block text-sm font-bold text-gray-700 mb-1"><i class="fa-brands fa-facebook text-blue-600 mr-1"></i> رابط فيسبوك</label><input type="url" id="set-facebook" dir="ltr" class="w-full border p-3 rounded-lg focus:ring-2 focus:ring-yellow-500 bg-gray-50 text-left"></div>
+                            <div><label class="block text-sm font-bold text-gray-700 mb-1"><i class="fa-brands fa-instagram text-pink-600 mr-1"></i> رابط إنستجرام</label><input type="url" id="set-instagram" dir="ltr" class="w-full border p-3 rounded-lg focus:ring-2 focus:ring-yellow-500 bg-gray-50 text-left"></div>
+                            <div><label class="block text-sm font-bold text-gray-700 mb-1"><i class="fa-brands fa-tiktok text-black mr-1"></i> رابط تيك توك</label><input type="url" id="set-tiktok" dir="ltr" class="w-full border p-3 rounded-lg focus:ring-2 focus:ring-yellow-500 bg-gray-50 text-left"></div>
+                        </div>
+
+                        <button type="submit" class="bg-black text-white px-8 py-3 rounded-lg font-bold shadow hover:bg-gray-800 transition mt-4">حفظ الإعدادات</button>
                     </form>
                 </div>
             </div>
@@ -222,7 +231,7 @@
         
         let salesChartInstance = null;
         let visitsChartInstance = null;
-        let allOrders = []; // لحفظ الطلبات لتصديرها
+        let allOrders = [];
 
         // 1. Auth
         document.getElementById('login-form').addEventListener('submit', async (e) => {
@@ -300,20 +309,14 @@
             if(salesChartInstance) salesChartInstance.destroy();
             salesChartInstance = new Chart(document.getElementById('salesChart').getContext('2d'), {
                 type: 'line',
-                data: {
-                    labels: last7Days.map(d => d.split('-').slice(1).reverse().join('/')),
-                    datasets: [{ label: 'المبيعات', data: salesData, borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)', borderWidth: 3, fill: true, tension: 0.4 }]
-                },
+                data: { labels: last7Days.map(d => d.split('-').slice(1).reverse().join('/')), datasets: [{ label: 'المبيعات', data: salesData, borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)', borderWidth: 3, fill: true, tension: 0.4 }] },
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
             });
 
             if(visitsChartInstance) visitsChartInstance.destroy();
             visitsChartInstance = new Chart(document.getElementById('visitsChart').getContext('2d'), {
                 type: 'bar',
-                data: {
-                    labels: last7Days.map(d => d.split('-').slice(1).reverse().join('/')),
-                    datasets: [{ label: 'الزيارات', data: visitsData, backgroundColor: '#f59e0b', borderRadius: 6 }]
-                },
+                data: { labels: last7Days.map(d => d.split('-').slice(1).reverse().join('/')), datasets: [{ label: 'الزيارات', data: visitsData, backgroundColor: '#f59e0b', borderRadius: 6 }] },
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
             });
         }
@@ -358,7 +361,6 @@
             const itemsList = document.getElementById('order-items-list');
             itemsList.innerHTML = '';
             
-            // تأكد إن items مصفوفة
             let items = order.items;
             if(typeof items === 'string') items = JSON.parse(items);
 
@@ -377,19 +379,16 @@
 
         async function updateOrderStatus(id, status) {
             await supabaseClient.from('orders').update({ status }).eq('id', id);
-            loadStatsAndCharts(); // تحديث الإحصائيات
+            loadStatsAndCharts();
         }
 
         function exportOrdersCSV() {
             if(allOrders.length === 0) return alert('لا يوجد طلبات لتصديرها.');
-            
-            let csvContent = "\uFEFF"; // لدعم اللغة العربية في Excel
+            let csvContent = "\uFEFF";
             csvContent += "رقم الطلب,اسم العميل,رقم الهاتف,المحافظة,العنوان,الإجمالي,الحالة,التاريخ\n";
-            
             allOrders.forEach(o => {
                 csvContent += `"${o.id}","${o.customer_name}","${o.phone}","${o.city}","${o.address}","${o.total_price}","${o.status}","${new Date(o.created_at).toLocaleString('ar-EG')}"\n`;
             });
-
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement("a");
             link.href = URL.createObjectURL(blob);
@@ -405,7 +404,6 @@
             
             products.forEach(p => {
                 const stockBadge = p.stock <= 0 ? '<span class="text-red-500 font-bold text-xs block">نفذت الكمية</span>' : `<span class="text-green-500 font-bold text-xs block">متوفر: ${p.stock}</span>`;
-                
                 list.innerHTML += `
                     <div class="bg-white border rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition group flex flex-col">
                         <div class="h-40 overflow-hidden relative bg-gray-100">
@@ -452,14 +450,10 @@
 
             if (fileInput.files.length > 0) {
                 let file = fileInput.files[0];
-                
-                // ضغط الصورة قبل الرفع
                 try {
                     const options = { maxSizeMB: 0.5, maxWidthOrHeight: 1024, useWebWorker: true };
                     file = await imageCompression(file, options);
-                } catch (error) {
-                    console.log("خطأ في ضغط الصورة، سيتم رفع الأصلية", error);
-                }
+                } catch (error) { console.log("خطأ في الضغط", error); }
 
                 const fileName = `${Date.now()}-${file.name.replace(/\s/g, '_')}`;
                 const { error: uploadError } = await supabaseClient.storage.from('product-images').upload(fileName, file);
@@ -543,7 +537,6 @@
             e.preventDefault();
             const code = document.getElementById('c-code').value.toUpperCase();
             const percent = parseInt(document.getElementById('c-percent').value);
-            
             const { error } = await supabaseClient.from('coupons').insert([{ code, discount_percent: percent }]);
             if(error) alert('الكود موجود بالفعل!');
             else { document.getElementById('coupon-form').reset(); loadCoupons(); }
@@ -556,7 +549,7 @@
             }
         }
 
-        // 8. Settings
+        // 8. Settings (تحديث عشان يشمل السوشيال والواتساب)
         async function loadSettings() {
             const { data } = await supabaseClient.from('settings').select('*').eq('id', 1).single();
             if (data) {
@@ -564,6 +557,10 @@
                 document.getElementById('set-title').value = data.hero_title || '';
                 document.getElementById('set-subtitle').value = data.hero_subtitle || '';
                 document.getElementById('set-image').value = data.hero_image || '';
+                document.getElementById('set-whatsapp').value = data.whatsapp_number || '';
+                document.getElementById('set-facebook').value = data.facebook_url || '';
+                document.getElementById('set-instagram').value = data.instagram_url || '';
+                document.getElementById('set-tiktok').value = data.tiktok_url || '';
             }
         }
 
@@ -573,10 +570,23 @@
                 site_name: document.getElementById('set-name').value,
                 hero_title: document.getElementById('set-title').value,
                 hero_subtitle: document.getElementById('set-subtitle').value,
-                hero_image: document.getElementById('set-image').value
+                hero_image: document.getElementById('set-image').value,
+                whatsapp_number: document.getElementById('set-whatsapp').value,
+                facebook_url: document.getElementById('set-facebook').value,
+                instagram_url: document.getElementById('set-instagram').value,
+                tiktok_url: document.getElementById('set-tiktok').value
             };
-            await supabaseClient.from('settings').update(data).eq('id', 1);
-            alert('تم الحفظ!');
+            const btn = e.target.querySelector('button[type="submit"]');
+            const oldText = btn.innerText;
+            btn.innerText = 'جاري الحفظ...';
+            
+            const { error } = await supabaseClient.from('settings').update(data).eq('id', 1);
+            
+            if(error) alert('حدث خطأ: ' + error.message);
+            else {
+                btn.innerHTML = '<i class="fa-solid fa-check mr-2"></i> تم الحفظ!';
+                setTimeout(() => { btn.innerText = oldText; }, 2000);
+            }
         }
 
         // Realtime Updates
