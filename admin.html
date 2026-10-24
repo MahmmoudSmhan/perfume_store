@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة تحكم عطور الشرق</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style> body { font-family: 'Cairo', sans-serif; background-color: #f3f4f6; } </style>
+</head>
+<body class="min-h-screen">
+
+    <!-- شاشة تسجيل الدخول -->
+    <div id="login-screen" class="flex items-center justify-center h-screen">
+        <div class="bg-white p-8 rounded-xl shadow-lg w-96">
+            <h2 class="text-2xl font-bold text-center mb-6 text-gray-800">تسجيل دخول الأدمن</h2>
+            <form id="login-form" class="space-y-4">
+                <input type="email" id="email" placeholder="الإيميل" required class="w-full border p-3 rounded focus:outline-none focus:border-yellow-500">
+                <input type="password" id="password" placeholder="الباسورد" required class="w-full border p-3 rounded focus:outline-none focus:border-yellow-500">
+                <button type="submit" class="w-full bg-yellow-500 text-black font-bold py-3 rounded hover:bg-yellow-400 transition">دخول</button>
+            </form>
+            <p id="login-error" class="text-red-500 text-center mt-4 hidden">خطأ في البيانات!</p>
+        </div>
+    </div>
+
+    <!-- لوحة التحكم (مخفية في الأول) -->
+    <div id="dashboard" class="hidden container mx-auto p-4 md:p-8">
+        <!-- الهيدر -->
+        <div class="flex justify-between items-center bg-white p-4 rounded-lg shadow-sm mb-6">
+            <h1 class="text-2xl font-bold text-gray-800">لوحة التحكم</h1>
+            <div class="flex gap-4">
+                <a href="index.html" target="_blank" class="text-blue-500 hover:underline">عرض الموقع</a>
+                <button onclick="logout()" class="text-red-500 font-bold hover:underline">تسجيل خروج</button>
+            </div>
+        </div>
+
+        <!-- التبويبات -->
+        <div class="flex gap-2 mb-6 overflow-x-auto pb-2">
+            <button onclick="switchTab('orders')" class="tab-btn bg-black text-white px-6 py-2 rounded-lg font-bold">الطلبات</button>
+            <button onclick="switchTab('products')" class="tab-btn bg-white text-gray-700 px-6 py-2 rounded-lg font-bold shadow-sm">المنتجات</button>
+            <button onclick="switchTab('settings')" class="tab-btn bg-white text-gray-700 px-6 py-2 rounded-lg font-bold shadow-sm">إعدادات الموقع</button>
+        </div>
+
+        <!-- قسم الطلبات -->
+        <div id="tab-orders" class="tab-content bg-white p-6 rounded-xl shadow-sm">
+            <h2 class="text-xl font-bold mb-4">الطلبات الجديدة</h2>
+            <div class="overflow-x-auto">
+                <table class="w-full text-right border-collapse">
+                    <thead>
+                        <tr class="bg-gray-100 text-gray-600">
+                            <th class="p-3 border-b">الاسم</th>
+                            <th class="p-3 border-b">التليفون</th>
+                            <th class="p-3 border-b">العنوان</th>
+                            <th class="p-3 border-b">الإجمالي</th>
+                            <th class="p-3 border-b">الحالة</th>
+                        </tr>
+                    </thead>
+                    <tbody id="orders-list"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- قسم المنتجات -->
+        <div id="tab-products" class="tab-content hidden bg-white p-6 rounded-xl shadow-sm">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold">المنتجات</h2>
+                <button onclick="openProductForm()" class="bg-black text-white px-4 py-2 rounded-lg font-bold">+ إضافة منتج</button>
+            </div>
+            
+            <!-- فورمة إضافة منتج (مخفية) -->
+            <div id="product-form-container" class="hidden bg-gray-50 p-4 rounded-lg mb-6 border">
+                <form id="product-form" onsubmit="saveProduct(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <input type="hidden" id="prod-id">
+                    <input type="text" id="prod-name" placeholder="اسم العطر" required class="border p-2 rounded">
+                    <input type="text" id="prod-brand" placeholder="الماركة" required class="border p-2 rounded">
+                    <input type="number" id="prod-price" placeholder="السعر" required class="border p-2 rounded">
+                    <input type="text" id="prod-image" placeholder="رابط الصورة (URL)" required class="border p-2 rounded">
+                    <input type="text" id="prod-notes" placeholder="الهرم العطري (مقدمة | قلب | قاعدة)" required class="border p-2 rounded md:col-span-2">
+                    <div class="md:col-span-2 flex gap-2">
+                        <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded font-bold">حفظ</button>
+                        <button type="button" onclick="closeProductForm()" class="bg-gray-400 text-white px-6 py-2 rounded font-bold">إلغاء</button>
+                    </div>
+                </form>
+            </div>
+
+            <div id="products-list" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+        </div>
+
+        <!-- قسم الإعدادات -->
+        <div id="tab-settings" class="tab-content hidden bg-white p-6 rounded-xl shadow-sm">
+            <h2 class="text-xl font-bold mb-4">إعدادات النصوص والصور</h2>
+            <form id="settings-form" onsubmit="saveSettings(event)" class="space-y-4 max-w-2xl">
+                <div>
+                    <label class="block text-sm font-bold mb-1">اسم الموقع</label>
+                    <input type="text" id="set-name" class="w-full border p-2 rounded">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold mb-1">عنوان البانر الرئيسي</label>
+                    <input type="text" id="set-title" class="w-full border p-2 rounded">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold mb-1">الوصف تحت العنوان</label>
+                    <input type="text" id="set-subtitle" class="w-full border p-2 rounded">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold mb-1">رابط صورة البانر (URL)</label>
+                    <input type="text" id="set-image" class="w-full border p-2 rounded">
+                </div>
+                <button type="submit" class="bg-yellow-500 text-black px-8 py-2 rounded font-bold hover:bg-yellow-400 transition">حفظ التعديلات</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const SUPABASE_URL = 'https://icmvrjmkcyjuoxekvvfw.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_M05JYZ9LKlIfeDjuCJqzxQ_Ay6EbRKj';
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // 1. تسجيل الدخول
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+            
+            if (error) {
+                document.getElementById('login-error').classList.remove('hidden');
+            } else {
+                checkSession();
+            }
+        });
+
+        async function checkSession() {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (session) {
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('dashboard').classList.remove('hidden');
+                loadOrders();
+                loadProducts();
+                loadSettings();
+            } else {
+                document.getElementById('login-screen').classList.remove('hidden');
+                document.getElementById('dashboard').classList.add('hidden');
+            }
+        }
+
+        function logout() {
+            supabaseClient.auth.signOut();
+            checkSession();
+        }
+
+        // 2. التبويبات
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById('tab-' + tabId).classList.remove('hidden');
+            
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('bg-black', 'text-white');
+                btn.classList.add('bg-white', 'text-gray-700');
+            });
+            event.target.classList.remove('bg-white', 'text-gray-700');
+            event.target.classList.add('bg-black', 'text-white');
+        }
+
+        // 3. إدارة الطلبات
+        async function loadOrders() {
+            const { data: orders } = await supabaseClient.from('orders').select('*').order('created_at', { ascending: false });
+            const list = document.getElementById('orders-list');
+            list.innerHTML = '';
+            
+            orders.forEach(order => {
+                let statusColor = order.status === 'pending' ? 'text-yellow-600' : order.status === 'shipped' ? 'text-blue-600' : 'text-green-600';
+                list.innerHTML += `
+                    <tr class="border-b hover:bg-gray-50">
+                        <td class="p-3 font-bold">${order.customer_name}</td>
+                        <td class="p-3 text-blue-600"><a href="tel:${order.phone}">${order.phone}</a></td>
+                        <td class="p-3 text-sm text-gray-600">${order.city} - ${order.address}</td>
+                        <td class="p-3 font-bold">${order.total_price} ج.م</td>
+                        <td class="p-3">
+                            <select onchange="updateOrderStatus(${order.id}, this.value)" class="border p-1 rounded font-bold ${statusColor}">
+                                <option value="pending" ${order.status === 'pending' ? 'selected' : ''}>قيد الانتظار</option>
+                                <option value="shipped" ${order.status === 'shipped' ? 'selected' : ''}>تم الشحن</option>
+                                <option value="delivered" ${order.status === 'delivered' ? 'selected' : ''}>تم التسليم</option>
+                            </select>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        async function updateOrderStatus(id, status) {
+            await supabaseClient.from('orders').update({ status }).eq('id', id);
+            loadOrders();
+        }
+
+        // 4. إدارة المنتجات
+        async function loadProducts() {
+            const { data: products } = await supabaseClient.from('products').select('*');
+            const list = document.getElementById('products-list');
+            list.innerHTML = '';
+            
+            products.forEach(p => {
+                list.innerHTML += `
+                    <div class="border p-4 rounded-lg flex justify-between items-center bg-gray-50">
+                        <div class="flex gap-4 items-center">
+                            <img src="${p.image_url}" class="w-16 h-16 object-cover rounded">
+                            <div>
+                                <h3 class="font-bold">${p.name}</h3>
+                                <p class="text-sm text-gray-500">${p.price} ج.م</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="editProduct(${p.id}, '${p.name}', '${p.brand}', ${p.price}, '${p.image_url}', '${p.notes}')" class="text-blue-500 font-bold px-2">تعديل</button>
+                            <button onclick="deleteProduct(${p.id})" class="text-red-500 font-bold px-2">حذف</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function openProductForm() { document.getElementById('product-form-container').classList.remove('hidden'); }
+        function closeProductForm() { document.getElementById('product-form-container').classList.add('hidden'); document.getElementById('product-form').reset(); document.getElementById('prod-id').value = ''; }
+
+        async function saveProduct(e) {
+            e.preventDefault();
+            const id = document.getElementById('prod-id').value;
+            const data = {
+                name: document.getElementById('prod-name').value,
+                brand: document.getElementById('prod-brand').value,
+                price: parseFloat(document.getElementById('prod-price').value),
+                image_url: document.getElementById('prod-image').value,
+                notes: document.getElementById('prod-notes').value
+            };
+
+            if (id) {
+                await supabaseClient.from('products').update(data).eq('id', id);
+            } else {
+                await supabaseClient.from('products').insert([data]);
+            }
+            closeProductForm();
+            loadProducts();
+        }
+
+        function editProduct(id, name, brand, price, image, notes) {
+            document.getElementById('prod-id').value = id;
+            document.getElementById('prod-name').value = name;
+            document.getElementById('prod-brand').value = brand;
+            document.getElementById('prod-price').value = price;
+            document.getElementById('prod-image').value = image;
+            document.getElementById('prod-notes').value = notes;
+            openProductForm();
+        }
+
+        async function deleteProduct(id) {
+            if(confirm('هل أنت متأكد من حذف المنتج؟')) {
+                await supabaseClient.from('products').delete().eq('id', id);
+                loadProducts();
+            }
+        }
+
+        // 5. إدارة الإعدادات
+        async function loadSettings() {
+            const { data } = await supabaseClient.from('settings').select('*').eq('id', 1).single();
+            if (data) {
+                document.getElementById('set-name').value = data.site_name;
+                document.getElementById('set-title').value = data.hero_title;
+                document.getElementById('set-subtitle').value = data.hero_subtitle;
+                document.getElementById('set-image').value = data.hero_image;
+            }
+        }
+
+        async function saveSettings(e) {
+            e.preventDefault();
+            const data = {
+                site_name: document.getElementById('set-name').value,
+                hero_title: document.getElementById('set-title').value,
+                hero_subtitle: document.getElementById('set-subtitle').value,
+                hero_image: document.getElementById('set-image').value
+            };
+            await supabaseClient.from('settings').update(data).eq('id', 1);
+            alert('تم حفظ الإعدادات بنجاح!');
+        }
+
+        // تشغيل الجلسة عند فتح الصفحة
+        checkSession();
+    </script>
+</body>
+</html>
