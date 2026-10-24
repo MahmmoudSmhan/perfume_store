@@ -4,27 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>عطور الشرق | الفخامة والتميز</title>
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- خطوط عربية فخمة -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;800&family=Amiri:wght@700&display=swap" rel="stylesheet">
-    <!-- مكتبة Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    colors: {
-                        gold: '#D4AF37',
-                        dark: '#0a0a0a',
-                        darker: '#050505',
-                        card: '#111111'
-                    },
-                    fontFamily: {
-                        cairo: ['Cairo', 'sans-serif'],
-                        amiri: ['Amiri', 'serif'],
-                    }
+                    colors: { gold: '#D4AF37', dark: '#0a0a0a', darker: '#050505', card: '#111111' },
+                    fontFamily: { cairo: ['Cairo', 'sans-serif'], amiri: ['Amiri', 'serif'] }
                 }
             }
         }
@@ -35,7 +24,6 @@
         .cart-open { transform: translateX(0) !important; }
         .modal-open { opacity: 1 !important; pointer-events: auto !important; }
         .modal-content { transform: translateY(0) !important; }
-        /* تخصيص شكل الـ Scrollbar */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #111; }
         ::-webkit-scrollbar-thumb { background: #D4AF37; border-radius: 4px; }
@@ -46,7 +34,7 @@
     <!-- شريط التنقل -->
     <nav class="bg-darker bg-opacity-90 backdrop-blur-md text-white p-4 sticky top-0 z-40 border-b border-gray-800">
         <div class="container mx-auto flex justify-between items-center">
-            <h1 class="text-3xl font-bold gold-text tracking-wide">عطور الشرق</h1>
+            <h1 id="site-name" class="text-3xl font-bold gold-text tracking-wide">عطور الشرق</h1>
             <div class="flex items-center gap-6">
                 <a href="#" class="hover:text-gold transition hidden md:block">الرئيسية</a>
                 <a href="#products" class="hover:text-gold transition hidden md:block">المتجر</a>
@@ -60,10 +48,10 @@
 
     <!-- البانر الرئيسي -->
     <header class="relative bg-darker text-center py-24 px-4 overflow-hidden">
-        <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1616949755610-8c9bbc08f138?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center opacity-20"></div>
+        <div id="hero-bg" class="absolute inset-0 bg-cover bg-center opacity-20 transition-all duration-700" style="background-image: url('https://images.unsplash.com/photo-1616949755610-8c9bbc08f138?q=80&w=2070&auto=format&fit=crop');"></div>
         <div class="relative z-10">
-            <h2 class="text-5xl md:text-7xl font-bold mb-6 gold-text drop-shadow-lg">اكتشف عطرك المميز</h2>
-            <p class="text-gray-300 text-lg md:text-xl mb-10 max-w-2xl mx-auto font-light leading-relaxed">نقدم لك أفخم العطور الشرقية والفرنسية، المصنوعة من أجود المكونات لتعكس شخصيتك الفريدة.</p>
+            <h2 id="hero-title" class="text-5xl md:text-7xl font-bold mb-6 gold-text drop-shadow-lg">اكتشف عطرك المميز</h2>
+            <p id="hero-subtitle" class="text-gray-300 text-lg md:text-xl mb-10 max-w-2xl mx-auto font-light leading-relaxed">نقدم لك أفخم العطور الشرقية والفرنسية.</p>
             <button onclick="document.getElementById('products').scrollIntoView({behavior: 'smooth'})" class="bg-gold text-dark px-10 py-4 rounded-full font-bold hover:bg-yellow-500 transition-all duration-300 transform hover:scale-105 shadow-[0_0_20px_rgba(212,175,55,0.4)]">تسوق الآن</button>
         </div>
     </header>
@@ -81,7 +69,7 @@
 
     <!-- الفوتر -->
     <footer class="bg-darker border-t border-gray-800 text-center text-gray-500 py-8 mt-auto">
-        <p class="font-light">جميع الحقوق محفوظة &copy; 2024 عطور الشرق</p>
+        <p class="font-light">جميع الحقوق محفوظة &copy; 2024 <span id="footer-name">عطور الشرق</span></p>
     </footer>
 
     <!-- طبقة تعتيم الخلفية للسلة -->
@@ -110,12 +98,10 @@
     <!-- نافذة إتمام الطلب (Form Modal) -->
     <div id="checkout-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80 opacity-0 pointer-events-none transition-opacity duration-300 p-4">
         <div class="bg-card w-full max-w-lg rounded-2xl shadow-2xl border border-gray-800 overflow-hidden transform translate-y-10 transition-transform duration-300 modal-content flex flex-col max-h-[90vh]">
-            
             <div class="bg-darker p-4 border-b border-gray-800 flex justify-between items-center">
                 <h3 class="text-xl font-bold gold-text">بيانات الشحن</h3>
                 <button onclick="closeCheckoutModal()" class="text-2xl text-gray-400 hover:text-white">&times;</button>
             </div>
-
             <div class="p-6 overflow-y-auto">
                 <form id="checkout-form" onsubmit="submitOrder(event)" class="space-y-4">
                     <div>
@@ -128,7 +114,7 @@
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-sm font-medium text-gray-400 mb-1">المحافظة / المدينة</label>
+                            <label class="block text-sm font-medium text-gray-400 mb-1">المحافظة</label>
                             <input type="text" id="city" required class="w-full bg-darker border border-gray-700 rounded-lg p-3 text-white focus:outline-none focus:border-gold transition">
                         </div>
                         <div>
@@ -140,7 +126,6 @@
                         <label class="block text-sm font-medium text-gray-400 mb-1">ملاحظات إضافية (اختياري)</label>
                         <textarea id="notes" rows="2" class="w-full bg-darker border border-gray-700 rounded-lg p-3 text-white focus:outline-none focus:border-gold transition"></textarea>
                     </div>
-                    
                     <div class="pt-4 border-t border-gray-800 mt-6">
                         <button type="submit" id="submit-btn" class="w-full bg-gold text-dark font-bold py-3 rounded-lg hover:bg-yellow-500 transition-colors text-lg">تأكيد الطلب (الدفع عند الاستلام)</button>
                     </div>
@@ -149,7 +134,6 @@
         </div>
     </div>
 
-    <!-- سكربت الجافاسكريبت -->
     <script>
         // ✅ مفاتيح Supabase
         const SUPABASE_URL = 'https://icmvrjmkcyjuoxekvvfw.supabase.co';
@@ -158,13 +142,31 @@
         
         let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
-        // 1. سحب المنتجات
-        async function fetchProducts() {
+        // 1. سحب الإعدادات والمنتجات
+        async function initPage() {
+            // سحب الإعدادات
+            const { data: settings, error: setErr } = await supabaseClient.from('settings').select('*').eq('id', 1).single();
+            if (settings) {
+                document.getElementById('site-name').innerText = settings.site_name || 'عطور الشرق';
+                document.getElementById('footer-name').innerText = settings.site_name || 'عطور الشرق';
+                document.getElementById('hero-title').innerText = settings.hero_title || 'اكتشف عطرك المميز';
+                document.getElementById('hero-subtitle').innerText = settings.hero_subtitle || 'نقدم لك أفخم العطور الشرقية والفرنسية.';
+                if(settings.hero_image) {
+                    document.getElementById('hero-bg').style.backgroundImage = `url('${settings.hero_image}')`;
+                }
+            }
+
+            // سحب المنتجات
             const { data: products, error } = await supabaseClient.from('products').select('*');
             if (error) { console.error(error); return; }
 
             const grid = document.getElementById('products-grid');
             grid.innerHTML = '';
+
+            if(!products || products.length === 0) {
+                grid.innerHTML = '<p class="text-center col-span-3 text-gray-500">لا توجد منتجات حالياً.</p>';
+                return;
+            }
 
             products.forEach(product => {
                 grid.innerHTML += `
@@ -243,11 +245,10 @@
             }
         }
 
-        // 3. وظائف الـ Checkout Form
+        // 3. الفورم وإتمام الطلب
         function openCheckoutModal() {
             if (cart.length === 0) return alert('السلة فارغة!');
             document.getElementById('checkout-modal').classList.add('modal-open');
-            // إخفاء السلة عشان الفورمة تبان
             document.getElementById('cart-sidebar').classList.remove('cart-open');
             document.getElementById('overlay').classList.add('hidden');
         }
@@ -265,7 +266,6 @@
 
             const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
             
-            // تجميع بيانات الفورمة
             const orderData = {
                 customer_name: document.getElementById('customer_name').value,
                 phone: document.getElementById('phone').value,
@@ -277,32 +277,42 @@
                 status: 'pending'
             };
 
-            // الإدخال في الداتابيز
             const { error } = await supabaseClient.from('orders').insert([orderData]);
 
             if (error) {
                 console.error(error);
-                alert('حدث خطأ أثناء حفظ الطلب. تأكد من اتصالك بالإنترنت.');
+                alert('حدث خطأ أثناء حفظ الطلب.');
                 btn.innerText = originalText;
                 btn.disabled = false;
                 return;
             }
 
-            // نجاح
-            alert(`تم استلام طلبك بنجاح يا ${orderData.customer_name}! جاري تجهيزه.`);
-            
-            // تصفير السلة وإغلاق الفورمة
+            alert(`تم استلام طلبك بنجاح يا ${orderData.customer_name}!`);
             cart = [];
             saveCart();
             closeCheckoutModal();
             document.getElementById('checkout-form').reset();
-            
             btn.innerText = originalText;
             btn.disabled = false;
         }
 
+        // --- التحديث اللحظي (Real-time) ---
+        const channel = supabaseClient.channel('store-realtime');
+        channel
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, (payload) => {
+                console.log('تحديث المنتجات:', payload);
+                initPage(); 
+            })
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'settings' }, (payload) => {
+                console.log('تحديث الإعدادات:', payload);
+                initPage(); 
+            })
+            .subscribe((status) => {
+                console.log('حالة الاتصال بالتحديث اللحظي:', status);
+            });
+
         // التشغيل
-        fetchProducts();
+        initPage();
         updateCartUI();
     </script>
 </body>
