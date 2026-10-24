@@ -3,13 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- SEO Meta Tags -->
     <title>عطور الشرق | الفخامة والتميز</title>
     <meta name="description" content="اشتري أفخم العطور الشرقية والفرنسية الأصلية بأفضل الأسعار من عطور الشرق.">
-    <meta property="og:title" content="عطور الشرق | الفخامة والتميز">
-    <meta property="og:description" content="اكتشف عطرك المميز من مجموعتنا الفاخرة.">
-    <meta property="og:image" content="https://images.unsplash.com/photo-1616949755610-8c9bbc08f138?q=80&w=2070&auto=format&fit=crop">
-    
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;800&family=Amiri:wght@700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -70,25 +65,28 @@
     <main class="container mx-auto py-12 px-4 flex-grow">
         <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
             <h3 class="text-3xl font-bold border-b-2 border-gold gold-text pb-2">تصفح العطور</h3>
-            
-            <!-- فلترة الماركات -->
             <div class="flex gap-2 overflow-x-auto pb-2 w-full md:w-auto" id="brand-filters">
                 <button onclick="filterByBrand('all', this)" class="brand-btn bg-gold text-black px-4 py-1.5 rounded-full font-bold text-sm whitespace-nowrap">الكل</button>
-                <!-- الماركات هتظهر هنا -->
             </div>
         </div>
         
-        <div id="products-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            <!-- المنتجات -->
-        </div>
+        <div id="products-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
     </main>
 
-    <footer class="bg-darker border-t border-gray-800 text-center text-gray-500 py-8 mt-auto">
-        <p class="font-light">جميع الحقوق محفوظة &copy; 2024 <span id="footer-name">عطور الشرق</span></p>
+    <!-- الفوتر (تمت إضافة السوشيال ميديا هنا) -->
+    <footer class="bg-darker border-t border-gray-800 py-8 mt-auto">
+        <div class="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <p class="font-light text-gray-500 text-sm">جميع الحقوق محفوظة &copy; 2024 <span id="footer-name" class="text-gold font-bold">عطور الشرق</span></p>
+            
+            <!-- أيقونات السوشيال ميديا -->
+            <div id="social-links" class="flex gap-4 text-xl">
+                <!-- هيتم إضافتها بالجافاسكريبت بناءً على الإعدادات -->
+            </div>
+        </div>
     </footer>
 
-    <!-- زرار واتساب -->
-    <a href="https://wa.me/201012345678?text=مرحباً، أرغب في الاستفسار عن العطور" target="_blank" class="fixed bottom-6 right-6 bg-green-500 text-white w-14 h-14 rounded-full flex items-center justify-center text-3xl shadow-lg hover:bg-green-600 transition z-40 transform hover:scale-110">
+    <!-- زرار واتساب (الرابط هيتم تحديثه بالجافاسكريبت) -->
+    <a id="whatsapp-btn" href="#" target="_blank" class="hidden fixed bottom-6 right-6 bg-green-500 text-white w-14 h-14 rounded-full flex items-center justify-center text-3xl shadow-lg hover:bg-green-600 transition z-40 transform hover:scale-110">
         <i class="fa-brands fa-whatsapp"></i>
     </a>
 
@@ -105,7 +103,6 @@
         <div id="cart-items" class="flex-1 p-5 overflow-y-auto"></div>
         
         <div class="p-5 border-t border-gray-800 bg-darker">
-            <!-- كوبون الخصم -->
             <div class="flex gap-2 mb-4">
                 <input type="text" id="coupon-input" placeholder="كود الخصم" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-white text-sm focus:outline-none focus:border-gold">
                 <button onclick="applyCoupon()" class="bg-gray-700 text-white px-4 rounded-lg font-bold hover:bg-gray-600 transition">تطبيق</button>
@@ -165,7 +162,7 @@
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         
         let cart = JSON.parse(localStorage.getItem('cart')) || [];
-        let allProducts = []; // لتخزين المنتجات للبحث والفلترة
+        let allProducts = [];
         let currentBrand = 'all';
         let appliedDiscount = 0;
 
@@ -178,6 +175,23 @@
                 document.getElementById('hero-title').innerText = settings.hero_title || 'اكتشف عطرك المميز';
                 document.getElementById('hero-subtitle').innerText = settings.hero_subtitle || '';
                 if(settings.hero_image) document.getElementById('hero-bg').style.backgroundImage = `url('${settings.hero_image}')`;
+                
+                // --- تحديث زرار الواتساب ---
+                const waBtn = document.getElementById('whatsapp-btn');
+                if(settings.whatsapp_number) {
+                    waBtn.href = `https://wa.me/${settings.whatsapp_number}?text=مرحباً، أرغب في الاستفسار عن العطور`;
+                    waBtn.classList.remove('hidden');
+                } else {
+                    waBtn.classList.add('hidden');
+                }
+
+                // --- تحديث أيقونات السوشيال ميديا في الفوتر ---
+                const socialDiv = document.getElementById('social-links');
+                socialDiv.innerHTML = '';
+                
+                if(settings.facebook_url) socialDiv.innerHTML += `<a href="${settings.facebook_url}" target="_blank" class="hover:text-blue-500 transition"><i class="fa-brands fa-facebook"></i></a>`;
+                if(settings.instagram_url) socialDiv.innerHTML += `<a href="${settings.instagram_url}" target="_blank" class="hover:text-pink-500 transition"><i class="fa-brands fa-instagram"></i></a>`;
+                if(settings.tiktok_url) socialDiv.innerHTML += `<a href="${settings.tiktok_url}" target="_blank" class="hover:text-white transition"><i class="fa-brands fa-tiktok"></i></a>`;
             }
 
             const { data: products } = await supabaseClient.from('products').select('*');
@@ -192,6 +206,9 @@
         function renderBrands() {
             const brands = [...new Set(allProducts.map(p => p.brand))];
             const container = document.getElementById('brand-filters');
+            // مسح الماركات القديمة وتثبيت زرار "الكل"
+            container.innerHTML = '<button onclick="filterByBrand(\'all\', this)" class="brand-btn bg-gold text-black px-4 py-1.5 rounded-full font-bold text-sm whitespace-nowrap">الكل</button>';
+            
             brands.forEach(brand => {
                 container.innerHTML += `<button onclick="filterByBrand('${brand}', this)" class="brand-btn bg-gray-800 text-white border border-gray-700 px-4 py-1.5 rounded-full font-bold text-sm whitespace-nowrap hover:border-gold transition">${brand}</button>`;
             });
@@ -250,7 +267,7 @@
 
         document.getElementById('search-input').addEventListener('input', renderProducts);
 
-        // 3. السلة والكوبونات
+        // 3. السلة
         function addToCart(id, name, price) {
             const existing = cart.find(item => item.id === id);
             if (existing) { existing.qty += 1; } 
@@ -259,10 +276,7 @@
             if (!document.getElementById('cart-sidebar').classList.contains('cart-open')) { toggleCart(); }
         }
 
-        function saveCart() {
-            localStorage.setItem('cart', JSON.stringify(cart));
-            updateCartUI();
-        }
+        function saveCart() { localStorage.setItem('cart', JSON.stringify(cart)); updateCartUI(); }
 
         function updateCartUI() {
             const totalCount = cart.reduce((total, item) => total + item.qty, 0);
@@ -291,7 +305,6 @@
                 `;
             });
             
-            // حساب الخصم
             let discountAmount = (totalPrice * appliedDiscount) / 100;
             let finalTotal = totalPrice - discountAmount;
 
@@ -310,7 +323,7 @@
             const msg = document.getElementById('coupon-msg');
             if(!code) return;
 
-            const { data, error } = await supabaseClient.from('coupons').select('*').eq('code', code).eq('active', true).single();
+            const { data } = await supabaseClient.from('coupons').select('*').eq('code', code).eq('active', true).single();
             
             if(data) {
                 appliedDiscount = data.discount_percent;
@@ -319,7 +332,7 @@
                 updateCartUI();
             } else {
                 appliedDiscount = 0;
-                msg.innerText = 'كود الخصم غير صحيح أو منتهي.';
+                msg.innerText = 'كود الخصم غير صحيح.';
                 msg.className = 'text-red-500 text-xs font-bold mb-2';
                 updateCartUI();
             }
@@ -378,7 +391,7 @@
                 return;
             }
 
-            alert(`تم استلام طلبك بنجاح يا ${orderData.customer_name}!`);
+            alert(`تم استلام طلبك بنجاح!`);
             cart = []; appliedDiscount = 0; saveCart();
             closeCheckoutModal();
             document.getElementById('checkout-form').reset();
@@ -390,10 +403,9 @@
         // تسجيل الزيارات
         async function logVisit() {
             const lastVisit = sessionStorage.getItem('lastVisit');
-            const now = Date.now();
-            if (!lastVisit || now - lastVisit > 30 * 60 * 1000) {
+            if (!lastVisit || Date.now() - lastVisit > 30 * 60 * 1000) {
                 await supabaseClient.from('visits').insert([{}]);
-                sessionStorage.setItem('lastVisit', now);
+                sessionStorage.setItem('lastVisit', Date.now());
             }
         }
 
