@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>عطور الفخامة والتميز</title>
+    <title>عطور الشرق | الفخامة والتميز</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -20,20 +20,23 @@
         .modal-content { transform: translateY(0) !important; }
         .glass { background: rgba(10, 10, 10, 0.7); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(212, 175, 55, 0.2); }
         
-        /* Toast Notification */
         #toast { visibility: hidden; min-width: 250px; background-color: #D4AF37; color: #000; text-align: center; border-radius: 12px; padding: 16px; position: fixed; z-index: 100; left: 50%; bottom: 30px; transform: translateX(-50%); font-weight: bold; box-shadow: 0 10px 20px rgba(0,0,0,0.5); opacity: 0; transition: opacity 0.5s, bottom 0.5s; }
         #toast.show { visibility: visible; opacity: 1; bottom: 50px; }
     </style>
 </head>
 <body class="relative min-h-screen flex flex-col">
 
-    <!-- Toast -->
     <div id="toast">تمت العملية بنجاح!</div>
 
     <!-- شريط التنقل -->
     <nav class="glass text-white p-4 sticky top-0 z-40 transition-all duration-300">
         <div class="container mx-auto flex justify-between items-center">
-            <h1 id="site-name" class="text-3xl font-bold gold-text tracking-wide">عطور الشرق</h1>
+            
+            <!-- اللوجو والاسم -->
+            <div class="flex items-center gap-3 cursor-pointer" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+                <img id="site-logo" src="" class="h-10 w-10 object-contain rounded-full hidden border border-gold" alt="Logo">
+                <h1 id="site-name" class="text-3xl font-bold gold-text tracking-wide">عطور الشرق</h1>
+            </div>
             
             <div class="hidden md:flex items-center gap-8">
                 <a href="#" id="nav-home" class="hover:text-gold transition font-bold text-sm">الرئيسية</a>
@@ -66,8 +69,6 @@
 
     <!-- المتجر -->
     <main class="container mx-auto py-16 px-4 flex-grow" id="products">
-        
-        <!-- شريط الفلترة والبحث -->
         <div class="bg-card p-6 rounded-2xl border border-gray-800 mb-10 flex flex-col md:flex-row justify-between items-center gap-6">
             <div class="flex flex-wrap gap-2 justify-center w-full md:w-auto">
                 <button onclick="filterCategory('all')" class="cat-btn bg-gold text-dark px-6 py-2 rounded-full font-bold text-sm transition">الكل</button>
@@ -106,15 +107,12 @@
     <!-- الفوتر -->
     <footer class="bg-black border-t border-gray-800 py-10 mt-auto">
         <div class="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-6">
-            <p class="font-light text-gray-500 text-sm"><span id="footer-text">جميع الحقوق محفوظة</span> &copy; 2030 <span id="footer-name" class="text-gold font-bold">عطور الشرق</span></p>
+            <p class="font-light text-gray-500 text-sm"><span id="footer-text">جميع الحقوق محفوظة</span> &copy; 2024 <span id="footer-name" class="text-gold font-bold">عطور الشرق</span></p>
             <div id="social-links" class="flex gap-5 text-2xl"></div>
         </div>
     </footer>
 
-    <!-- زرار واتساب -->
     <a id="whatsapp-btn" href="#" target="_blank" class="hidden fixed bottom-8 right-8 bg-green-500 text-white w-16 h-16 rounded-full flex items-center justify-center text-4xl shadow-lg hover:bg-green-400 transition transform hover:scale-110 z-40"><i class="fa-brands fa-whatsapp"></i></a>
-
-    <!-- ==================== النوافذ المنبثقة ==================== -->
 
     <!-- 1. السلة -->
     <div id="overlay" class="fixed inset-0 bg-black bg-opacity-80 z-40 hidden backdrop-blur-sm" onclick="toggleCart()"></div>
@@ -157,9 +155,7 @@
     <!-- 3. شاشة نجاح الطلب -->
     <div id="success-modal" class="fixed inset-0 z-[60] flex items-center justify-center bg-black bg-opacity-90 opacity-0 pointer-events-none transition-opacity p-4">
         <div class="bg-card w-full max-w-sm rounded-3xl shadow-2xl border border-gray-800 p-8 text-center transform scale-90 transition-transform duration-300 modal-content">
-            <div class="w-24 h-24 bg-green-500/20 text-green-500 rounded-full flex items-center justify-center mx-auto mb-6 text-5xl">
-                <i class="fa-solid fa-check"></i>
-            </div>
+            <div class="w-24 h-24 bg-green-500/20 text-green-500 rounded-full flex items-center justify-center mx-auto mb-6 text-5xl"><i class="fa-solid fa-check"></i></div>
             <h3 class="text-2xl font-bold text-white mb-2">تم استلام طلبك!</h3>
             <p class="text-gray-400 text-sm mb-8">شكراً لثقتك بنا. سنتواصل معك قريباً لتأكيد الشحن.</p>
             <button onclick="document.getElementById('success-modal').classList.remove('modal-open')" class="w-full bg-gold text-dark font-bold py-3 rounded-xl hover:bg-white transition">حسناً، شكراً</button>
@@ -170,9 +166,7 @@
     <div id="tracking-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-90 opacity-0 pointer-events-none transition-opacity p-4">
         <div class="bg-card w-full max-w-md rounded-3xl shadow-2xl border border-gray-800 p-6 relative modal-content">
             <button onclick="document.getElementById('tracking-modal').classList.remove('modal-open')" class="absolute top-4 left-4 text-gray-400 text-2xl hover:text-white">&times;</button>
-            <div class="text-center mb-8">
-                <h3 class="text-2xl font-bold gold-text">تتبع طلبك</h3>
-            </div>
+            <div class="text-center mb-8"><h3 class="text-2xl font-bold gold-text">تتبع طلبك</h3></div>
             <div class="flex flex-col gap-3 mb-6">
                 <input type="tel" id="track-phone" placeholder="اكتب رقم تليفونك" class="w-full bg-darker border border-gray-700 rounded-xl p-4 text-white text-center focus:border-gold outline-none">
                 <button onclick="trackOrder()" class="w-full bg-gold text-dark py-3 rounded-xl font-bold hover:bg-white">بحث</button>
@@ -194,11 +188,7 @@
                     <div class="flex items-center gap-3 mb-3">
                         <span class="text-sm font-bold text-gray-300">تقييمك:</span>
                         <select id="review-rating" required class="bg-gray-800 text-gold font-bold p-2 rounded-lg outline-none border border-gray-700">
-                            <option value="5">⭐⭐⭐⭐⭐ ممتاز</option>
-                            <option value="4">⭐⭐⭐⭐ جيد جداً</option>
-                            <option value="3">⭐⭐⭐ جيد</option>
-                            <option value="2">⭐⭐ مقبول</option>
-                            <option value="1">⭐ سيء</option>
+                            <option value="5">⭐⭐⭐⭐⭐ ممتاز</option><option value="4">⭐⭐⭐⭐ جيد جداً</option><option value="3">⭐⭐⭐ جيد</option><option value="2">⭐⭐ مقبول</option><option value="1">⭐ سيء</option>
                         </select>
                     </div>
                     <input type="text" id="review-name" placeholder="اسمك" required class="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 text-white text-sm mb-3 outline-none focus:border-gold">
@@ -210,17 +200,12 @@
     </div>
 
     <script>
-        // ✅ تم تصحيح الرابط هنا
         const SUPABASE_URL = 'https://icmvrjmkcyjuoxekvvfw.supabase.co'; 
         const SUPABASE_KEY = 'sb_publishable_M05JYZ9LKlIfeDjuCJqzxQ_Ay6EbRKj';
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         
         let cart = JSON.parse(localStorage.getItem('cart')) || [];
-        let allProducts = [];
-        let allReviews = [];
-        let appliedDiscount = 0;
-        let dynamicTexts = {};
-        let currentFilter = 'all';
+        let allProducts = [], allReviews = [], appliedDiscount = 0, dynamicTexts = {}, currentFilter = 'all';
 
         const badWords = ['كسم', 'خرا', 'زبالة', 'حيوان', 'غبي', 'عبيط', 'كلب', 'عرص', 'شرموط', 'قحب', 'خول', 'لبوة', 'طيز', 'كس', 'نيك', 'متناك', 'شرموطة', 'fuck', 'shit', 'bitch', 'asshole', 'pussy'];
         function censorText(text) {
@@ -232,8 +217,7 @@
 
         function showToast(msg) {
             const toast = document.getElementById("toast");
-            toast.innerText = msg;
-            toast.className = "show";
+            toast.innerText = msg; toast.className = "show";
             setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 3000);
         }
 
@@ -242,6 +226,14 @@
             if (settings) {
                 dynamicTexts = settings; 
                 document.getElementById('site-name').innerText = censorText(settings.site_name) || 'عطور الشرق';
+                
+                // عرض اللوجو لو موجود
+                if(settings.logo_url) {
+                    const logoImg = document.getElementById('site-logo');
+                    logoImg.src = settings.logo_url;
+                    logoImg.classList.remove('hidden');
+                }
+
                 document.getElementById('footer-name').innerText = censorText(settings.site_name) || 'عطور الشرق';
                 document.getElementById('hero-title').innerText = censorText(settings.hero_title) || '';
                 document.getElementById('hero-subtitle').innerText = censorText(settings.hero_subtitle) || '';
@@ -265,46 +257,33 @@
 
             const { data: products } = await supabaseClient.from('products').select('*');
             if(products) allProducts = products;
-
             const { data: reviews } = await supabaseClient.from('reviews').select('*').eq('status', 'approved');
             if(reviews) allReviews = reviews;
 
-            renderProducts();
-            renderLatestReviews();
+            renderProducts(); renderLatestReviews();
         }
 
         function renderLatestReviews() {
-            const container = document.getElementById('latest-reviews-container');
-            container.innerHTML = '';
+            const container = document.getElementById('latest-reviews-container'); container.innerHTML = '';
             const latest = allReviews.slice(-6).reverse(); 
             if(latest.length === 0) { container.innerHTML = '<p class="text-gray-500 col-span-3 text-center">كن أول من يشاركنا رأيه!</p>'; return; }
             latest.forEach(r => {
                 const product = allProducts.find(p => p.id === r.product_id);
-                container.innerHTML += `
-                    <div class="bg-card p-6 rounded-2xl border border-gray-800">
-                        <div class="flex justify-between items-center mb-3"><span class="font-bold text-gold">${censorText(r.customer_name)}</span><span class="text-yellow-500 text-sm">${'⭐'.repeat(r.rating)}</span></div>
-                        <p class="text-gray-300 text-sm italic mb-4">"${censorText(r.comment)}"</p>
-                        <div class="text-xs text-gray-500 border-t border-gray-800 pt-3"><i class="fa-solid fa-bottle-droplet text-gold"></i> اشترى: ${product ? censorText(product.name) : 'منتج'}</div>
-                    </div>`;
+                container.innerHTML += `<div class="bg-card p-6 rounded-2xl border border-gray-800"><div class="flex justify-between items-center mb-3"><span class="font-bold text-gold">${censorText(r.customer_name)}</span><span class="text-yellow-500 text-sm">${'⭐'.repeat(r.rating)}</span></div><p class="text-gray-300 text-sm italic mb-4">"${censorText(r.comment)}"</p><div class="text-xs text-gray-500 border-t border-gray-800 pt-3"><i class="fa-solid fa-bottle-droplet text-gold"></i> اشترى: ${product ? censorText(product.name) : 'منتج'}</div></div>`;
             });
         }
 
         function filterCategory(cat) {
             currentFilter = cat;
-            document.querySelectorAll('.cat-btn').forEach(btn => {
-                btn.classList.remove('bg-gold', 'text-dark', 'border-gold');
-                btn.classList.add('bg-gray-800', 'text-white', 'border-gray-700');
-            });
-            event.target.classList.remove('bg-gray-800', 'text-white', 'border-gray-700');
-            event.target.classList.add('bg-gold', 'text-dark', 'border-gold');
+            document.querySelectorAll('.cat-btn').forEach(btn => { btn.classList.remove('bg-gold', 'text-dark', 'border-gold'); btn.classList.add('bg-gray-800', 'text-white', 'border-gray-700'); });
+            event.target.classList.remove('bg-gray-800', 'text-white', 'border-gray-700'); event.target.classList.add('bg-gold', 'text-dark', 'border-gold');
             renderProducts();
         }
 
         function renderProducts() {
             const searchText = document.getElementById('search-input').value.toLowerCase();
             const priceFilter = document.getElementById('price-filter').value;
-            const grid = document.getElementById('products-grid');
-            grid.innerHTML = '';
+            const grid = document.getElementById('products-grid'); grid.innerHTML = '';
 
             let filtered = allProducts.filter(p => p.name.toLowerCase().includes(searchText) || p.brand.toLowerCase().includes(searchText));
             if (currentFilter !== 'all') filtered = filtered.filter(p => p.category === currentFilter);
@@ -316,22 +295,13 @@
             filtered.forEach(product => {
                 const isOutOfStock = product.stock <= 0;
                 const productReviews = allReviews.filter(r => r.product_id === product.id);
-                let ratingHTML = productReviews.length > 0 ? 
-                    `<div class="flex items-center gap-1 mt-1 mb-2"><span class="text-yellow-500 text-sm"><i class="fa-solid fa-star"></i> ${(productReviews.reduce((sum, r) => sum + r.rating, 0) / productReviews.length).toFixed(1)}</span><span class="text-xs text-gray-500">(${productReviews.length})</span></div>` : 
-                    `<div class="mt-1 mb-2 h-5"><span class="text-xs text-gray-600">لا يوجد تقييمات</span></div>`;
+                let ratingHTML = productReviews.length > 0 ? `<div class="flex items-center gap-1 mt-1 mb-2"><span class="text-yellow-500 text-sm"><i class="fa-solid fa-star"></i> ${(productReviews.reduce((sum, r) => sum + r.rating, 0) / productReviews.length).toFixed(1)}</span><span class="text-xs text-gray-500">(${productReviews.length})</span></div>` : `<div class="mt-1 mb-2 h-5"><span class="text-xs text-gray-600">لا يوجد تقييمات</span></div>`;
                 
                 grid.innerHTML += `
                     <div class="bg-card rounded-2xl border border-gray-800 overflow-hidden hover:border-gold transition-all duration-500 group flex flex-col ${isOutOfStock ? 'opacity-60 grayscale' : ''}">
-                        <div class="relative overflow-hidden h-72">
-                            <img src="${product.image_url}" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
-                            <div class="absolute top-4 right-4 bg-black/80 px-4 py-1.5 rounded-full text-xs font-bold text-gold border border-gray-700">${censorText(product.brand)}</div>
-                        </div>
+                        <div class="relative overflow-hidden h-72"><img src="${product.image_url}" class="w-full h-full object-cover group-hover:scale-110 transition duration-700"><div class="absolute top-4 right-4 bg-black/80 px-4 py-1.5 rounded-full text-xs font-bold text-gold border border-gray-700">${censorText(product.brand)}</div></div>
                         <div class="p-6 flex-1 flex flex-col justify-between">
-                            <div>
-                                <h4 class="text-2xl font-bold gold-text truncate">${censorText(product.name)}</h4>
-                                ${ratingHTML}
-                                <p class="text-gray-400 text-sm mb-4 line-clamp-2">${censorText(product.notes)}</p>
-                            </div>
+                            <div><h4 class="text-2xl font-bold gold-text truncate">${censorText(product.name)}</h4>${ratingHTML}<p class="text-gray-400 text-sm mb-4 line-clamp-2">${censorText(product.notes)}</p></div>
                             <div class="flex justify-between items-center mt-4 pt-4 border-t border-gray-800">
                                 <span class="text-white font-bold text-2xl">${product.price} <span class="text-sm text-gray-500">ج.م</span></span>
                                 <div class="flex gap-2">
@@ -346,32 +316,19 @@
         
         document.getElementById('search-input').addEventListener('input', renderProducts);
 
-        function openReviews(productId) {
-            document.getElementById('reviews-modal').classList.add('modal-open');
-            document.getElementById('review-product-id').value = productId;
-        }
-
+        function openReviews(productId) { document.getElementById('reviews-modal').classList.add('modal-open'); document.getElementById('review-product-id').value = productId; }
         async function submitReview(e) {
             e.preventDefault();
-            const data = { 
-                product_id: parseInt(document.getElementById('review-product-id').value), 
-                rating: parseInt(document.getElementById('review-rating').value), 
-                customer_name: censorText(document.getElementById('review-name').value), 
-                comment: censorText(document.getElementById('review-comment').value) 
-            };
+            const data = { product_id: parseInt(document.getElementById('review-product-id').value), rating: parseInt(document.getElementById('review-rating').value), customer_name: censorText(document.getElementById('review-name').value), comment: censorText(document.getElementById('review-comment').value) };
             const { error } = await supabaseClient.from('reviews').insert([data]);
-            if(error) showToast('حدث خطأ!');
-            else { showToast('شكراً لتقييمك! سيظهر قريباً.'); document.getElementById('reviews-modal').classList.remove('modal-open'); }
+            if(error) showToast('حدث خطأ!'); else { showToast('شكراً لتقييمك! سيظهر قريباً.'); document.getElementById('reviews-modal').classList.remove('modal-open'); }
         }
 
         function openTrackingModal() { document.getElementById('tracking-modal').classList.add('modal-open'); }
-        
         async function trackOrder() {
             const phone = document.getElementById('track-phone').value;
             if(!phone) return showToast('اكتب رقم الهاتف');
-            const resultDiv = document.getElementById('tracking-result'); 
-            resultDiv.innerHTML = '<p class="text-center text-gray-400">جاري البحث...</p>'; 
-            resultDiv.classList.remove('hidden');
+            const resultDiv = document.getElementById('tracking-result'); resultDiv.innerHTML = '<p class="text-center text-gray-400">جاري البحث...</p>'; resultDiv.classList.remove('hidden');
             
             const { data: orders } = await supabaseClient.from('orders').select('*').eq('phone', phone).order('created_at', { ascending: false }).limit(1);
             if (!orders || orders.length === 0) { resultDiv.innerHTML = '<p class="text-center text-red-500 font-bold">مفيش طلبات بالرقم ده!</p>'; return; }
@@ -379,41 +336,13 @@
             const order = orders[0];
             let statusText = order.status === 'pending' ? 'قيد التجهيز' : order.status === 'shipped' ? 'تم الشحن' : order.status === 'cancelled' ? 'ملغي' : 'تم التسليم';
             let statusColor = order.status === 'pending' ? 'text-yellow-500' : order.status === 'shipped' ? 'text-blue-500' : order.status === 'cancelled' ? 'text-red-500' : 'text-green-500';
+            let actionButtons = order.status === 'pending' ? `<div class="flex gap-2 mt-4"><button onclick="cancelOrder(${order.id})" class="flex-1 bg-red-500/20 text-red-500 border border-red-500/50 py-2 rounded-lg font-bold text-sm hover:bg-red-500 hover:text-white transition">إلغاء الطلب</button><button onclick="reorder(${order.id}, '${phone}')" class="flex-1 bg-blue-500/20 text-blue-500 border border-blue-500/50 py-2 rounded-lg font-bold text-sm hover:bg-blue-500 hover:text-white transition">تعديل / إضافة</button></div>` : '';
 
-            let actionButtons = '';
-            if (order.status === 'pending') {
-                actionButtons = `
-                    <div class="flex gap-2 mt-4">
-                        <button onclick="cancelOrder(${order.id})" class="flex-1 bg-red-500/20 text-red-500 border border-red-500/50 py-2 rounded-lg font-bold text-sm hover:bg-red-500 hover:text-white transition">إلغاء الطلب</button>
-                        <button onclick="reorder(${order.id}, '${phone}')" class="flex-1 bg-blue-500/20 text-blue-500 border border-blue-500/50 py-2 rounded-lg font-bold text-sm hover:bg-blue-500 hover:text-white transition">تعديل / إضافة</button>
-                    </div>
-                `;
-            }
-
-            resultDiv.innerHTML = `
-                <div class="bg-darker p-5 rounded-xl border border-gray-800 text-center mt-4">
-                    <p class="text-gray-400 text-sm mb-1">الطلب #${order.id}</p>
-                    <p class="text-2xl font-bold ${statusColor} mb-2">${statusText}</p>
-                    <p class="text-sm text-gray-300">الإجمالي: <strong class="text-gold">${order.total_price} ج.م</strong></p>
-                    ${actionButtons}
-                </div>`;
+            resultDiv.innerHTML = `<div class="bg-darker p-5 rounded-xl border border-gray-800 text-center mt-4"><p class="text-gray-400 text-sm mb-1">الطلب #${order.id}</p><p class="text-2xl font-bold ${statusColor} mb-2">${statusText}</p><p class="text-sm text-gray-300">الإجمالي: <strong class="text-gold">${order.total_price} ج.م</strong></p>${actionButtons}</div>`;
         }
 
-        async function cancelOrder(orderId) {
-            if(!confirm('هل أنت متأكد من إلغاء الطلب؟')) return;
-            const { error } = await supabaseClient.from('orders').update({ status: 'cancelled' }).eq('id', orderId);
-            if(!error) { showToast('تم إلغاء الطلب بنجاح'); trackOrder(); } 
-        }
-
-        async function reorder(orderId, phone) {
-            const { data: order } = await supabaseClient.from('orders').select('items').eq('id', orderId).single();
-            if(order && order.items) {
-                cart = order.items;
-                saveCart(); toggleCart(); document.getElementById('tracking-modal').classList.remove('modal-open');
-                showToast('تم تحميل الطلب في السلة. يمكنك التعديل والمتابعة.');
-                await supabaseClient.from('orders').update({ status: 'cancelled' }).eq('id', orderId); // إلغاء القديم
-            }
-        }
+        async function cancelOrder(orderId) { if(!confirm('هل أنت متأكد من إلغاء الطلب؟')) return; const { error } = await supabaseClient.from('orders').update({ status: 'cancelled' }).eq('id', orderId); if(!error) { showToast('تم إلغاء الطلب بنجاح'); trackOrder(); } }
+        async function reorder(orderId, phone) { const { data: order } = await supabaseClient.from('orders').select('items').eq('id', orderId).single(); if(order && order.items) { cart = order.items; saveCart(); toggleCart(); document.getElementById('tracking-modal').classList.remove('modal-open'); showToast('تم تحميل الطلب في السلة. يمكنك التعديل والمتابعة.'); await supabaseClient.from('orders').update({ status: 'cancelled' }).eq('id', orderId); } }
 
         function addToCart(id, name, price) { const existing = cart.find(item => item.id === id); if (existing) { existing.qty += 1; } else { cart.push({ id, name, price, qty: 1 }); } saveCart(); toggleCart(); }
         function saveCart() { localStorage.setItem('cart', JSON.stringify(cart)); updateCartUI(); }
@@ -445,33 +374,18 @@
             const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.qty), 0); 
             const finalTotal = totalPrice - ((totalPrice * appliedDiscount) / 100); 
             
-            const orderData = { 
-                customer_name: censorText(document.getElementById('customer_name').value), 
-                phone: document.getElementById('phone').value, 
-                city: censorText(document.getElementById('city').value), 
-                address: censorText(document.getElementById('address').value), 
-                total_price: finalTotal, 
-                items: cart, 
-                status: 'pending' 
-            }; 
+            const orderData = { customer_name: censorText(document.getElementById('customer_name').value), phone: document.getElementById('phone').value, city: censorText(document.getElementById('city').value), address: censorText(document.getElementById('address').value), total_price: finalTotal, items: cart, status: 'pending' }; 
             
             const { error } = await supabaseClient.from('orders').insert([orderData]); 
             if (error) { showToast('حدث خطأ!'); btn.innerText = 'تأكيد'; btn.disabled = false; return; } 
             
-            // إظهار شاشة النجاح الفخمة
-            closeCheckoutModal();
-            document.getElementById('success-modal').classList.add('modal-open');
-            
-            cart = []; appliedDiscount = 0; saveCart(); document.getElementById('checkout-form').reset(); 
-            btn.innerText = 'تأكيد'; btn.disabled = false; 
+            closeCheckoutModal(); document.getElementById('success-modal').classList.add('modal-open');
+            cart = []; appliedDiscount = 0; saveCart(); document.getElementById('checkout-form').reset(); btn.innerText = 'تأكيد'; btn.disabled = false; 
         }
         
         async function logVisit() { const lastVisit = sessionStorage.getItem('lastVisit'); if (!lastVisit || Date.now() - lastVisit > 30 * 60 * 1000) { await supabaseClient.from('visits').insert([{}]); sessionStorage.setItem('lastVisit', Date.now()); } }
 
-        supabaseClient.channel('store-realtime')
-            .on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, () => initPage())
-            .on('postgres_changes', { event: '*', schema: 'public', table: 'reviews' }, () => initPage())
-            .subscribe();
+        supabaseClient.channel('store-realtime').on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, () => initPage()).on('postgres_changes', { event: '*', schema: 'public', table: 'reviews' }, () => initPage()).on('postgres_changes', { event: '*', schema: 'public', table: 'settings' }, () => initPage()).subscribe();
 
         initPage(); updateCartUI(); logVisit();
     </script>
