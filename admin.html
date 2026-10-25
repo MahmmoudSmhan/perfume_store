@@ -2,354 +2,509 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة التحكم | SELECT</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SELECT | الفخامة والتميز</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&family=Playfair+Display:wght@600;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,800;1,400&family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <style> 
-        body { font-family: 'Tajawal', sans-serif; background-color: #F7F7F7; } 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = { 
+            theme: { 
+                extend: { 
+                    colors: { 
+                        brandBlack: '#0A0A0A',
+                        brandWhite: '#FFFFFF',
+                        brandGray: '#F7F7F7',
+                        brandBorder: '#EAEAEA',
+                        brandText: '#4A4A4A'
+                    }, 
+                    fontFamily: { 
+                        arabic: ['Tajawal', 'sans-serif'], 
+                        english: ['Playfair Display', 'serif'] 
+                    } 
+                } 
+            } 
+        }
+    </script>
+    <style>
+        body { font-family: 'Tajawal', sans-serif; background-color: #FFFFFF; color: #0A0A0A; scroll-behavior: smooth; overflow-x: hidden;}
         .brand-english { font-family: 'Playfair Display', serif; font-weight: 800; letter-spacing: 0.05em; }
-        .view-section { display: none; animation: fadeIn 0.3s ease-in-out; }
-        .view-section.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .cart-open { transform: translateX(0) !important; }
+        .modal-open { opacity: 1 !important; pointer-events: auto !important; }
+        .modal-content { transform: translateY(0) scale(1) !important; }
+        .glass-nav { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); border-bottom: 1px solid #EAEAEA; }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #F7F7F7; }
+        ::-webkit-scrollbar-thumb { background: #0A0A0A; }
+        #toast { visibility: hidden; min-width: 250px; background-color: #0A0A0A; color: #FFF; text-align: center; padding: 16px; position: fixed; z-index: 100; left: 50%; bottom: 30px; transform: translateX(-50%); font-weight: 500; opacity: 0; transition: all 0.5s ease; border-radius: 4px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        #toast.show { visibility: visible; opacity: 1; bottom: 40px; }
+        #mobile-menu { display: none; }
+        #mobile-menu.active { display: block; }
+        .hover-lift { transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.4s ease; }
+        .hover-lift:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0,0,0,0.08); }
+        .img-zoom { transition: transform 1.2s cubic-bezier(0.25, 1, 0.5, 1); }
+        .group:hover .img-zoom { transform: scale(1.08); }
     </style>
 </head>
-<body class="h-screen overflow-hidden flex bg-[#F7F7F7]">
+<body class="relative min-h-screen flex flex-col selection:bg-brandBlack selection:text-brandWhite">
 
-    <!-- Login -->
-    <div id="login-screen" class="fixed inset-0 z-50 flex items-center justify-center bg-white/90 backdrop-blur-sm">
-        <div class="bg-white p-10 border border-gray-200 shadow-xl w-full max-w-sm">
-            <div class="text-center mb-8"><h2 class="text-3xl brand-english text-black">SELECT</h2><p class="text-gray-500 text-sm mt-2">لوحة الإدارة</p></div>
-            <form id="login-form" class="space-y-5">
-                <input type="email" id="email" placeholder="الإيميل" required class="w-full border-b border-gray-300 p-3 focus:border-black outline-none transition">
-                <input type="password" id="password" placeholder="الباسورد" required class="w-full border-b border-gray-300 p-3 focus:border-black outline-none transition">
-                <button type="submit" class="w-full bg-black text-white font-bold py-3 hover:bg-gray-800 transition">دخول</button>
-            </form>
-            <p id="login-error" class="text-red-500 text-center mt-4 hidden text-sm font-bold">بيانات الدخول غير صحيحة!</p>
+    <div id="toast">تمت العملية بنجاح!</div>
+
+    <!-- ==================== Navbar ==================== -->
+    <nav class="glass-nav sticky top-0 z-40 transition-all duration-300">
+        <div class="container mx-auto px-4 md:px-8 py-4 flex justify-between items-center relative">
+            
+            <div class="flex items-center cursor-pointer z-20" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+                <img id="site-logo" src="" class="h-8 md:h-10 object-contain hidden" alt="SELECT Logo">
+                <h1 id="site-name" class="text-2xl md:text-3xl brand-english text-brandBlack">SELECT</h1>
+            </div>
+
+            <div class="hidden md:flex items-center justify-center gap-10 absolute left-1/2 -translate-x-1/2">
+                <a href="#" id="nav-home" class="text-sm font-bold text-brandText hover:text-brandBlack transition-colors">الرئيسية</a>
+                <a href="#products" id="nav-shop" class="text-sm font-bold text-brandText hover:text-brandBlack transition-colors">المتجر</a>
+            </div>
+
+            <div class="flex items-center gap-4 md:gap-6 z-20">
+                <button onclick="openTrackingModal()" class="text-brandText hover:text-brandBlack transition-colors">
+                    <i class="fa-solid fa-truck-fast text-lg"></i>
+                </button>
+                <div class="relative cursor-pointer group" onclick="toggleCart()">
+                    <span class="text-xl text-brandBlack group-hover:text-gray-500 transition-colors"><i class="fa-solid fa-bag-shopping"></i></span>
+                    <span id="cart-count" class="absolute -top-2 -right-2 bg-brandBlack text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full">0</span>
+                </div>
+                <button onclick="toggleMobileMenu()" class="md:hidden text-brandBlack text-2xl">
+                    <i class="fa-solid fa-bars-staggered"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div id="mobile-menu" class="md:hidden bg-white border-t border-brandBorder px-4 py-4 absolute w-full shadow-xl">
+            <a href="#" id="nav-home-mobile" class="block py-3 text-sm font-bold text-brandText hover:text-brandBlack border-b border-brandBorder">الرئيسية</a>
+            <a href="#products" onclick="toggleMobileMenu()" id="nav-shop-mobile" class="block py-3 text-sm font-bold text-brandText hover:text-brandBlack">المتجر</a>
+        </div>
+    </nav>
+
+    <!-- ==================== Hero Section ==================== -->
+    <header class="relative bg-brandBlack text-center flex items-center justify-center min-h-[85vh] md:min-h-screen overflow-hidden">
+        <div id="hero-bg" class="absolute inset-0 bg-cover bg-center transition-transform duration-[30s] hover:scale-105" style="background-image: url('https://images.unsplash.com/photo-1616949755610-8c9bbc08f138?q=80&w=2070&auto=format&fit=crop');"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/30"></div>
+        
+        <img id="hero-watermark-logo" src="" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] max-w-4xl opacity-10 pointer-events-none hidden mix-blend-overlay">
+        
+        <div class="relative z-10 px-6 max-w-4xl mx-auto flex flex-col items-center mt-10">
+            <span class="text-xs md:text-sm font-bold tracking-[0.4em] text-white/80 mb-6 uppercase">The Essence of Luxury</span>
+            <h2 id="hero-title" class="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-[1.2]">اكتشف عطرك المميز</h2>
+            <p id="hero-subtitle" class="text-gray-300 text-base md:text-xl mb-10 max-w-xl mx-auto font-light leading-relaxed">نقدم لك أفخم العطور الشرقية والفرنسية، لتترك أثراً لا يُنسى أينما ذهبت.</p>
+            <button onclick="document.getElementById('products').scrollIntoView({behavior: 'smooth'})" id="hero-btn" class="bg-white text-brandBlack px-10 md:px-14 py-4 font-bold text-sm tracking-widest hover:bg-brandBlack hover:text-white border border-white transition-all duration-300">تسوق الآن</button>
+        </div>
+    </header>
+
+    <!-- ==================== Products Section ==================== -->
+    <main class="container mx-auto py-16 md:py-24 px-4 md:px-8 flex-grow" id="products">
+        
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-12 md:mb-20">
+            <div class="w-full md:w-auto">
+                <h3 class="text-2xl md:text-3xl font-bold text-brandBlack mb-6">تسوق حسب</h3>
+                <div class="flex gap-2 overflow-x-auto pb-2 scrollbar-hide w-full">
+                    <button onclick="filterCategory('all')" class="cat-btn whitespace-nowrap bg-brandBlack text-white px-6 py-2 text-sm font-bold transition">الكل</button>
+                    <button onclick="filterCategory('men')" class="cat-btn whitespace-nowrap bg-transparent text-brandText border border-brandBorder px-6 py-2 text-sm font-bold hover:border-brandBlack hover:text-brandBlack transition">رجالي</button>
+                    <button onclick="filterCategory('women')" class="cat-btn whitespace-nowrap bg-transparent text-brandText border border-brandBorder px-6 py-2 text-sm font-bold hover:border-brandBlack hover:text-brandBlack transition">نسائي</button>
+                    <button onclick="filterCategory('unisex')" class="cat-btn whitespace-nowrap bg-transparent text-brandText border border-brandBorder px-6 py-2 text-sm font-bold hover:border-brandBlack hover:text-brandBlack transition">للجنسين</button>
+                </div>
+            </div>
+            
+            <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+                <div class="relative w-full sm:w-64">
+                    <input type="text" id="search-input" placeholder="ابحث..." class="w-full bg-brandGray text-brandBlack border border-transparent py-3 px-5 focus:outline-none focus:border-brandBlack transition-colors text-sm">
+                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-gray-400"></i>
+                </div>
+                <select id="price-filter" onchange="renderProducts()" class="bg-brandGray border border-transparent text-brandText py-3 px-4 focus:outline-none focus:border-brandBlack outline-none cursor-pointer text-sm font-bold">
+                    <option value="all">السعر: الكل</option>
+                    <option value="low">أقل من 500 ج.م</option>
+                    <option value="mid">500 - 1000 ج.م</option>
+                    <option value="high">أكثر من 1000 ج.م</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-4 gap-y-12 md:gap-x-8 md:gap-y-16"></div>
+    </main>
+
+    <!-- ==================== Reviews Section ==================== -->
+    <section class="bg-brandGray py-16 md:py-24 border-t border-brandBorder">
+        <div class="container mx-auto px-4 md:px-8">
+            <div class="text-center mb-12">
+                <h3 class="text-2xl md:text-3xl font-bold text-brandBlack">آراء العملاء</h3>
+                <div class="w-12 h-[2px] bg-brandBlack mx-auto mt-4"></div>
+            </div>
+            <div id="latest-reviews-container" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
+        </div>
+    </section>
+
+    <!-- ==================== Footer ==================== -->
+    <footer class="bg-brandBlack text-white py-12 mt-auto">
+        <div class="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-8 text-center md:text-right">
+            <div class="flex flex-col items-center md:items-start gap-3">
+                <img id="footer-logo" src="" class="h-10 object-contain hidden brightness-0 invert">
+                <h2 id="footer-logo-text" class="text-3xl brand-english text-white">SELECT</h2>
+                <p class="text-gray-400 text-sm mt-2"><span id="footer-text">جميع الحقوق محفوظة</span> &copy; 2024 <span id="footer-name"></span></p>
+            </div>
+            <div id="social-links" class="flex gap-6 text-xl text-gray-400"></div>
+        </div>
+    </footer>
+
+    <a id="whatsapp-btn" href="#" target="_blank" class="hidden fixed bottom-6 right-6 bg-[#25D366] text-white w-14 h-14 flex items-center justify-center text-2xl shadow-2xl hover:bg-[#20b858] transition-transform transform hover:scale-110 z-40 rounded-full"><i class="fa-brands fa-whatsapp"></i></a>
+
+    <!-- ==================== Modals & Sidebars ==================== -->
+    <div id="overlay" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 hidden transition-opacity" onclick="toggleCart()"></div>
+    <div id="cart-sidebar" class="fixed inset-y-0 left-0 w-full md:w-[400px] bg-white shadow-2xl transform -translate-x-full transition-transform duration-500 z-50 flex flex-col border-l border-brandBorder">
+        <div class="p-6 border-b border-brandBorder flex justify-between items-center">
+            <h3 class="text-xl font-bold text-brandBlack">سلة المشتريات</h3>
+            <button onclick="toggleCart()" class="text-gray-400 hover:text-brandBlack transition"><i class="fa-solid fa-xmark text-2xl"></i></button>
+        </div>
+        <div id="cart-items" class="flex-1 p-6 overflow-y-auto"></div>
+        <div class="p-6 border-t border-brandBorder bg-brandGray">
+            <div class="flex gap-2 mb-4">
+                <input type="text" id="coupon-input" placeholder="كود الخصم" class="w-full bg-white border border-brandBorder p-3 text-sm outline-none focus:border-brandBlack transition uppercase">
+                <button onclick="applyCoupon()" class="bg-brandBlack text-white px-6 font-bold text-sm hover:bg-gray-800 transition">تطبيق</button>
+            </div>
+            <p id="coupon-msg" class="text-xs font-bold mb-3"></p>
+            <div class="flex justify-between font-bold text-lg mb-2 text-brandBlack"><span>الإجمالي:</span><span id="cart-total">0 ج.م</span></div>
+            <div class="flex justify-between text-sm text-green-600 mb-4 hidden" id="discount-row"><span>الخصم:</span><span id="discount-amount">0 ج.م</span></div>
+            <button onclick="openCheckoutModal()" id="btn-checkout-dyn" class="w-full bg-brandBlack text-white font-bold py-4 hover:bg-gray-800 transition text-sm tracking-widest uppercase">إتمام الطلب</button>
         </div>
     </div>
 
-    <!-- Dashboard -->
-    <div id="dashboard" class="hidden w-full h-full flex">
-        <aside class="w-72 bg-black text-white flex flex-col shadow-2xl z-20">
-            <div class="h-24 flex items-center justify-center border-b border-gray-800"><h1 class="text-xl brand-english text-white">SELECT</h1></div>
-            <nav class="flex-1 py-8 space-y-1 overflow-y-auto px-4">
-                <button onclick="switchView('overview', this)" class="nav-btn w-full flex items-center px-6 py-4 text-gray-400 hover:bg-gray-900 hover:text-white transition-all"><i class="fa-solid fa-chart-pie w-6 mr-3"></i> نظرة عامة</button>
-                <button onclick="switchView('orders', this)" class="nav-btn w-full flex items-center px-6 py-4 text-gray-400 hover:bg-gray-900 hover:text-white transition-all"><i class="fa-solid fa-box w-6 mr-3"></i> الطلبات</button>
-                <button onclick="switchView('products', this)" class="nav-btn w-full flex items-center px-6 py-4 text-gray-400 hover:bg-gray-900 hover:text-white transition-all"><i class="fa-solid fa-bottle-droplet w-6 mr-3"></i> المنتجات</button>
-                <button onclick="switchView('reviews', this)" class="nav-btn w-full flex items-center px-6 py-4 text-gray-400 hover:bg-gray-900 hover:text-white transition-all"><i class="fa-solid fa-star w-6 mr-3"></i> التقييمات</button>
-                <button onclick="switchView('coupons', this)" class="nav-btn w-full flex items-center px-6 py-4 text-gray-400 hover:bg-gray-900 hover:text-white transition-all"><i class="fa-solid fa-ticket w-6 mr-3"></i> الكوبونات</button>
-                <button onclick="switchView('settings', this)" class="nav-btn w-full flex items-center px-6 py-4 text-gray-400 hover:bg-gray-900 hover:text-white transition-all"><i class="fa-solid fa-gear w-6 mr-3"></i> الإعدادات</button>
-            </nav>
-            <div class="p-6 border-t border-gray-800 space-y-4">
-                <a href="index.html" target="_blank" class="flex items-center text-gray-400 hover:text-white font-bold text-sm transition"><i class="fa-solid fa-external-link-alt mr-3"></i> عرض المتجر</a>
-                <button onclick="logout()" class="flex items-center text-red-500 hover:text-red-400 font-bold text-sm transition"><i class="fa-solid fa-sign-out-alt mr-3"></i> خروج</button>
-            </div>
-        </aside>
-
-        <main class="flex-1 overflow-y-auto p-10">
-            <!-- 1. Overview -->
-            <div id="view-overview" class="view-section active">
-                <h2 class="text-2xl font-bold mb-8">نظرة عامة</h2>
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
-                    <div class="bg-white p-6 border border-gray-200 shadow-sm flex items-center gap-5"><div class="w-12 h-12 bg-gray-100 text-black flex items-center justify-center text-xl"><i class="fa-solid fa-shopping-bag"></i></div><div><p class="text-gray-500 text-xs font-bold">الطلبات</p><h3 id="stat-orders" class="text-2xl font-bold">0</h3></div></div>
-                    <div class="bg-white p-6 border border-gray-200 shadow-sm flex items-center gap-5"><div class="w-12 h-12 bg-gray-100 text-black flex items-center justify-center text-xl"><i class="fa-solid fa-money-bill-wave"></i></div><div><p class="text-gray-500 text-xs font-bold">المبيعات</p><h3 id="stat-revenue" class="text-2xl font-bold">0</h3></div></div>
-                    <div class="bg-white p-6 border border-gray-200 shadow-sm flex items-center gap-5"><div class="w-12 h-12 bg-gray-100 text-black flex items-center justify-center text-xl"><i class="fa-solid fa-box-open"></i></div><div><p class="text-gray-500 text-xs font-bold">المنتجات</p><h3 id="stat-products" class="text-2xl font-bold">0</h3></div></div>
-                    <div class="bg-white p-6 border border-gray-200 shadow-sm flex items-center gap-5"><div class="w-12 h-12 bg-gray-100 text-black flex items-center justify-center text-xl"><i class="fa-solid fa-eye"></i></div><div><p class="text-gray-500 text-xs font-bold">الزيارات</p><h3 id="stat-visits" class="text-2xl font-bold">0</h3></div></div>
-                </div>
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <div class="bg-white p-8 border border-gray-200 shadow-sm lg:col-span-2"><h3 class="font-bold mb-6 text-sm">المبيعات</h3><div class="h-72 w-full"><canvas id="salesChart"></canvas></div></div>
-                    <div class="bg-white p-8 border border-gray-200 shadow-sm"><h3 class="font-bold mb-6 text-sm">الزيارات</h3><div class="h-72 w-full"><canvas id="visitsChart"></canvas></div></div>
-                </div>
-            </div>
-
-            <!-- 2. Orders -->
-            <div id="view-orders" class="view-section">
-                <h2 class="text-2xl font-bold mb-8">الطلبات</h2>
-                <div class="bg-white border border-gray-200 shadow-sm overflow-hidden">
-                    <table class="w-full text-right border-collapse">
-                        <thead class="bg-gray-50 text-gray-500 text-xs"><tr><th class="p-4 border-b">العميل</th><th class="p-4 border-b">الهاتف</th><th class="p-4 border-b">الإجمالي</th><th class="p-4 border-b">الحالة</th><th class="p-4 border-b">تتبع</th></tr></thead>
-                        <tbody id="orders-list" class="text-gray-700 text-sm divide-y divide-gray-100"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- 3. Products -->
-            <div id="view-products" class="view-section">
-                <div class="flex justify-between items-center mb-8"><h2 class="text-2xl font-bold">المنتجات</h2><button onclick="openProductModal()" class="bg-black text-white px-6 py-2 text-sm font-bold hover:bg-gray-800 transition"><i class="fa-solid fa-plus mr-2"></i> إضافة</button></div>
-                <div id="products-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"></div>
-            </div>
-
-            <!-- 4. Reviews -->
-            <div id="view-reviews" class="view-section">
-                <h2 class="text-2xl font-bold mb-8">التقييمات</h2>
-                <div id="reviews-list-admin" class="space-y-4"></div>
-            </div>
-
-            <!-- 5. Coupons -->
-            <div id="view-coupons" class="view-section">
-                <h2 class="text-2xl font-bold mb-8">الكوبونات</h2>
-                <div class="bg-white p-6 border border-gray-200 shadow-sm mb-8">
-                    <form id="coupon-form" onsubmit="saveCoupon(event)" class="flex gap-4 items-end">
-                        <div class="flex-1"><label class="block text-xs font-bold mb-2">الكود</label><input type="text" id="c-code" required class="w-full border p-2 text-sm bg-gray-50 outline-none uppercase"></div>
-                        <div class="flex-1"><label class="block text-xs font-bold mb-2">النسبة %</label><input type="number" id="c-percent" required class="w-full border p-2 text-sm bg-gray-50 outline-none"></div>
-                        <button type="submit" class="bg-black text-white px-6 py-2.5 text-sm font-bold">إضافة</button>
-                    </form>
-                </div>
-                <div id="coupons-list" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
-            </div>
-
-            <!-- 6. Settings -->
-            <div id="view-settings" class="view-section">
-                <h2 class="text-2xl font-bold mb-8">الإعدادات</h2>
-                <div class="bg-white p-8 border border-gray-200 shadow-sm max-w-4xl">
-                    <form id="settings-form" onsubmit="saveSettings(event)" class="space-y-8">
-                        <div>
-                            <h3 class="font-bold text-sm border-b pb-2 mb-4">معلومات المتجر</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div><label class="block text-xs font-bold mb-1">اسم الموقع (نص)</label><input type="text" id="set-name" class="w-full border p-2 text-sm bg-gray-50 outline-none"></div>
-                                <div><label class="block text-xs font-bold mb-1">حقوق الفوتر</label><input type="text" id="set-footer" class="w-full border p-2 text-sm bg-gray-50 outline-none"></div>
-                                <div class="md:col-span-2 bg-gray-50 p-4 border border-gray-200 mt-2">
-                                    <label class="block text-xs font-bold mb-2">شعار الموقع (اللوجو)</label>
-                                    <div class="flex items-center gap-4">
-                                        <input type="file" id="set-logo-file" accept="image/*" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:border-0 file:text-xs file:font-bold file:bg-black file:text-white hover:file:bg-gray-800 transition">
-                                        <input type="hidden" id="set-logo-url">
-                                        <img id="current-logo-preview" src="" class="h-12 object-contain hidden">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-sm border-b pb-2 mb-4">البانر الرئيسي</h3>
-                            <div class="space-y-4">
-                                <input type="text" id="set-title" placeholder="عنوان البانر" class="w-full border p-2 text-sm bg-gray-50 outline-none">
-                                <input type="text" id="set-subtitle" placeholder="الوصف" class="w-full border p-2 text-sm bg-gray-50 outline-none">
-                                <input type="text" id="set-hero-btn" placeholder="نص الزرار" class="w-full border p-2 text-sm bg-gray-50 outline-none">
-                                <div class="bg-gray-50 p-4 border border-gray-200 mt-2">
-                                    <label class="block text-xs font-bold mb-2">صورة خلفية البانر (اختر من جهازك)</label>
-                                    <div class="flex items-center gap-4">
-                                        <input type="file" id="set-image-file" accept="image/*" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:border-0 file:text-xs file:font-bold file:bg-black file:text-white hover:file:bg-gray-800 transition">
-                                        <input type="hidden" id="set-image-url">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-sm border-b pb-2 mb-4">التواصل</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <input type="text" id="set-whatsapp" placeholder="رقم الواتساب" dir="ltr" class="w-full border p-2 text-sm bg-gray-50 outline-none text-left">
-                                <input type="url" id="set-facebook" placeholder="رابط فيسبوك" dir="ltr" class="w-full border p-2 text-sm bg-gray-50 outline-none text-left">
-                                <input type="url" id="set-instagram" placeholder="رابط إنستجرام" dir="ltr" class="w-full border p-2 text-sm bg-gray-50 outline-none text-left">
-                                <input type="url" id="set-tiktok" placeholder="رابط تيك توك" dir="ltr" class="w-full border p-2 text-sm bg-gray-50 outline-none text-left">
-                            </div>
-                        </div>
-                        <button type="submit" class="w-full bg-black text-white text-sm px-8 py-3 font-bold mt-4 shadow-md hover:bg-gray-800 transition">حفظ التعديلات</button>
-                    </form>
-
-                    <div class="mt-12 pt-6 border-t border-red-200">
-                        <h3 class="font-bold text-sm text-red-600 mb-2">منطقة الخطر</h3>
-                        <p class="text-xs text-gray-500 mb-4">هذا الإجراء سيقوم بمسح جميع البيانات نهائياً ولا يمكن التراجع عنه.</p>
-                        <button onclick="deleteAllData()" class="bg-red-600 text-white px-6 py-2.5 text-sm font-bold hover:bg-red-700 transition shadow-md"><i class="fa-solid fa-trash mr-2"></i> مسح كل البيانات</button>
-                    </div>
-                </div>
-            </div>
-        </main>
-    </div>
-
-    <!-- Modal: Product -->
-    <div id="product-modal" class="fixed inset-0 z-50 bg-black/60 hidden items-center justify-center p-4 backdrop-blur-sm">
-        <div class="bg-white w-full max-w-lg overflow-hidden flex flex-col max-h-[90vh] shadow-2xl border border-gray-200">
-            <div class="bg-black p-5 flex justify-between items-center"><h3 class="text-lg text-white">إضافة / تعديل منتج</h3><button onclick="document.getElementById('product-modal').classList.add('hidden'); document.getElementById('product-modal').classList.remove('flex');" class="text-gray-400 hover:text-white text-2xl">&times;</button></div>
+    <div id="checkout-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity p-4">
+        <div class="bg-white w-full max-w-lg shadow-2xl overflow-hidden transform scale-95 transition-transform duration-300 modal-content flex flex-col max-h-[90vh]">
+            <div class="p-6 border-b border-brandBorder flex justify-between items-center"><h3 class="text-xl font-bold text-brandBlack">بيانات الشحن</h3><button onclick="closeCheckoutModal()" class="text-gray-400 hover:text-brandBlack"><i class="fa-solid fa-xmark text-2xl"></i></button></div>
             <div class="p-6 overflow-y-auto">
-                <form id="product-form" onsubmit="saveProduct(event)" class="space-y-4">
-                    <input type="hidden" id="prod-id"><input type="hidden" id="prod-image-url">
-                    <div><label class="block text-xs font-bold mb-1">اسم العطر</label><input type="text" id="prod-name" required class="w-full border p-2 text-sm bg-gray-50 outline-none"></div>
+                <form id="checkout-form" onsubmit="submitOrder(event)" class="space-y-5">
+                    <div><label class="block text-sm font-bold text-brandText mb-2">الاسم بالكامل</label><input type="text" id="customer_name" required class="w-full bg-brandGray border border-transparent p-3 text-brandBlack focus:border-brandBlack outline-none transition"></div>
+                    <div><label class="block text-sm font-bold text-brandText mb-2">رقم الهاتف</label><input type="tel" id="phone" required class="w-full bg-brandGray border border-transparent p-3 text-brandBlack focus:border-brandBlack outline-none transition"></div>
                     <div class="grid grid-cols-2 gap-4">
-                        <div><label class="block text-xs font-bold mb-1">الماركة</label><input type="text" id="prod-brand" required class="w-full border p-2 text-sm bg-gray-50 outline-none"></div>
-                        <div><label class="block text-xs font-bold mb-1">التصنيف</label>
-                            <select id="prod-category" class="w-full border p-2 text-sm bg-gray-50 outline-none">
-                                <option value="men">رجالي</option><option value="women">نسائي</option><option value="unisex">للجنسين</option>
-                            </select>
-                        </div>
+                        <div><label class="block text-sm font-bold text-brandText mb-2">المحافظة</label><input type="text" id="city" required class="w-full bg-brandGray border border-transparent p-3 text-brandBlack focus:border-brandBlack outline-none transition"></div>
+                        <div><label class="block text-sm font-bold text-brandText mb-2">العنوان</label><input type="text" id="address" required class="w-full bg-brandGray border border-transparent p-3 text-brandBlack focus:border-brandBlack outline-none transition"></div>
                     </div>
-                    <div class="grid grid-cols-3 gap-4">
-                        <div><label class="block text-xs font-bold mb-1">السعر</label><input type="number" id="prod-price" required class="w-full border p-2 text-sm bg-gray-50 outline-none"></div>
-                        <div><label class="block text-xs font-bold mb-1">الحجم (مثال: 100ml)</label><input type="text" id="prod-size" required class="w-full border p-2 text-sm bg-gray-50 outline-none"></div>
-                        <div><label class="block text-xs font-bold mb-1">المخزون</label><input type="number" id="prod-stock" required class="w-full border p-2 text-sm bg-gray-50 outline-none"></div>
-                    </div>
-                    <div><label class="block text-xs font-bold mb-1">الهرم العطري</label><input type="text" id="prod-notes" required class="w-full border p-2 text-sm bg-gray-50 outline-none"></div>
-                    <div class="bg-gray-50 border border-dashed border-gray-300 p-4 text-center"><label class="block text-xs font-bold text-gray-600 mb-2">صورة المنتج</label><input type="file" id="prod-image-file" accept="image/*" class="w-full text-xs text-gray-500"></div>
-                    <button type="submit" id="save-prod-btn" class="w-full bg-black text-white font-bold py-3 mt-2 text-sm hover:bg-gray-800 transition">حفظ</button>
+                    <button type="submit" id="submit-btn" class="w-full bg-brandBlack text-white font-bold py-4 mt-2 text-sm tracking-widest hover:bg-gray-800 transition">تأكيد الطلب</button>
                 </form>
             </div>
         </div>
     </div>
 
-    <!-- Modal: Order -->
-    <div id="order-modal" class="fixed inset-0 z-50 bg-black/60 hidden items-center justify-center p-4 backdrop-blur-sm">
-        <div class="bg-white w-full max-w-lg overflow-hidden flex flex-col max-h-[90vh] shadow-2xl border border-gray-200">
-            <div class="bg-black p-5 flex justify-between items-center"><h3 class="text-lg text-white">تفاصيل الطلب</h3><button onclick="document.getElementById('order-modal').classList.add('hidden'); document.getElementById('order-modal').classList.remove('flex');" class="text-gray-400 hover:text-white text-2xl">&times;</button></div>
-            <div class="p-6 overflow-y-auto">
-                <div id="order-customer-info" class="mb-6 bg-gray-50 p-4 text-xs border border-gray-200"></div>
-                <h4 class="font-bold mb-2 border-b pb-2 text-sm">المنتجات:</h4>
-                <div id="order-items-list" class="space-y-2 text-xs mb-6"></div>
-                <h4 class="font-bold mb-2 border-b pb-2 mt-6 text-sm">الشحن والتتبع:</h4>
-                <div class="space-y-3">
-                    <input type="text" id="track-company" placeholder="شركة الشحن" class="w-full border p-2 text-sm bg-gray-50 outline-none">
-                    <input type="text" id="track-number" placeholder="رقم التتبع" class="w-full border p-2 text-sm bg-gray-50 outline-none">
-                    <button onclick="saveTracking()" class="w-full bg-black text-white font-bold py-2 text-sm hover:bg-gray-800 transition">حفظ التتبع</button>
-                </div>
+    <div id="success-modal" class="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 backdrop-blur-md opacity-0 pointer-events-none transition-opacity p-4">
+        <div class="bg-white w-full max-w-md shadow-2xl p-10 text-center transform scale-90 transition-transform duration-300 modal-content">
+            <div class="w-20 h-20 bg-brandGray text-brandBlack rounded-full flex items-center justify-center mx-auto mb-6 text-4xl"><i class="fa-solid fa-check"></i></div>
+            <h3 class="text-2xl font-bold text-brandBlack mb-3">تم استلام طلبك</h3>
+            <p class="text-brandText text-sm mb-8 leading-relaxed">شكراً لثقتك بنا. سنتواصل معك قريباً لتأكيد الشحن.</p>
+            <button onclick="document.getElementById('success-modal').classList.remove('modal-open')" class="w-full bg-brandBlack text-white font-bold py-3 text-sm tracking-widest hover:bg-gray-800 transition">حسناً، شكراً</button>
+        </div>
+    </div>
+
+    <div id="tracking-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity p-4">
+        <div class="bg-white w-full max-w-md shadow-2xl p-6 relative modal-content">
+            <button onclick="document.getElementById('tracking-modal').classList.remove('modal-open')" class="absolute top-4 left-4 text-gray-400 hover:text-brandBlack transition"><i class="fa-solid fa-xmark text-2xl"></i></button>
+            <div class="text-center mb-6"><h3 class="text-xl font-bold text-brandBlack">تتبع الطلب</h3></div>
+            <div class="flex flex-col gap-3 mb-6">
+                <input type="tel" id="track-phone" placeholder="أدخل رقم الهاتف" class="w-full bg-brandGray border border-transparent p-3 text-brandBlack text-center focus:border-brandBlack outline-none transition">
+                <button onclick="trackOrder()" class="w-full bg-brandBlack text-white py-3 font-bold text-sm tracking-widest hover:bg-gray-800 transition">بحث</button>
+            </div>
+            <div id="tracking-result" class="hidden space-y-4"></div>
+        </div>
+    </div>
+
+    <div id="reviews-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity p-4">
+        <div class="bg-white w-full max-w-lg shadow-2xl overflow-hidden flex flex-col modal-content">
+            <div class="p-6 border-b border-brandBorder flex justify-between items-center">
+                <h3 class="text-xl font-bold text-brandBlack">أضف تقييمك</h3>
+                <button onclick="document.getElementById('reviews-modal').classList.remove('modal-open')" class="text-gray-400 hover:text-brandBlack"><i class="fa-solid fa-xmark text-2xl"></i></button>
+            </div>
+            <div class="p-6">
+                <form onsubmit="submitReview(event)" class="space-y-5">
+                    <input type="hidden" id="review-product-id">
+                    <div>
+                        <label class="block text-sm font-bold text-brandText mb-2">تقييمك</label>
+                        <select id="review-rating" required class="w-full bg-brandGray text-brandBlack font-bold p-3 outline-none border border-transparent focus:border-brandBlack">
+                            <option value="5">⭐⭐⭐⭐⭐ ممتاز</option><option value="4">⭐⭐⭐⭐ جيد جداً</option><option value="3">⭐⭐⭐ جيد</option><option value="2">⭐⭐ مقبول</option><option value="1">⭐ سيء</option>
+                        </select>
+                    </div>
+                    <div><label class="block text-sm font-bold text-brandText mb-2">اسمك</label><input type="text" id="review-name" required class="w-full bg-brandGray border border-transparent p-3 text-brandBlack outline-none focus:border-brandBlack transition"></div>
+                    <div><label class="block text-sm font-bold text-brandText mb-2">رأيك</label><textarea id="review-comment" required class="w-full bg-brandGray border border-transparent p-3 text-brandBlack outline-none focus:border-brandBlack transition" rows="3"></textarea></div>
+                    <button type="submit" class="w-full bg-brandBlack text-white font-bold py-3 text-sm tracking-widest hover:bg-gray-800 transition mt-2">إرسال</button>
+                </form>
             </div>
         </div>
     </div>
 
     <script>
-        const SUPABASE_URL = 'https://icmvrjmkcyjuoxekvvfw.supabase.co';
+        const SUPABASE_URL = 'https://icmvrjmkcyjuoxekvvfw.supabase.co'; 
         const SUPABASE_KEY = 'sb_publishable_M05JYZ9LKlIfeDjuCJqzxQ_Ay6EbRKj';
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        let salesChartInstance = null, visitsChartInstance = null, allOrders = [], currentOrderId = null;
+        
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        let allProducts = [], allReviews = [], appliedDiscount = 0, appliedCouponCode = '', dynamicTexts = {}, currentFilter = 'all';
 
         const badWords = ['كسم', 'خرا', 'زبالة', 'حيوان', 'غبي', 'عبيط', 'كلب', 'عرص', 'شرموط', 'قحب', 'خول', 'لبوة', 'طيز', 'كس', 'نيك', 'متناك', 'شرموطة', 'fuck', 'shit', 'bitch', 'asshole', 'pussy'];
         function censorText(text) { if (!text) return ''; let clean = text; badWords.forEach(word => { const regex = new RegExp(word, 'gi'); clean = clean.replace(regex, '***'); }); return clean; }
 
-        document.getElementById('login-form').addEventListener('submit', async (e) => { e.preventDefault(); const { error } = await supabaseClient.auth.signInWithPassword({ email: document.getElementById('email').value, password: document.getElementById('password').value }); if (error) document.getElementById('login-error').classList.remove('hidden'); else checkSession(); });
-        async function checkSession() { const { data: { session } } = await supabaseClient.auth.getSession(); if (session) { document.getElementById('login-screen').classList.add('hidden'); document.getElementById('dashboard').classList.remove('hidden'); loadData(); } else { document.getElementById('login-screen').classList.remove('hidden'); document.getElementById('dashboard').classList.add('hidden'); } }
-        function logout() { supabaseClient.auth.signOut(); checkSession(); }
-        function switchView(viewId, btnElement) { document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active')); document.getElementById('view-' + viewId).classList.add('active'); document.querySelectorAll('.nav-btn').forEach(btn => { btn.classList.remove('bg-gray-900', 'text-white'); btn.classList.add('text-gray-400'); }); btnElement.classList.add('bg-gray-900', 'text-white'); btnElement.classList.remove('text-gray-400'); }
-        async function loadData() { loadStatsAndCharts(); loadOrders(); loadProducts(); loadCoupons(); loadReviews(); loadSettings(); }
+        function showToast(msg) { const toast = document.getElementById("toast"); toast.innerText = msg; toast.className = "show"; setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 3000); }
 
-        async function loadStatsAndCharts() {
-            const { data: orders } = await supabaseClient.from('orders').select('total_price, created_at').neq('status', 'cancelled');
-            const { count: prodCount } = await supabaseClient.from('products').select('*', { count: 'exact', head: true });
-            const { count: visitCount } = await supabaseClient.from('visits').select('*', { count: 'exact', head: true });
-            let totalRev = 0; orders?.forEach(o => totalRev += Number(o.total_price));
-            document.getElementById('stat-orders').innerText = orders ? orders.length : 0;
-            document.getElementById('stat-revenue').innerText = totalRev.toLocaleString();
-            document.getElementById('stat-products').innerText = prodCount || 0;
-            document.getElementById('stat-visits').innerText = visitCount || 0;
-            const last7Days = [...Array(7)].map((_, i) => { const d = new Date(); d.setDate(d.getDate() - i); return d.toISOString().split('T')[0]; }).reverse();
-            const salesData = last7Days.map(date => { const dayOrders = orders?.filter(o => o.created_at.startsWith(date)); return dayOrders?.reduce((sum, o) => sum + Number(o.total_price), 0) || 0; });
-            const { data: visits } = await supabaseClient.from('visits').select('visited_at');
-            const visitsData = last7Days.map(date => visits?.filter(v => v.visited_at.startsWith(date)).length || 0);
-            if(salesChartInstance) salesChartInstance.destroy();
-            salesChartInstance = new Chart(document.getElementById('salesChart').getContext('2d'), { type: 'line', data: { labels: last7Days.map(d => d.split('-').slice(1).reverse().join('/')), datasets: [{ label: 'المبيعات', data: salesData, borderColor: '#111111', backgroundColor: 'rgba(17, 17, 17, 0.05)', borderWidth: 2, fill: true, tension: 0.4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } } });
-            if(visitsChartInstance) visitsChartInstance.destroy();
-            visitsChartInstance = new Chart(document.getElementById('visitsChart').getContext('2d'), { type: 'bar', data: { labels: last7Days.map(d => d.split('-').slice(1).reverse().join('/')), datasets: [{ label: 'الزيارات', data: visitsData, backgroundColor: '#E5E5E5', borderRadius: 4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } } });
-        }
+        function toggleMobileMenu() { document.getElementById('mobile-menu').classList.toggle('active'); }
 
-        async function loadOrders() {
-            const { data: orders } = await supabaseClient.from('orders').select('*').order('created_at', { ascending: false });
-            allOrders = orders || []; const list = document.getElementById('orders-list'); list.innerHTML = '';
-            allOrders.forEach(order => {
-                const statusColors = { pending: 'bg-gray-200 text-gray-800', shipped: 'bg-blue-100 text-blue-700', delivered: 'bg-green-100 text-green-700', cancelled: 'bg-red-100 text-red-700' };
-                list.innerHTML += `<tr class="hover:bg-gray-50 border-b"><td class="p-4 font-bold text-xs">${censorText(order.customer_name)}</td><td class="p-4 text-blue-600 text-xs" dir="ltr">${order.phone}</td><td class="p-4 font-bold text-xs">${order.total_price} ج.م</td><td class="p-4"><select onchange="updateOrderStatus(${order.id}, this.value)" class="border p-1 text-xs font-bold outline-none ${statusColors[order.status]}"><option value="pending" ${order.status === 'pending' ? 'selected' : ''}>انتظار</option><option value="shipped" ${order.status === 'shipped' ? 'selected' : ''}>شحن</option><option value="delivered" ${order.status === 'delivered' ? 'selected' : ''}>تسليم</option><option value="cancelled" ${order.status === 'cancelled' ? 'selected' : ''}>ملغي</option></select></td><td class="p-4"><button onclick='openOrderModal(${JSON.stringify(order).replace(/'/g, "&#39;")})' class="bg-black text-white px-3 py-1 font-bold text-xs hover:bg-gray-800">عرض</button></td></tr>`;
-            });
-        }
-        function openOrderModal(order) {
-            currentOrderId = order.id;
-            document.getElementById('order-customer-info').innerHTML = `<p><strong>الاسم:</strong> ${censorText(order.customer_name)}</p><p class="mt-1"><strong>الهاتف:</strong> ${order.phone}</p><p class="mt-1"><strong>العنوان:</strong> ${censorText(order.city)} - ${censorText(order.address)}</p>`;
-            const itemsList = document.getElementById('order-items-list'); itemsList.innerHTML = '';
-            let items = order.items; if(typeof items === 'string') items = JSON.parse(items);
-            items.forEach(item => { 
-                itemsList.innerHTML += `<div class="flex justify-between border-b pb-2"><span>${censorText(item.name)} ${item.size ? `(${item.size})` : ''} × ${item.qty}</span><span class="font-bold">${item.price * item.qty} ج.م</span></div>`; 
-            });
-            document.getElementById('track-company').value = censorText(order.shipping_company) || ''; document.getElementById('track-number').value = order.tracking_number || '';
-            document.getElementById('order-modal').classList.remove('hidden'); document.getElementById('order-modal').classList.add('flex');
-        }
-        async function saveTracking() { const company = document.getElementById('track-company').value; const number = document.getElementById('track-number').value; await supabaseClient.from('orders').update({ shipping_company: company, tracking_number: number }).eq('id', currentOrderId); alert('تم الحفظ!'); document.getElementById('order-modal').classList.add('hidden'); document.getElementById('order-modal').classList.remove('flex'); loadOrders(); }
-        async function updateOrderStatus(id, status) { await supabaseClient.from('orders').update({ status }).eq('id', id); loadStatsAndCharts(); }
+        async function initPage() {
+            const { data: settings } = await supabaseClient.from('settings').select('*').eq('id', 1).single();
+            if (settings) {
+                dynamicTexts = settings; 
+                document.getElementById('site-name').innerText = censorText(settings.site_name) || 'SELECT';
+                document.getElementById('footer-name').innerText = censorText(settings.site_name) || 'SELECT';
+                
+                if(settings.logo_url) {
+                    const logoImg = document.getElementById('site-logo'); logoImg.src = settings.logo_url; logoImg.classList.remove('hidden'); document.getElementById('site-name').classList.add('hidden'); 
+                    const heroWatermark = document.getElementById('hero-watermark-logo'); heroWatermark.src = settings.logo_url; heroWatermark.classList.remove('hidden');
+                    const footerLogo = document.getElementById('footer-logo'); footerLogo.src = settings.logo_url; footerLogo.classList.remove('hidden'); document.getElementById('footer-logo-text').classList.add('hidden');
+                }
 
-        async function loadProducts() {
-            const { data: products } = await supabaseClient.from('products').select('*'); const list = document.getElementById('products-list'); list.innerHTML = '';
-            products.forEach(p => {
-                const stockBadge = p.stock <= 0 ? '<span class="text-red-500 font-bold text-[10px] bg-red-50 px-2 py-1 block w-fit mt-1">نفذت</span>' : `<span class="text-green-600 font-bold text-[10px] bg-green-50 px-2 py-1 block w-fit mt-1">متوفر: ${p.stock}</span>`;
-                list.innerHTML += `<div class="bg-white border border-gray-200 shadow-sm flex flex-col"><div class="h-40 bg-gray-100 relative"><img src="${p.image_url}" class="w-full h-full object-cover"><span class="absolute top-2 right-2 bg-black text-white text-[10px] font-bold px-2 py-1">${censorText(p.brand)}</span></div><div class="p-4 flex-1 flex flex-col justify-between"><div><h3 class="font-bold text-black text-sm truncate">${censorText(p.name)}</h3><p class="text-gray-500 font-bold text-xs mt-1">${p.price} ج.م | ${p.size || '100ml'}</p>${stockBadge}</div><div class="flex justify-end gap-2 mt-4 pt-3 border-t border-gray-100"><button onclick="editProduct(${p.id}, '${p.name}', '${p.brand}', '${p.category}', ${p.price}, '${p.size || '100ml'}', '${p.image_url}', '${p.notes}', ${p.stock})" class="text-black bg-gray-100 px-2 py-1 hover:bg-gray-200"><i class="fa-solid fa-pen text-xs"></i></button><button onclick="deleteProduct(${p.id})" class="text-red-600 bg-red-50 px-2 py-1 hover:bg-red-100"><i class="fa-solid fa-trash text-xs"></i></button></div></div></div>`;
-            });
-        }
-        function openProductModal() { document.getElementById('product-modal').classList.remove('hidden'); document.getElementById('product-modal').classList.add('flex'); document.getElementById('product-form').reset(); document.getElementById('prod-id').value = ''; document.getElementById('prod-image-url').value = ''; }
-        async function saveProduct(e) {
-            e.preventDefault(); const btn = document.getElementById('save-prod-btn'); btn.innerText = 'جاري...'; btn.disabled = true;
-            const id = document.getElementById('prod-id').value; let imageUrl = document.getElementById('prod-image-url').value; const fileInput = document.getElementById('prod-image-file');
-            if (fileInput.files.length > 0) { let file = fileInput.files[0]; try { file = await imageCompression(file, { maxSizeMB: 0.5, maxWidthOrHeight: 1024, useWebWorker: true }); } catch (error) {} const fileName = `${Date.now()}-${file.name.replace(/\s/g, '_')}`; const { error: uploadError } = await supabaseClient.storage.from('product-images').upload(fileName, file); if (uploadError) { alert('خطأ في الرفع'); btn.innerText = 'حفظ'; btn.disabled = false; return; } const { data: urlData } = supabaseClient.storage.from('product-images').getPublicUrl(fileName); imageUrl = urlData.publicUrl; }
-            if(!imageUrl) { alert('اختر صورة'); btn.innerText = 'حفظ'; btn.disabled = false; return; }
-            const data = { name: censorText(document.getElementById('prod-name').value), brand: censorText(document.getElementById('prod-brand').value), category: document.getElementById('prod-category').value, price: parseFloat(document.getElementById('prod-price').value), size: document.getElementById('prod-size').value, image_url: imageUrl, notes: censorText(document.getElementById('prod-notes').value), stock: parseInt(document.getElementById('prod-stock').value) };
-            if (id) await supabaseClient.from('products').update(data).eq('id', id); else await supabaseClient.from('products').insert([data]);
-            document.getElementById('product-modal').classList.add('hidden'); document.getElementById('product-modal').classList.remove('flex'); loadProducts(); loadStatsAndCharts(); btn.innerText = 'حفظ'; btn.disabled = false;
-        }
-        function editProduct(id, name, brand, category, price, size, image, notes, stock) { document.getElementById('prod-id').value = id; document.getElementById('prod-name').value = name; document.getElementById('prod-brand').value = brand; document.getElementById('prod-category').value = category; document.getElementById('prod-price').value = price; document.getElementById('prod-size').value = size; document.getElementById('prod-image-url').value = image; document.getElementById('prod-notes').value = notes; document.getElementById('prod-stock').value = stock; document.getElementById('product-modal').classList.remove('hidden'); document.getElementById('product-modal').classList.add('flex'); }
-        async function deleteProduct(id) { if(confirm('حذف المنتج؟')) { await supabaseClient.from('products').delete().eq('id', id); loadProducts(); loadStatsAndCharts(); } }
+                document.getElementById('hero-title').innerText = censorText(settings.hero_title) || 'اكتشف عطرك المميز';
+                document.getElementById('hero-subtitle').innerText = censorText(settings.hero_subtitle) || '';
+                document.getElementById('nav-home').innerText = settings.nav_home || 'الرئيسية';
+                document.getElementById('nav-shop').innerText = settings.nav_shop || 'المتجر';
+                document.getElementById('nav-home-mobile').innerText = settings.nav_home || 'الرئيسية';
+                document.getElementById('nav-shop-mobile').innerText = settings.nav_shop || 'المتجر';
+                document.getElementById('hero-btn').innerText = censorText(settings.hero_btn) || 'تسوق الآن';
+                document.getElementById('btn-checkout-dyn').innerText = censorText(settings.btn_checkout) || 'إتمام الطلب';
+                document.getElementById('footer-text').innerText = censorText(settings.footer_text) || 'جميع الحقوق محفوظة';
 
-        async function loadReviews() {
-            const { data } = await supabaseClient.from('reviews').select('*, products(name)').order('created_at', { ascending: false }); const list = document.getElementById('reviews-list-admin'); list.innerHTML = '';
-            if(!data || data.length === 0) { list.innerHTML = '<p class="text-gray-500 bg-white p-6 border text-xs">لا يوجد تقييمات.</p>'; return; }
-            data.forEach(r => {
-                const isPending = r.status === 'pending';
-                list.innerHTML += `<div class="bg-white p-4 shadow-sm border ${isPending ? 'border-black' : 'border-gray-200'} flex justify-between items-center"><div><p class="font-bold text-black text-sm">${censorText(r.customer_name)} <span class="text-xs text-gray-500 font-normal">(على: ${censorText(r.products?.name) || 'محذوف'})</span></p><p class="text-black text-xs mt-1">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</p><p class="text-gray-600 text-xs mt-2">${censorText(r.comment)}</p><span class="text-[10px] font-bold mt-2 inline-block px-2 py-1 border ${isPending ? 'border-black text-black' : 'border-gray-300 text-gray-500'}">${isPending ? 'قيد المراجعة' : 'تم الموافقة'}</span></div><div class="flex gap-2">${isPending ? `<button onclick="approveReview(${r.id})" class="bg-black text-white px-3 py-1.5 text-xs font-bold hover:bg-gray-800">موافقة</button>` : ''}<button onclick="deleteReview(${r.id})" class="bg-red-50 text-red-600 px-3 py-1.5 text-xs font-bold hover:bg-red-100">حذف</button></div></div>`;
-            });
-        }
-        async function approveReview(id) { await supabaseClient.from('reviews').update({ status: 'approved' }).eq('id', id); loadReviews(); }
-        async function deleteReview(id) { if(confirm('حذف التقييم؟')) { await supabaseClient.from('reviews').delete().eq('id', id); loadReviews(); } }
+                if(settings.hero_image) document.getElementById('hero-bg').style.backgroundImage = `url('${settings.hero_image}')`;
+                
+                const waBtn = document.getElementById('whatsapp-btn');
+                if(settings.whatsapp_number) { waBtn.href = `https://wa.me/${settings.whatsapp_number}`; waBtn.classList.remove('hidden'); }
 
-        async function loadCoupons() {
-            const { data } = await supabaseClient.from('coupons').select('*').order('created_at', { ascending: false }); const list = document.getElementById('coupons-list'); list.innerHTML = '';
-            data.forEach(c => { list.innerHTML += `<div class="bg-white border p-4 flex justify-between items-center shadow-sm"><div><span class="bg-gray-100 text-black font-bold px-3 py-1 text-sm border">${c.code}</span><span class="text-gray-600 font-bold text-xs block mt-2">خصم ${c.discount_percent}%</span><span class="text-[10px] ${c.active ? 'text-green-500' : 'text-red-500'}">${c.active ? 'نشط' : 'غير نشط'}</span></div><button onclick="deleteCoupon(${c.id})" class="text-red-500 bg-red-50 p-2 hover:bg-red-100"><i class="fa-solid fa-trash text-xs"></i></button></div>`; });
-        }
-        async function saveCoupon(e) { e.preventDefault(); const code = document.getElementById('c-code').value.toUpperCase(); const percent = parseInt(document.getElementById('c-percent').value); const { error } = await supabaseClient.from('coupons').insert([{ code, discount_percent: percent, active: true }]); if(error) alert('موجود!'); else { document.getElementById('coupon-form').reset(); loadCoupons(); } }
-        async function deleteCoupon(id) { if(confirm('حذف الكوبون؟')) { await supabaseClient.from('coupons').delete().eq('id', id); loadCoupons(); } }
-
-        async function loadSettings() {
-            const { data } = await supabaseClient.from('settings').select('*').eq('id', 1).single();
-            if (data) { 
-                document.getElementById('set-name').value = data.site_name || ''; document.getElementById('set-footer').value = data.footer_text || ''; document.getElementById('set-title').value = data.hero_title || ''; document.getElementById('set-subtitle').value = data.hero_subtitle || ''; document.getElementById('set-hero-btn').value = data.hero_btn || ''; document.getElementById('set-whatsapp').value = data.whatsapp_number || ''; document.getElementById('set-facebook').value = data.facebook_url || ''; document.getElementById('set-instagram').value = data.instagram_url || ''; document.getElementById('set-tiktok').value = data.tiktok_url || ''; 
-                document.getElementById('set-logo-url').value = data.logo_url || '';
-                const logoPreview = document.getElementById('current-logo-preview');
-                if(data.logo_url) { logoPreview.src = data.logo_url; logoPreview.classList.remove('hidden'); } else { logoPreview.classList.add('hidden'); }
-                document.getElementById('set-image-url').value = data.hero_image || '';
+                const socialDiv = document.getElementById('social-links');
+                socialDiv.innerHTML = '';
+                if(settings.facebook_url) socialDiv.innerHTML += `<a href="${settings.facebook_url}" target="_blank" class="hover:text-white transition"><i class="fa-brands fa-facebook"></i></a>`;
+                if(settings.instagram_url) socialDiv.innerHTML += `<a href="${settings.instagram_url}" target="_blank" class="hover:text-white transition"><i class="fa-brands fa-instagram"></i></a>`;
+                if(settings.tiktok_url) socialDiv.innerHTML += `<a href="${settings.tiktok_url}" target="_blank" class="hover:text-white transition"><i class="fa-brands fa-tiktok"></i></a>`;
             }
+
+            const { data: products } = await supabaseClient.from('products').select('*');
+            if(products) allProducts = products;
+            const { data: reviews } = await supabaseClient.from('reviews').select('*').eq('status', 'approved');
+            if(reviews) allReviews = reviews;
+
+            renderProducts(); renderLatestReviews();
+        }
+
+        function renderLatestReviews() {
+            const container = document.getElementById('latest-reviews-container'); container.innerHTML = '';
+            const latest = allReviews.slice(-3).reverse(); 
+            if(latest.length === 0) { container.innerHTML = '<p class="text-brandText col-span-3 text-center text-sm">كن أول من يشاركنا رأيه!</p>'; return; }
+            latest.forEach(r => {
+                const product = allProducts.find(p => p.id === r.product_id);
+                container.innerHTML += `
+                <div class="bg-white p-6 border border-brandBorder hover:shadow-lg transition duration-300">
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="font-bold text-brandBlack text-sm">${censorText(r.customer_name)}</span>
+                        <span class="text-brandBlack text-xs">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</span>
+                    </div>
+                    <p class="text-brandText text-sm italic mb-4 leading-relaxed">"${censorText(r.comment)}"</p>
+                    <div class="text-xs text-gray-400 border-t border-brandBorder pt-3 flex items-center gap-2"><i class="fa-solid fa-check"></i> اشترى: ${product ? censorText(product.name) : 'منتج'}</div>
+                </div>`;
+            });
+        }
+
+        function filterCategory(cat) {
+            currentFilter = cat;
+            document.querySelectorAll('.cat-btn').forEach(btn => { 
+                btn.classList.remove('bg-brandBlack', 'text-white', 'border-brandBlack'); 
+                btn.classList.add('bg-transparent', 'text-brandText', 'border-brandBorder'); 
+            });
+            event.target.classList.remove('bg-transparent', 'text-brandText', 'border-brandBorder'); 
+            event.target.classList.add('bg-brandBlack', 'text-white', 'border-brandBlack');
+            renderProducts();
+        }
+
+        function renderProducts() {
+            const searchText = document.getElementById('search-input').value.toLowerCase();
+            const priceFilter = document.getElementById('price-filter').value;
+            const grid = document.getElementById('products-grid'); grid.innerHTML = '';
+
+            let filtered = allProducts.filter(p => p.name.toLowerCase().includes(searchText) || p.brand.toLowerCase().includes(searchText));
+            if (currentFilter !== 'all') filtered = filtered.filter(p => p.category === currentFilter);
+            
+            if (priceFilter === 'low') filtered = filtered.filter(p => p.price < 500);
+            else if (priceFilter === 'mid') filtered = filtered.filter(p => p.price >= 500 && p.price <= 1000);
+            else if (priceFilter === 'high') filtered = filtered.filter(p => p.price > 1000);
+
+            filtered.forEach(product => {
+                const isOutOfStock = product.stock <= 0;
+                const productReviews = allReviews.filter(r => r.product_id === product.id);
+                let ratingHTML = productReviews.length > 0 ? 
+                    `<div class="flex items-center gap-1 text-[11px] text-brandBlack font-bold"><i class="fa-solid fa-star text-[9px]"></i> ${(productReviews.reduce((sum, r) => sum + r.rating, 0) / productReviews.length).toFixed(1)} <span class="text-gray-400 font-normal">(${productReviews.length})</span></div>` : 
+                    `<div class="text-[11px] text-gray-400">لا يوجد تقييمات</div>`;
+                
+                grid.innerHTML += `
+                    <div class="group flex flex-col hover-lift ${isOutOfStock ? 'opacity-60 grayscale' : ''}">
+                        <div class="relative overflow-hidden aspect-[4/5] bg-brandGray mb-4">
+                            <img src="${product.image_url}" class="w-full h-full object-cover img-zoom">
+                            <div class="absolute top-3 right-3 bg-white/90 backdrop-blur px-2 py-1 text-[10px] font-bold text-brandBlack tracking-widest uppercase border border-brandBorder">${censorText(product.brand)}</div>
+                            <div class="absolute top-3 left-3 bg-black/80 backdrop-blur px-2 py-1 text-[10px] font-bold text-white tracking-widest uppercase">${product.size || '100ml'}</div>
+                            
+                            <div class="absolute bottom-0 left-0 w-full p-3 translate-y-0 md:translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                                <button onclick="addToCart(${product.id}, '${censorText(product.name)}', ${product.price}, '${product.size || '100ml'}')" ${isOutOfStock ? 'disabled' : ''} class="w-full bg-brandBlack/90 backdrop-blur text-white py-2.5 text-xs font-bold hover:bg-brandBlack transition ${isOutOfStock ? 'cursor-not-allowed' : ''}">
+                                    ${isOutOfStock ? 'نفذت' : 'أضف للسلة'}
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="flex flex-col px-1">
+                            <div class="flex justify-between items-start mb-1">
+                                <h4 class="text-sm md:text-base font-bold text-brandBlack line-clamp-1">${censorText(product.name)}</h4>
+                                <span class="text-brandBlack font-bold text-sm md:text-base">${product.price} <span class="text-[10px] font-normal">ج.م</span></span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <p class="text-brandText text-[11px] line-clamp-1">${censorText(product.notes)}</p>
+                                ${ratingHTML}
+                            </div>
+                        </div>
+                    </div>`;
+            });
         }
         
-        async function saveSettings(e) {
+        document.getElementById('search-input').addEventListener('input', renderProducts);
+
+        function openReviews(productId) { document.getElementById('reviews-modal').classList.add('modal-open'); document.getElementById('review-product-id').value = productId; }
+        async function submitReview(e) {
             e.preventDefault();
-            const btn = e.target.querySelector('button[type="submit"]'); const oldText = btn.innerText; btn.innerText = 'جاري الحفظ...'; btn.disabled = true;
+            const data = { product_id: parseInt(document.getElementById('review-product-id').value), rating: parseInt(document.getElementById('review-rating').value), customer_name: censorText(document.getElementById('review-name').value), comment: censorText(document.getElementById('review-comment').value) };
+            const { error } = await supabaseClient.from('reviews').insert([data]);
+            if(error) showToast('حدث خطأ!'); else { showToast('شكراً لتقييمك!'); document.getElementById('reviews-modal').classList.remove('modal-open'); }
+        }
+
+        function openTrackingModal() { document.getElementById('tracking-modal').classList.add('modal-open'); }
+        async function trackOrder() {
+            const phone = document.getElementById('track-phone').value;
+            if(!phone) return showToast('اكتب رقم الهاتف');
+            const resultDiv = document.getElementById('tracking-result'); resultDiv.innerHTML = '<p class="text-center text-brandText text-sm">جاري البحث...</p>'; resultDiv.classList.remove('hidden');
             
-            let logoUrl = document.getElementById('set-logo-url').value;
-            const logoFileInput = document.getElementById('set-logo-file');
-            if (logoFileInput.files.length > 0) {
-                let file = logoFileInput.files[0];
-                try { file = await imageCompression(file, { maxSizeMB: 0.1, maxWidthOrHeight: 400, useWebWorker: true }); } catch (error) {}
-                const fileName = `logo-${Date.now()}-${file.name.replace(/\s/g, '_')}`;
-                const { error: uploadError } = await supabaseClient.storage.from('product-images').upload(fileName, file);
-                if (!uploadError) { const { data: urlData } = supabaseClient.storage.from('product-images').getPublicUrl(fileName); logoUrl = urlData.publicUrl; }
-            }
+            const { data: orders } = await supabaseClient.from('orders').select('*').eq('phone', phone).order('created_at', { ascending: false }).limit(1);
+            if (!orders || orders.length === 0) { resultDiv.innerHTML = '<p class="text-center text-red-500 font-bold text-sm">مفيش طلبات بالرقم ده!</p>'; return; }
+            
+            const order = orders[0];
+            let statusText = order.status === 'pending' ? 'قيد التجهيز' : order.status === 'shipped' ? 'تم الشحن' : order.status === 'cancelled' ? 'ملغي' : 'تم التسليم';
+            let statusColor = order.status === 'pending' ? 'text-yellow-600' : order.status === 'shipped' ? 'text-blue-600' : order.status === 'cancelled' ? 'text-red-500' : 'text-green-600';
+            let actionButtons = order.status === 'pending' ? `<div class="flex gap-3 mt-4"><button onclick="cancelOrder(${order.id})" class="flex-1 bg-white border border-brandBorder text-red-500 py-2 font-bold text-xs hover:bg-red-50 transition">إلغاء</button><button onclick="reorder(${order.id}, '${phone}')" class="flex-1 bg-brandBlack text-white py-2 font-bold text-xs hover:bg-gray-800 transition">تعديل</button></div>` : '';
 
-            let heroImageUrl = document.getElementById('set-image-url').value;
-            const heroFileInput = document.getElementById('set-image-file');
-            if (heroFileInput.files.length > 0) {
-                let file = heroFileInput.files[0];
-                try { file = await imageCompression(file, { maxSizeMB: 0.5, maxWidthOrHeight: 1920, useWebWorker: true }); } catch (error) {}
-                const fileName = `hero-${Date.now()}-${file.name.replace(/\s/g, '_')}`;
-                const { error: uploadError } = await supabaseClient.storage.from('product-images').upload(fileName, file);
-                if (!uploadError) { const { data: urlData } = supabaseClient.storage.from('product-images').getPublicUrl(fileName); heroImageUrl = urlData.publicUrl; }
-            }
-
-            const data = { site_name: censorText(document.getElementById('set-name').value), footer_text: censorText(document.getElementById('set-footer').value), hero_title: censorText(document.getElementById('set-title').value), hero_subtitle: censorText(document.getElementById('set-subtitle').value), hero_image: heroImageUrl, hero_btn: censorText(document.getElementById('set-hero-btn').value), whatsapp_number: document.getElementById('set-whatsapp').value, facebook_url: document.getElementById('set-facebook').value, instagram_url: document.getElementById('set-instagram').value, tiktok_url: document.getElementById('set-tiktok').value, logo_url: logoUrl };
-            const { error } = await supabaseClient.from('settings').update(data).eq('id', 1);
-            if(error) alert('خطأ! ' + error.message); else { btn.innerHTML = 'تم الحفظ!'; loadSettings(); setTimeout(() => { btn.innerText = oldText; btn.disabled = false; }, 2000); }
+            resultDiv.innerHTML = `<div class="bg-brandGray p-4 border border-brandBorder text-center mt-2"><p class="text-brandText text-xs mb-1">الطلب #${order.id}</p><p class="text-lg font-bold ${statusColor} mb-2">${statusText}</p><p class="text-sm text-brandBlack">الإجمالي: <strong>${order.total_price} ج.م</strong></p>${actionButtons}</div>`;
         }
 
-        async function deleteAllData() {
-            if(!confirm('⚠️ تحذير: سيتم مسح جميع البيانات. هل أنت متأكد؟')) return;
-            const btn = event.target; btn.innerText = 'جاري المسح...'; btn.disabled = true;
-            await supabaseClient.from('orders').delete().neq('id', 0); await supabaseClient.from('reviews').delete().neq('id', 0); await supabaseClient.from('visits').delete().neq('id', 0); await supabaseClient.from('coupons').delete().neq('id', 0); await supabaseClient.from('products').delete().neq('id', 0);
-            alert('تم مسح جميع البيانات بنجاح.'); loadData(); btn.innerHTML = '<i class="fa-solid fa-trash mr-2"></i> مسح كل البيانات'; btn.disabled = false;
-        }
+        async function cancelOrder(orderId) { if(!confirm('هل أنت متأكد من إلغاء الطلب؟')) return; const { error } = await supabaseClient.from('orders').update({ status: 'cancelled' }).eq('id', orderId); if(!error) { showToast('تم إلغاء الطلب'); trackOrder(); } }
+        async function reorder(orderId, phone) { const { data: order } = await supabaseClient.from('orders').select('items').eq('id', orderId).single(); if(order && order.items) { cart = order.items; saveCart(); toggleCart(); document.getElementById('tracking-modal').classList.remove('modal-open'); showToast('تم نقل المنتجات للسلة'); await supabaseClient.from('orders').update({ status: 'cancelled' }).eq('id', orderId); } }
 
-        supabaseClient.channel('admin-updates').on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, () => { loadOrders(); loadStatsAndCharts(); }).on('postgres_changes', { event: '*', schema: 'public', table: 'reviews' }, () => { loadReviews(); }).subscribe();
-        checkSession();
+        function addToCart(id, name, price, size) { 
+            const existing = cart.find(item => item.id === id); 
+            if (existing) { existing.qty += 1; } 
+            else { cart.push({ id, name, price, size, qty: 1 }); } 
+            saveCart(); toggleCart(); 
+        }
+        function saveCart() { localStorage.setItem('cart', JSON.stringify(cart)); updateCartUI(); }
+        
+        function updateCartUI() {
+            const totalCount = cart.reduce((total, item) => total + item.qty, 0); document.getElementById('cart-count').innerText = totalCount;
+            const cartItemsDiv = document.getElementById('cart-items'); let totalPrice = 0;
+            if (cart.length === 0) { cartItemsDiv.innerHTML = '<p class="text-center text-gray-400 mt-10 text-sm">السلة فارغة</p>'; document.getElementById('cart-total').innerText = '0 ج.م'; document.getElementById('discount-row').classList.add('hidden'); return; }
+            cartItemsDiv.innerHTML = '';
+            cart.forEach((item, index) => { 
+                totalPrice += item.price * item.qty; 
+                cartItemsDiv.innerHTML += `<div class="flex justify-between items-center border-b border-brandBorder pb-4 mb-4"><div><p class="font-bold text-brandBlack text-sm">${censorText(item.name)} <span class="text-gray-500 text-xs">(${item.size || '100ml'})</span></p><p class="text-xs text-brandText mt-1">${item.price} ج.م × ${item.qty}</p></div><button onclick="removeFromCart(${index})" class="text-gray-400 hover:text-red-500 transition"><i class="fa-solid fa-xmark"></i></button></div>`; 
+            });
+            let discountAmount = (totalPrice * appliedDiscount) / 100;
+            document.getElementById('cart-total').innerText = (totalPrice - discountAmount).toFixed(0) + ' ج.م';
+            if(appliedDiscount > 0) { document.getElementById('discount-row').classList.remove('hidden'); document.getElementById('discount-amount').innerText = discountAmount.toFixed(0) + ' ج.م'; } else { document.getElementById('discount-row').classList.add('hidden'); }
+        }
+        function removeFromCart(index) { cart.splice(index, 1); saveCart(); }
+        function toggleCart() { document.getElementById('cart-sidebar').classList.toggle('cart-open'); document.getElementById('overlay').classList.toggle('hidden'); }
+        function openCheckoutModal() { if (cart.length === 0) return showToast('السلة فارغة!'); document.getElementById('checkout-modal').classList.add('modal-open'); document.getElementById('cart-sidebar').classList.remove('cart-open'); document.getElementById('overlay').classList.add('hidden'); }
+        function closeCheckoutModal() { document.getElementById('checkout-modal').classList.remove('modal-open'); }
+        
+        // ✅ تحديث دالة تطبيق الكوبون (بتراجع الحد الأقصى للاستخدام)
+        async function applyCoupon() { 
+            const code = document.getElementById('coupon-input').value.trim().toUpperCase(); 
+            const msg = document.getElementById('coupon-msg');
+            if(!code) { msg.innerText = 'اكتب كود الخصم'; msg.className = 'text-red-500 text-xs mb-3 font-bold'; return; }
+            msg.innerText = 'جاري التحقق...'; msg.className = 'text-gray-500 text-xs mb-3';
+            
+            const { data, error } = await supabaseClient.from('coupons').select('*').eq('code', code).maybeSingle();
+
+            if (error) {
+                console.error("Coupon Error:", error);
+                msg.innerText = 'حدث خطأ في الاتصال'; msg.className = 'text-red-500 text-xs mb-3 font-bold'; return;
+            }
+            
+            if (!data || data.active === false) {
+                appliedDiscount = 0; appliedCouponCode = '';
+                msg.innerText = 'كود الخصم غير صحيح أو غير نشط';
+                msg.className = 'text-red-500 text-xs mb-3 font-bold'; 
+                updateCartUI();
+                return;
+            }
+
+            // ✅ التحقق من الحد الأقصى للاستخدام
+            if (data.used_count >= data.max_uses) {
+                appliedDiscount = 0; appliedCouponCode = '';
+                msg.innerText = 'هذا الكوبون وصل للحد الأقصى للاستخدام';
+                msg.className = 'text-red-500 text-xs mb-3 font-bold'; 
+                updateCartUI();
+                return;
+            }
+
+            appliedDiscount = data.discount_percent; 
+            appliedCouponCode = data.code; // حفظ كود الكوبون عشان يتبعت مع الطلب
+            msg.innerText = `تم تطبيق خصم ${appliedDiscount}%`; 
+            msg.className = 'text-green-600 text-xs mb-3 font-bold'; 
+            updateCartUI(); 
+        }
+        
+        // ✅ تحديث دالة تأكيد الطلب (عشان تسجل الكوبون)
+        async function submitOrder(e) { 
+            e.preventDefault(); 
+            const btn = document.getElementById('submit-btn'); btn.innerText = 'جاري المعالجة...'; btn.disabled = true; 
+            
+            const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.qty), 0); 
+            const discountAmount = (totalPrice * appliedDiscount) / 100;
+            const finalTotal = totalPrice - discountAmount; 
+            
+            const orderData = { 
+                customer_name: censorText(document.getElementById('customer_name').value), 
+                phone: document.getElementById('phone').value, 
+                city: censorText(document.getElementById('city').value), 
+                address: censorText(document.getElementById('address').value), 
+                total_price: finalTotal, 
+                coupon_code: appliedCouponCode || null, // تسجيل الكوبون
+                discount_amount: discountAmount, // تسجيل قيمة الخصم
+                items: cart, 
+                status: 'pending' 
+            }; 
+            
+            const { error } = await supabaseClient.from('orders').insert([orderData]); 
+            if (error) { 
+                console.error(error);
+                showToast('حدث خطأ!'); btn.innerText = 'تأكيد الطلب'; btn.disabled = false; return; 
+            } 
+            
+            closeCheckoutModal(); document.getElementById('success-modal').classList.add('modal-open');
+            cart = []; appliedDiscount = 0; appliedCouponCode = ''; // تصفير الكوبون
+            saveCart(); 
+            document.getElementById('checkout-form').reset(); btn.innerText = 'تأكيد الطلب'; btn.disabled = false; 
+            document.getElementById('coupon-input').value = ''; document.getElementById('coupon-msg').innerText = '';
+        }
+        
+        async function logVisit() { const lastVisit = sessionStorage.getItem('lastVisit'); if (!lastVisit || Date.now() - lastVisit > 30 * 60 * 1000) { await supabaseClient.from('visits').insert([{}]); sessionStorage.setItem('lastVisit', Date.now()); } }
+
+        supabaseClient.channel('store-realtime').on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, () => initPage()).on('postgres_changes', { event: '*', schema: 'public', table: 'reviews' }, () => initPage()).on('postgres_changes', { event: '*', schema: 'public', table: 'settings' }, () => initPage()).subscribe();
+
+        initPage(); updateCartUI(); logVisit();
     </script>
 </body>
 </html>
