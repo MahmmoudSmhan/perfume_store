@@ -19,9 +19,15 @@
         .admin-logo-fix { filter: brightness(0) invert(1); }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* ستايل إشعار الطلب الجديد */
+        #admin-toast { visibility: hidden; min-width: 300px; background-color: #0A0A0A; color: #C5A880; text-align: center; padding: 16px; position: fixed; z-index: 1000; left: 50%; bottom: 30px; transform: translateX(-50%); font-weight: bold; opacity: 0; transition: all 0.5s ease; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); border: 2px solid #C5A880; }
+        #admin-toast.show { visibility: visible; opacity: 1; bottom: 40px; }
     </style>
 </head>
 <body class="h-screen overflow-hidden flex bg-[#F7F7F7]">
+
+    <div id="admin-toast">🔔 لديك طلب جديد!</div>
 
     <div id="login-screen" class="fixed inset-0 z-[100] flex items-center justify-center bg-white/90 backdrop-blur-sm p-4">
         <div class="bg-white p-8 md:p-10 border border-gray-200 shadow-xl w-full max-w-sm">
@@ -49,7 +55,15 @@
             
             <nav class="flex-1 py-6 md:py-8 space-y-1 overflow-y-auto px-4">
                 <button onclick="switchView('overview', this); closeSidebarOnMobile();" class="nav-btn w-full flex items-center px-6 py-4 text-gray-400 hover:bg-gray-900 hover:text-white transition-all rounded-lg"><i class="fa-solid fa-chart-pie w-6 mr-3"></i> نظرة عامة</button>
-                <button onclick="switchView('orders', this); closeSidebarOnMobile();" class="nav-btn w-full flex items-center px-6 py-4 text-gray-400 hover:bg-gray-900 hover:text-white transition-all rounded-lg"><i class="fa-solid fa-box w-6 mr-3"></i> الطلبات</button>
+                
+                <!-- زر الطلبات مع عداد الإشعارات -->
+                <button onclick="switchView('orders', this); closeSidebarOnMobile();" class="nav-btn w-full flex items-center justify-between px-6 py-4 text-gray-400 hover:bg-gray-900 hover:text-white transition-all rounded-lg">
+                    <div class="flex items-center">
+                        <i class="fa-solid fa-box w-6 mr-3"></i> الطلبات
+                    </div>
+                    <span id="orders-badge" class="hidden bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">0</span>
+                </button>
+                
                 <button onclick="switchView('products', this); closeSidebarOnMobile();" class="nav-btn w-full flex items-center px-6 py-4 text-gray-400 hover:bg-gray-900 hover:text-white transition-all rounded-lg"><i class="fa-solid fa-bottle-droplet w-6 mr-3"></i> المنتجات</button>
                 <button onclick="switchView('bundles', this); closeSidebarOnMobile();" class="nav-btn w-full flex items-center px-6 py-4 text-gray-400 hover:bg-gray-900 hover:text-white transition-all rounded-lg"><i class="fa-solid fa-gift w-6 mr-3"></i> الباقات والعروض</button>
                 <button onclick="switchView('reviews', this); closeSidebarOnMobile();" class="nav-btn w-full flex items-center px-6 py-4 text-gray-400 hover:bg-gray-900 hover:text-white transition-all rounded-lg"><i class="fa-solid fa-star w-6 mr-3"></i> التقييمات</button>
@@ -382,10 +396,40 @@
         const SUPABASE_KEY = 'sb_publishable_M05JYZ9LKlIfeDjuCJqzxQ_Ay6EbRKj';
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         let salesChartInstance = null, visitsChartInstance = null, allOrders = [], currentOrderId = null, allProductsList = [];
-        let currentLogoUrl = ''; // متغير جديد لحفظ اللوجو
+        let currentLogoUrl = ''; 
+        
+        // متغيرات الإشعارات
+        let newOrdersCount = 0;
+        let isFirstLoad = true; // عشان ميرنش أول ما الصفحة تفتح
 
         const badWords = ['كسم', 'خرا', 'زبالة', 'حيوان', 'غبي', 'عبيط', 'كلب', 'عرص', 'شرموط', 'قحب', 'خول', 'لبوة', 'طيز', 'كس', 'نيك', 'متناك', 'شرموطة', 'fuck', 'shit', 'bitch', 'asshole', 'pussy'];
         function censorText(text) { if (!text) return ''; let clean = text; badWords.forEach(word => { const regex = new RegExp(word, 'gi'); clean = clean.replace(regex, '***'); }); return clean; }
+
+        // دالة إظهار إشعار في الأدمن
+        function showAdminToast(msg) {
+            const toast = document.getElementById('admin-toast');
+            toast.innerText = msg;
+            toast.classList.add('show');
+            setTimeout(() => { toast.classList.remove('show'); }, 5000); 
+        }
+
+        // دالة تشغيل صوت تنبيه
+        function playNotificationSound() {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                oscillator.type = 'sine';
+                oscillator.frequency.setValueAtTime(880, audioCtx.currentTime); 
+                oscillator.frequency.exponentialRampToValueAtTime(440, audioCtx.currentTime + 0.1); 
+                gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                oscillator.start();
+                oscillator.stop(audioCtx.currentTime + 0.5);
+            } catch(e) { console.log('Audio play blocked by browser'); }
+        }
 
         function toggleSidebar() {
             const sidebar = document.getElementById('admin-sidebar');
@@ -396,7 +440,19 @@
         function closeSidebarOnMobile() { if (window.innerWidth < 768) toggleSidebar(); }
 
         document.getElementById('login-form').addEventListener('submit', async (e) => { e.preventDefault(); const { error } = await supabaseClient.auth.signInWithPassword({ email: document.getElementById('email').value, password: document.getElementById('password').value }); if (error) document.getElementById('login-error').classList.remove('hidden'); else checkSession(); });
-        async function checkSession() { const { data: { session } } = await supabaseClient.auth.getSession(); if (session) { document.getElementById('login-screen').classList.add('hidden'); document.getElementById('dashboard').classList.remove('hidden'); loadData(); } else { document.getElementById('login-screen').classList.remove('hidden'); document.getElementById('dashboard').classList.add('hidden'); } }
+        async function checkSession() { 
+            const { data: { session } } = await supabaseClient.auth.getSession(); 
+            if (session) { 
+                document.getElementById('login-screen').classList.add('hidden'); 
+                document.getElementById('dashboard').classList.remove('hidden'); 
+                await loadData(); 
+                // بعد ما الداتا تحمل، نخلي isFirstLoad = false عشان نبدأ نستقبل إشعارات
+                isFirstLoad = false;
+            } else { 
+                document.getElementById('login-screen').classList.remove('hidden'); 
+                document.getElementById('dashboard').classList.add('hidden'); 
+            } 
+        }
         function logout() { supabaseClient.auth.signOut(); checkSession(); }
         
         function switchView(viewId, btnElement) { 
@@ -404,10 +460,25 @@
             document.getElementById('view-' + viewId).classList.add('active'); 
             document.querySelectorAll('.nav-btn').forEach(btn => { btn.classList.remove('bg-gray-900', 'text-white'); btn.classList.add('text-gray-400'); }); 
             btnElement.classList.add('bg-gray-900', 'text-white'); btnElement.classList.remove('text-gray-400'); 
+            
+            // لو دخل على قسم الطلبات، نصفر العداد ونخفي الإشعار
+            if(viewId === 'orders') {
+                newOrdersCount = 0;
+                document.getElementById('orders-badge').classList.add('hidden');
+            }
+
             if(viewId === 'overview') loadStatsAndCharts();
         }
         
-        async function loadData() { loadStatsAndCharts(); loadOrders(); loadProducts(); loadBundles(); loadCoupons(); loadReviews(); loadSettings(); }
+        async function loadData() { 
+            await loadStatsAndCharts(); 
+            await loadOrders(); 
+            await loadProducts(); 
+            await loadBundles(); 
+            await loadCoupons(); 
+            await loadReviews(); 
+            await loadSettings(); 
+        }
 
         async function loadStatsAndCharts() {
             const { data: orders } = await supabaseClient.from('orders').select('*').neq('status', 'cancelled');
@@ -524,7 +595,6 @@
 
             let shippingText = (order.shipping_cost === 0 || !order.shipping_cost) ? 'شحن مجاني' : `${order.shipping_cost} ج.م`;
 
-            // الجزء الخاص باللوجو
             let headerLogoHTML = '';
             if (currentLogoUrl) {
                 headerLogoHTML = `<img src="${currentLogoUrl}" style="max-height: 80px; max-width: 200px; object-fit: contain; margin-bottom: 10px; display: block; margin-left: auto; margin-right: auto;">`;
@@ -547,7 +617,6 @@
                 .totals .final-row { border-top: 2px solid #0A0A0A; font-weight: bold; font-size: 18px; background: #F8F8F6;}
             </style></head><body>`;
             
-            // إضافة اللوجو هنا
             html += `<div class="header">${headerLogoHTML}<p style="margin-top:10px; color:#666;">فاتورة الطلب #${order.id}</p></div>`;
             
             html += `<div class="info">
@@ -913,8 +982,29 @@
             alert('تم مسح جميع البيانات بنجاح.'); loadData(); btn.innerHTML = '<i class="fa-solid fa-trash mr-2"></i> مسح كل البيانات'; btn.disabled = false;
         }
 
+        // Realtime Listener
         supabaseClient.channel('admin-updates')
-            .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, () => { loadOrders(); loadStatsAndCharts(); })
+            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'orders' }, (payload) => { 
+                // لو مش أول تحميل، اعرض الإشعار وزود العداد
+                if (!isFirstLoad) {
+                    newOrdersCount++;
+                    const badge = document.getElementById('orders-badge');
+                    badge.innerText = newOrdersCount;
+                    badge.classList.remove('hidden');
+                    playNotificationSound();
+                    showAdminToast('🔔 لديك طلب جديد!');
+                }
+                loadOrders(); 
+                loadStatsAndCharts(); 
+            })
+            .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'orders' }, () => { 
+                loadOrders(); 
+                loadStatsAndCharts(); 
+            })
+            .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'orders' }, () => { 
+                loadOrders(); 
+                loadStatsAndCharts(); 
+            })
             .on('postgres_changes', { event: '*', schema: 'public', table: 'reviews' }, () => { loadReviews(); })
             .on('postgres_changes', { event: '*', schema: 'public', table: 'coupons' }, () => { loadCoupons(); })
             .on('postgres_changes', { event: '*', schema: 'public', table: 'bundles' }, () => { loadBundles(); })
