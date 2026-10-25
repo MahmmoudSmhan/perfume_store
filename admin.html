@@ -22,7 +22,7 @@
     <!-- Login -->
     <div id="login-screen" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-95 backdrop-blur-sm">
         <div class="bg-white p-10 rounded-3xl shadow-2xl w-full max-w-sm border-t-4 border-yellow-500">
-            <div class="text-center mb-8"><div class="w-20 h-20 bg-yellow-50 text-yellow-500 rounded-full flex items-center justify-center mx-auto mb-4 text-4xl shadow-inner"><i class="fa-solid fa-spray-can-sparkles"></i></div><h2 class="text-3xl font-bold text-gray-800"></h2></div>
+            <div class="text-center mb-8"><div class="w-20 h-20 bg-yellow-50 text-yellow-500 rounded-full flex items-center justify-center mx-auto mb-4 text-4xl shadow-inner"><i class="fa-solid fa-spray-can-sparkles"></i></div><h2 class="text-3xl font-bold text-gray-800"> Dashbord </h2></div>
             <form id="login-form" class="space-y-5">
                 <input type="email" id="email" placeholder="الإيميل" required class="w-full border border-gray-300 p-4 rounded-xl focus:ring-2 focus:ring-yellow-500 bg-gray-50 outline-none">
                 <input type="password" id="password" placeholder="الباسورد" required class="w-full border border-gray-300 p-4 rounded-xl focus:ring-2 focus:ring-yellow-500 bg-gray-50 outline-none">
@@ -35,7 +35,7 @@
     <!-- Dashboard -->
     <div id="dashboard" class="hidden w-full h-full flex">
         <aside class="w-72 bg-gray-900 text-white flex flex-col shadow-2xl z-20">
-            <div class="h-24 flex items-center justify-center border-b border-gray-800 bg-gray-950"><h1 class="text-2xl font-bold text-yellow-500"><i class="fa-solid fa-spray-can-sparkles mr-3"></i> Dashboard </h1></div>
+            <div class="h-24 flex items-center justify-center border-b border-gray-800 bg-gray-950"><h1 class="text-2xl font-bold text-yellow-500"><i class="fa-solid fa-spray-can-sparkles mr-3"></i> </h1></div>
             <nav class="flex-1 py-8 space-y-2 overflow-y-auto px-4">
                 <button onclick="switchView('overview', this)" class="nav-btn w-full flex items-center px-6 py-4 text-gray-400 hover:bg-gray-800 hover:text-yellow-400 rounded-xl transition-all"><i class="fa-solid fa-chart-pie w-6 mr-3"></i> نظرة عامة</button>
                 <button onclick="switchView('orders', this)" class="nav-btn w-full flex items-center px-6 py-4 text-gray-400 hover:bg-gray-800 hover:text-yellow-400 rounded-xl transition-all"><i class="fa-solid fa-box w-6 mr-3"></i> الطلبات</button>
@@ -112,6 +112,16 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div><label class="block text-sm font-bold mb-1">اسم الموقع</label><input type="text" id="set-name" class="w-full border p-3 rounded-xl bg-gray-50"></div>
                                 <div><label class="block text-sm font-bold mb-1">حقوق الفوتر</label><input type="text" id="set-footer" class="w-full border p-3 rounded-xl bg-gray-50"></div>
+                                
+                                <!-- إضافة اللوجو -->
+                                <div class="md:col-span-2 bg-gray-50 p-4 rounded-xl border border-gray-200 mt-2">
+                                    <label class="block text-sm font-bold mb-2">شعار الموقع (اللوجو)</label>
+                                    <div class="flex items-center gap-4">
+                                        <input type="file" id="set-logo-file" accept="image/*" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-yellow-100 file:text-yellow-700 hover:file:bg-yellow-200">
+                                        <input type="hidden" id="set-logo-url">
+                                        <img id="current-logo-preview" src="" class="h-12 w-12 object-contain rounded border border-gray-300 hidden">
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div>
@@ -143,7 +153,6 @@
                         <button type="submit" class="w-full bg-yellow-500 text-black text-lg px-8 py-4 rounded-xl font-bold mt-4 shadow-lg">حفظ التعديلات</button>
                     </form>
 
-                    <!-- زر حذف كل البيانات -->
                     <div class="mt-12 pt-6 border-t border-red-200">
                         <h3 class="font-bold text-lg text-red-600 mb-2">منطقة الخطر</h3>
                         <p class="text-sm text-gray-500 mb-4">هذا الإجراء سيقوم بمسح جميع الطلبات، المنتجات، التقييمات، والزيارات نهائياً ولا يمكن التراجع عنه.</p>
@@ -166,9 +175,7 @@
                         <div><label class="block text-sm font-bold mb-1">الماركة</label><input type="text" id="prod-brand" required class="w-full border p-3 rounded-xl bg-gray-50"></div>
                         <div><label class="block text-sm font-bold mb-1">التصنيف</label>
                             <select id="prod-category" class="w-full border p-3 rounded-xl bg-gray-50 outline-none">
-                                <option value="men">رجالي</option>
-                                <option value="women">نسائي</option>
-                                <option value="unisex">للجنسين</option>
+                                <option value="men">رجالي</option><option value="women">نسائي</option><option value="unisex">للجنسين</option>
                             </select>
                         </div>
                     </div>
@@ -203,7 +210,6 @@
     </div>
 
     <script>
-        // ✅ تم تصحيح الرابط هنا
         const SUPABASE_URL = 'https://icmvrjmkcyjuoxekvvfw.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_M05JYZ9LKlIfeDjuCJqzxQ_Ay6EbRKj';
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -304,31 +310,65 @@
             const { data } = await supabaseClient.from('settings').select('*').eq('id', 1).single();
             if (data) { 
                 document.getElementById('set-name').value = data.site_name || ''; document.getElementById('set-footer').value = data.footer_text || ''; document.getElementById('set-title').value = data.hero_title || ''; document.getElementById('set-subtitle').value = data.hero_subtitle || ''; document.getElementById('set-image').value = data.hero_image || ''; document.getElementById('set-hero-btn').value = data.hero_btn || ''; document.getElementById('set-sec-title').value = data.section_title || ''; document.getElementById('set-btn-cart').value = data.btn_add_to_cart || ''; document.getElementById('set-btn-checkout').value = data.btn_checkout || ''; document.getElementById('set-whatsapp').value = data.whatsapp_number || ''; document.getElementById('set-facebook').value = data.facebook_url || ''; document.getElementById('set-instagram').value = data.instagram_url || ''; document.getElementById('set-tiktok').value = data.tiktok_url || ''; 
+                
+                // تحميل اللوجو
+                document.getElementById('set-logo-url').value = data.logo_url || '';
+                const logoPreview = document.getElementById('current-logo-preview');
+                if(data.logo_url) { logoPreview.src = data.logo_url; logoPreview.classList.remove('hidden'); }
+                else { logoPreview.classList.add('hidden'); }
             }
         }
+        
         async function saveSettings(e) {
             e.preventDefault();
-            const data = { site_name: censorText(document.getElementById('set-name').value), footer_text: censorText(document.getElementById('set-footer').value), hero_title: censorText(document.getElementById('set-title').value), hero_subtitle: censorText(document.getElementById('set-subtitle').value), hero_image: document.getElementById('set-image').value, hero_btn: censorText(document.getElementById('set-hero-btn').value), section_title: censorText(document.getElementById('set-sec-title').value), btn_add_to_cart: censorText(document.getElementById('set-btn-cart').value), btn_checkout: censorText(document.getElementById('set-btn-checkout').value), whatsapp_number: document.getElementById('set-whatsapp').value, facebook_url: document.getElementById('set-facebook').value, instagram_url: document.getElementById('set-instagram').value, tiktok_url: document.getElementById('set-tiktok').value };
-            const btn = e.target.querySelector('button[type="submit"]'); const oldText = btn.innerText; btn.innerText = 'جاري...'; btn.disabled = true;
+            const btn = e.target.querySelector('button[type="submit"]'); const oldText = btn.innerText; btn.innerText = 'جاري الحفظ...'; btn.disabled = true;
+            
+            let logoUrl = document.getElementById('set-logo-url').value;
+            const logoFileInput = document.getElementById('set-logo-file');
+
+            // لو المستخدم رفع لوجو جديد
+            if (logoFileInput.files.length > 0) {
+                let file = logoFileInput.files[0];
+                try { file = await imageCompression(file, { maxSizeMB: 0.2, maxWidthOrHeight: 512, useWebWorker: true }); } catch (error) {}
+                const fileName = `logo-${Date.now()}-${file.name.replace(/\s/g, '_')}`;
+                const { error: uploadError } = await supabaseClient.storage.from('product-images').upload(fileName, file);
+                if (!uploadError) {
+                    const { data: urlData } = supabaseClient.storage.from('product-images').getPublicUrl(fileName);
+                    logoUrl = urlData.publicUrl;
+                }
+            }
+
+            const data = { 
+                site_name: censorText(document.getElementById('set-name').value), 
+                footer_text: censorText(document.getElementById('set-footer').value), 
+                hero_title: censorText(document.getElementById('set-title').value), 
+                hero_subtitle: censorText(document.getElementById('set-subtitle').value), 
+                hero_image: document.getElementById('set-image').value, 
+                hero_btn: censorText(document.getElementById('set-hero-btn').value), 
+                section_title: censorText(document.getElementById('set-sec-title').value), 
+                btn_add_to_cart: censorText(document.getElementById('set-btn-cart').value), 
+                btn_checkout: censorText(document.getElementById('set-btn-checkout').value), 
+                whatsapp_number: document.getElementById('set-whatsapp').value, 
+                facebook_url: document.getElementById('set-facebook').value, 
+                instagram_url: document.getElementById('set-instagram').value, 
+                tiktok_url: document.getElementById('set-tiktok').value,
+                logo_url: logoUrl
+            };
+
             const { error } = await supabaseClient.from('settings').update(data).eq('id', 1);
-            if(error) alert('خطأ!'); else { btn.innerHTML = 'تم الحفظ!'; setTimeout(() => { btn.innerText = oldText; btn.disabled = false; }, 2000); }
+            if(error) alert('خطأ! ' + error.message); 
+            else { 
+                btn.innerHTML = 'تم الحفظ!'; 
+                loadSettings(); // لإظهار اللوجو الجديد
+                setTimeout(() => { btn.innerText = oldText; btn.disabled = false; }, 2000); 
+            }
         }
 
-        // ميزة حذف كل البيانات
         async function deleteAllData() {
             if(!confirm('⚠️ تحذير: سيتم مسح جميع الطلبات، المنتجات، التقييمات، الكوبونات والزيارات نهائياً. هل أنت متأكد؟')) return;
-            
             const btn = event.target; btn.innerText = 'جاري المسح...'; btn.disabled = true;
-
-            await supabaseClient.from('orders').delete().neq('id', 0);
-            await supabaseClient.from('reviews').delete().neq('id', 0);
-            await supabaseClient.from('visits').delete().neq('id', 0);
-            await supabaseClient.from('coupons').delete().neq('id', 0);
-            await supabaseClient.from('products').delete().neq('id', 0);
-            
-            alert('تم مسح جميع البيانات بنجاح.');
-            loadData();
-            btn.innerHTML = '<i class="fa-solid fa-trash mr-2"></i> مسح كل البيانات'; btn.disabled = false;
+            await supabaseClient.from('orders').delete().neq('id', 0); await supabaseClient.from('reviews').delete().neq('id', 0); await supabaseClient.from('visits').delete().neq('id', 0); await supabaseClient.from('coupons').delete().neq('id', 0); await supabaseClient.from('products').delete().neq('id', 0);
+            alert('تم مسح جميع البيانات بنجاح.'); loadData(); btn.innerHTML = '<i class="fa-solid fa-trash mr-2"></i> مسح كل البيانات'; btn.disabled = false;
         }
 
         supabaseClient.channel('admin-updates').on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, () => { loadOrders(); loadStatsAndCharts(); }).on('postgres_changes', { event: '*', schema: 'public', table: 'reviews' }, () => { loadReviews(); }).subscribe();
