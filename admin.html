@@ -53,6 +53,13 @@
                 <button onclick="toggleSidebar()" class="md:hidden text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-2xl"></i></button>
             </div>
             
+            <!-- زرار تفعيل الصوت -->
+            <div class="px-4 py-2 bg-gray-900 border-b border-gray-800">
+                <button id="enable-sound-btn" onclick="enableSound()" class="w-full bg-brandGold text-black font-bold py-2 text-xs rounded hover:bg-yellow-600 transition flex items-center justify-center">
+                    <i class="fa-solid fa-volume-high mr-2"></i> تفعيل صوت الإشعارات
+                </button>
+            </div>
+
             <nav class="flex-1 py-6 md:py-8 space-y-1 overflow-y-auto px-4">
                 <button onclick="switchView('overview', this); closeSidebarOnMobile();" class="nav-btn w-full flex items-center px-6 py-4 text-gray-400 hover:bg-gray-900 hover:text-white transition-all rounded-lg"><i class="fa-solid fa-chart-pie w-6 mr-3"></i> نظرة عامة</button>
                 
@@ -400,23 +407,31 @@
         
         // متغيرات الإشعارات
         let newOrdersCount = 0;
-        let isFirstLoad = true; // عشان ميرنش أول ما الصفحة تفتح
+        let isFirstLoad = true; 
+        let audioCtx;
+        let originalTitle = document.title;
+        let flashInterval;
 
         const badWords = ['كسم', 'خرا', 'زبالة', 'حيوان', 'غبي', 'عبيط', 'كلب', 'عرص', 'شرموط', 'قحب', 'خول', 'لبوة', 'طيز', 'كس', 'نيك', 'متناك', 'شرموطة', 'fuck', 'shit', 'bitch', 'asshole', 'pussy'];
         function censorText(text) { if (!text) return ''; let clean = text; badWords.forEach(word => { const regex = new RegExp(word, 'gi'); clean = clean.replace(regex, '***'); }); return clean; }
 
-        // دالة إظهار إشعار في الأدمن
-        function showAdminToast(msg) {
-            const toast = document.getElementById('admin-toast');
-            toast.innerText = msg;
-            toast.classList.add('show');
-            setTimeout(() => { toast.classList.remove('show'); }, 5000); 
+        // دالة تفعيل الصوت (لازم يضغط عليها المستخدم مرة واحدة)
+        function enableSound() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            document.getElementById('enable-sound-btn').innerHTML = '<i class="fa-solid fa-check mr-2"></i> الصوت مفعل';
+            document.getElementById('enable-sound-btn').classList.remove('bg-brandGold');
+            document.getElementById('enable-sound-btn').classList.add('bg-green-600', 'text-white');
+            playNotificationSound(); // تشغيل صوت تجريبي للتأكيد
         }
 
-        // دالة تشغيل صوت تنبيه
         function playNotificationSound() {
+            if(!audioCtx) return;
             try {
-                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                 const oscillator = audioCtx.createOscillator();
                 const gainNode = audioCtx.createGain();
                 oscillator.type = 'sine';
@@ -428,8 +443,37 @@
                 gainNode.connect(audioCtx.destination);
                 oscillator.start();
                 oscillator.stop(audioCtx.currentTime + 0.5);
-            } catch(e) { console.log('Audio play blocked by browser'); }
+            } catch(e) { console.log('Audio play failed:', e); }
         }
+
+        // دالة إظهار إشعار في الأدمن
+        function showAdminToast(msg) {
+            const toast = document.getElementById('admin-toast');
+            toast.innerText = msg;
+            toast.classList.add('show');
+            setTimeout(() => { toast.classList.remove('show'); }, 5000); 
+        }
+
+        // تأثير رفرفة العنوان
+        function startFlashingTitle() {
+            if(flashInterval) return;
+            let isOriginal = true;
+            flashInterval = setInterval(() => {
+                document.title = isOriginal ? '🔔 طلب جديد!' : originalTitle;
+                isOriginal = !isOriginal;
+            }, 1000);
+        }
+
+        function stopFlashingTitle() {
+            clearInterval(flashInterval);
+            flashInterval = null;
+            document.title = originalTitle;
+        }
+
+        // لما المستخدم يرجع للصفحة، نوقف الرفرفة
+        window.addEventListener('focus', () => {
+            stopFlashingTitle();
+        });
 
         function toggleSidebar() {
             const sidebar = document.getElementById('admin-sidebar');
@@ -446,7 +490,6 @@
                 document.getElementById('login-screen').classList.add('hidden'); 
                 document.getElementById('dashboard').classList.remove('hidden'); 
                 await loadData(); 
-                // بعد ما الداتا تحمل، نخلي isFirstLoad = false عشان نبدأ نستقبل إشعارات
                 isFirstLoad = false;
             } else { 
                 document.getElementById('login-screen').classList.remove('hidden'); 
@@ -461,10 +504,10 @@
             document.querySelectorAll('.nav-btn').forEach(btn => { btn.classList.remove('bg-gray-900', 'text-white'); btn.classList.add('text-gray-400'); }); 
             btnElement.classList.add('bg-gray-900', 'text-white'); btnElement.classList.remove('text-gray-400'); 
             
-            // لو دخل على قسم الطلبات، نصفر العداد ونخفي الإشعار
             if(viewId === 'orders') {
                 newOrdersCount = 0;
                 document.getElementById('orders-badge').classList.add('hidden');
+                stopFlashingTitle(); // إيقاف رفرفة العنوان لو دخل قسم الطلبات
             }
 
             if(viewId === 'overview') loadStatsAndCharts();
@@ -479,6 +522,9 @@
             await loadReviews(); 
             await loadSettings(); 
         }
+
+        // ... (باقي دوال loadStatsAndCharts, loadOrders, loadProducts, إلخ زي ما هي بالظبط) ...
+        // ملاحظة: لقد قمت بإضافة الدوال دي في الكود اللي فوق، أنت بس هتنسخ الكود كامل.
 
         async function loadStatsAndCharts() {
             const { data: orders } = await supabaseClient.from('orders').select('*').neq('status', 'cancelled');
@@ -991,8 +1037,15 @@
                     const badge = document.getElementById('orders-badge');
                     badge.innerText = newOrdersCount;
                     badge.classList.remove('hidden');
+                    
                     playNotificationSound();
                     showAdminToast('🔔 لديك طلب جديد!');
+                    startFlashingTitle();
+
+                    // إشعار ديسكتوب (لو المتصفح بيسمح)
+                    if (Notification.permission === "granted") {
+                        new Notification("طلب جديد من SELECT", { body: "لقد تم استلام طلب جديد." });
+                    }
                 }
                 loadOrders(); 
                 loadStatsAndCharts(); 
@@ -1009,6 +1062,11 @@
             .on('postgres_changes', { event: '*', schema: 'public', table: 'coupons' }, () => { loadCoupons(); })
             .on('postgres_changes', { event: '*', schema: 'public', table: 'bundles' }, () => { loadBundles(); })
             .subscribe();
+
+        // طلب صلاحية الإشعارات من المتصفح
+        if ("Notification" in window) {
+            Notification.requestPermission();
+        }
 
         checkSession();
     </script>
