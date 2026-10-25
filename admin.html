@@ -109,6 +109,7 @@
                                         <th class="p-4 border-b">التاريخ</th>
                                         <th class="p-4 border-b">العميل</th>
                                         <th class="p-4 border-b">الهاتف</th>
+                                        <th class="p-4 border-b">المحافظة</th>
                                         <th class="p-4 border-b">الإجمالي</th>
                                         <th class="p-4 border-b">كوبون</th>
                                         <th class="p-4 border-b">الحالة</th>
@@ -169,26 +170,39 @@
                     <div class="bg-white p-4 md:p-8 border border-gray-200 shadow-sm max-w-5xl mx-auto rounded-lg">
                         <form id="settings-form" onsubmit="saveSettings(event)" class="space-y-8 md:space-y-10">
                             
-                            <!-- القسم الجديد: نصوص دقيقة -->
+                            <!-- إعدادات الشحن -->
+                            <div class="bg-blue-50 border border-blue-200 p-4 md:p-6 rounded-lg">
+                                <h3 class="font-bold text-sm border-b border-blue-200 pb-2 mb-4 text-blue-800">إعدادات الشحن والتوصيل</h3>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div><label class="block text-xs font-bold mb-1 text-blue-900">سعر الشحن للقاهرة والجيزة</label><input type="number" id="set-ship-cairo" class="w-full border border-blue-300 p-2 text-sm bg-white outline-none rounded"></div>
+                                    <div><label class="block text-xs font-bold mb-1 text-blue-900">سعر الشحن للدلتا والمحافظات الساحلية</label><input type="number" id="set-ship-delta" class="w-full border border-blue-300 p-2 text-sm bg-white outline-none rounded"></div>
+                                    <div><label class="block text-xs font-bold mb-1 text-blue-900">سعر الشحن للصعيد وسيناء</label><input type="number" id="set-ship-upper" class="w-full border border-blue-300 p-2 text-sm bg-white outline-none rounded"></div>
+                                    <div><label class="block text-xs font-bold mb-1 text-blue-900">حد الشحن المجاني (مثال: 1500)</label><input type="number" id="set-free-ship" class="w-full border border-blue-300 p-2 text-sm bg-white outline-none rounded"></div>
+                                </div>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                                    <div><label class="block text-[10px] font-bold mb-1 text-blue-900">نص (اختر المحافظة)</label><input type="text" id="set-city-ph" class="w-full border border-blue-300 p-2 text-xs bg-white outline-none rounded"></div>
+                                    <div><label class="block text-[10px] font-bold mb-1 text-blue-900">نص (الحي، الشارع، رقم العمارة)</label><input type="text" id="set-address-ph" class="w-full border border-blue-300 p-2 text-xs bg-white outline-none rounded"></div>
+                                    <div><label class="block text-[10px] font-bold mb-1 text-blue-900">نص (مصاريف الشحن:)</label><input type="text" id="set-ship-label" class="w-full border border-blue-300 p-2 text-xs bg-white outline-none rounded"></div>
+                                    <div><label class="block text-[10px] font-bold mb-1 text-blue-900">نص (شحن مجاني)</label><input type="text" id="set-free-ship-text" class="w-full border border-blue-300 p-2 text-xs bg-white outline-none rounded"></div>
+                                </div>
+                            </div>
+
+                            <!-- نصوص دقيقة -->
                             <div>
                                 <h3 class="font-bold text-sm border-b pb-2 mb-4 text-black">نصوص دقيقة (كل حرف في الموقع)</h3>
                                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                                     <div><label class="block text-[10px] font-bold mb-1">النص العلوي للبانر</label><input type="text" id="set-ui-top-title" class="w-full border p-2 text-xs bg-gray-50 outline-none rounded"></div>
                                     <div><label class="block text-[10px] font-bold mb-1">نص زرار الكويز</label><input type="text" id="set-quiz-btn-text" class="w-full border p-2 text-xs bg-gray-50 outline-none rounded"></div>
                                     <div><label class="block text-[10px] font-bold mb-1">سنة الفوتر (مثال: 2024)</label><input type="text" id="set-footer-year" class="w-full border p-2 text-xs bg-gray-50 outline-none rounded"></div>
-                                    
                                     <div><label class="block text-[10px] font-bold mb-1">نص (Sold Out)</label><input type="text" id="set-sold-out-text" class="w-full border p-2 text-xs bg-gray-50 outline-none rounded"></div>
                                     <div><label class="block text-[10px] font-bold mb-1">نص (عرض سريع)</label><input type="text" id="set-quick-view-text" class="w-full border p-2 text-xs bg-gray-50 outline-none rounded"></div>
-                                    <div><label class="block text-[10px] font-bold mb-1">نص (جديد - للمنتجات بدون تقييم)</label><input type="text" id="set-new-text" class="w-full border p-2 text-xs bg-gray-50 outline-none rounded"></div>
-                                    
+                                    <div><label class="block text-[10px] font-bold mb-1">نص (جديد)</label><input type="text" id="set-new-text" class="w-full border p-2 text-xs bg-gray-50 outline-none rounded"></div>
                                     <div><label class="block text-[10px] font-bold mb-1">نص (أضف للسلة)</label><input type="text" id="set-add-to-cart-text" class="w-full border p-2 text-xs bg-gray-50 outline-none rounded"></div>
-                                    <div><label class="block text-[10px] font-bold mb-1">نص (يبدأ من - للأحجام)</label><input type="text" id="set-starts-from-text" class="w-full border p-2 text-xs bg-gray-50 outline-none rounded"></div>
+                                    <div><label class="block text-[10px] font-bold mb-1">نص (يبدأ من)</label><input type="text" id="set-starts-from-text" class="w-full border p-2 text-xs bg-gray-50 outline-none rounded"></div>
                                     <div><label class="block text-[10px] font-bold mb-1">نص (آخر X قطع)</label><input type="text" id="set-urgency-prefix" class="w-full border p-2 text-xs bg-gray-50 outline-none rounded"></div>
-
                                     <div><label class="block text-[10px] font-bold mb-1">عنوان نافذة العرض السريع</label><input type="text" id="set-qv-title" class="w-full border p-2 text-xs bg-gray-50 outline-none rounded"></div>
                                     <div><label class="block text-[10px] font-bold mb-1">نص (اختر الحجم)</label><input type="text" id="set-select-size-text" class="w-full border p-2 text-xs bg-gray-50 outline-none rounded"></div>
                                     <div><label class="block text-[10px] font-bold mb-1">نص (منتجات مشابهة)</label><input type="text" id="set-related-products-text" class="w-full border p-2 text-xs bg-gray-50 outline-none rounded"></div>
-                                    
                                     <div><label class="block text-[10px] font-bold mb-1">نص (حقيبتك فارغة)</label><input type="text" id="set-cart-empty-text" class="w-full border p-2 text-xs bg-gray-50 outline-none rounded"></div>
                                     <div><label class="block text-[10px] font-bold mb-1">نص (كن أول من يشاركنا رأيه)</label><input type="text" id="set-no-reviews-text" class="w-full border p-2 text-xs bg-gray-50 outline-none rounded"></div>
                                     <div><label class="block text-[10px] font-bold mb-1">نص (اشترى:)</label><input type="text" id="set-bought-text" class="w-full border p-2 text-xs bg-gray-50 outline-none rounded"></div>
@@ -202,27 +216,12 @@
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div><label class="block text-xs font-bold mb-1">Google Analytics ID (G-XXXX)</label><input type="text" id="set-ga-id" placeholder="G-XXXXXXX" class="w-full border p-2 text-sm bg-gray-50 outline-none rounded"></div>
                                     <div><label class="block text-xs font-bold mb-1">Facebook Pixel ID</label><input type="text" id="set-fb-pixel" placeholder="1234567890" class="w-full border p-2 text-sm bg-gray-50 outline-none rounded"></div>
-                                    
                                     <div><label class="block text-xs font-bold mb-1">نص رسالة الواتساب</label><input type="text" id="set-wa-msg" placeholder="أريد طلب هذا المنتج:" class="w-full border p-2 text-sm bg-gray-50 outline-none rounded"></div>
-                                    <div class="flex items-center mt-4">
-                                        <input type="checkbox" id="set-show-wa" class="w-4 h-4 mr-2">
-                                        <label for="set-show-wa" class="text-sm font-bold text-gray-700">تفعيل زرار الطلب عبر واتساب</label>
-                                    </div>
-
+                                    <div class="flex items-center mt-4"><input type="checkbox" id="set-show-wa" class="w-4 h-4 mr-2"><label for="set-show-wa" class="text-sm font-bold text-gray-700">تفعيل زرار الطلب عبر واتساب</label></div>
                                     <div><label class="block text-xs font-bold mb-1">حد التنبيه للمخزون (مثال: 5)</label><input type="number" id="set-urgency-limit" value="5" class="w-full border p-2 text-sm bg-gray-50 outline-none rounded"></div>
-                                    <div class="flex items-center mt-4">
-                                        <input type="checkbox" id="set-show-urgency" class="w-4 h-4 mr-2">
-                                        <label for="set-show-urgency" class="text-sm font-bold text-gray-700">تفعيل إشعارات الندرة</label>
-                                    </div>
-
-                                    <div class="flex items-center mt-4">
-                                        <input type="checkbox" id="set-show-related" class="w-4 h-4 mr-2">
-                                        <label for="set-show-related" class="text-sm font-bold text-gray-700">تفعيل قسم "منتجات مشابهة"</label>
-                                    </div>
-                                    <div class="flex items-center mt-4">
-                                        <input type="checkbox" id="set-show-quiz" class="w-4 h-4 mr-2">
-                                        <label for="set-show-quiz" class="text-sm font-bold text-gray-700">تفعيل Quiz "اكتشف عطرك"</label>
-                                    </div>
+                                    <div class="flex items-center mt-4"><input type="checkbox" id="set-show-urgency" class="w-4 h-4 mr-2"><label for="set-show-urgency" class="text-sm font-bold text-gray-700">تفعيل إشعارات الندرة</label></div>
+                                    <div class="flex items-center mt-4"><input type="checkbox" id="set-show-related" class="w-4 h-4 mr-2"><label for="set-show-related" class="text-sm font-bold text-gray-700">تفعيل قسم "منتجات مشابهة"</label></div>
+                                    <div class="flex items-center mt-4"><input type="checkbox" id="set-show-quiz" class="w-4 h-4 mr-2"><label for="set-show-quiz" class="text-sm font-bold text-gray-700">تفعيل Quiz "اكتشف عطرك"</label></div>
                                 </div>
                             </div>
 
@@ -317,12 +316,57 @@
     </div>
 
     <!-- Modals -->
-    <!-- (نفس المودالز بتاعة المنتج والطلب اللي فاتوا) -->
     <div id="product-modal" class="fixed inset-0 z-[60] bg-black/60 hidden items-center justify-center p-4 backdrop-blur-sm">
-        <!-- محتوى المودال هنا -->
+        <div class="bg-white w-full max-w-lg overflow-hidden flex flex-col max-h-[95vh] md:max-h-[90vh] shadow-2xl border border-gray-200 rounded-lg">
+            <div class="bg-black p-4 md:p-5 flex justify-between items-center shrink-0"><h3 class="text-base md:text-lg text-white">إضافة / تعديل منتج</h3><button onclick="document.getElementById('product-modal').classList.add('hidden'); document.getElementById('product-modal').classList.remove('flex');" class="text-gray-400 hover:text-white text-2xl">&times;</button></div>
+            <div class="p-4 md:p-6 overflow-y-auto">
+                <form id="product-form" onsubmit="saveProduct(event)" class="space-y-4">
+                    <input type="hidden" id="prod-id"><input type="hidden" id="prod-image-url">
+                    <div><label class="block text-xs font-bold mb-1">اسم العطر</label><input type="text" id="prod-name" required class="w-full border p-2 text-sm bg-gray-50 outline-none rounded"></div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div><label class="block text-xs font-bold mb-1">الماركة</label><input type="text" id="prod-brand" required class="w-full border p-2 text-sm bg-gray-50 outline-none rounded"></div>
+                        <div><label class="block text-xs font-bold mb-1">التصنيف</label>
+                            <select id="prod-category" class="w-full border p-2 text-sm bg-gray-50 outline-none rounded">
+                                <option value="men">رجالي</option><option value="women">نسائي</option><option value="unisex">للجنسين</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div><label class="block text-xs font-bold mb-1">السعر الأساسي</label><input type="number" id="prod-price" required class="w-full border p-2 text-sm bg-gray-50 outline-none rounded"></div>
+                        <div><label class="block text-xs font-bold mb-1">المخزون</label><input type="number" id="prod-stock" required class="w-full border p-2 text-sm bg-gray-50 outline-none rounded"></div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold mb-1">الأحجام والأسعار (اختياري)</label>
+                        <textarea id="prod-variants" class="w-full border p-2 text-sm bg-gray-50 outline-none rounded" rows="2" placeholder='مثال: [{"size":"50ml", "price":500}, {"size":"100ml", "price":800}]'></textarea>
+                        <p class="text-[10px] text-gray-500 mt-1">اكتبها بصيغة JSON.</p>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div><label class="block text-xs font-bold mb-1">الحجم الافتراضي</label><input type="text" id="prod-size" required class="w-full border p-2 text-sm bg-gray-50 outline-none rounded"></div>
+                        <div><label class="block text-xs font-bold mb-1">الهرم العطري</label><input type="text" id="prod-notes" required class="w-full border p-2 text-sm bg-gray-50 outline-none rounded"></div>
+                    </div>
+                    <div class="bg-gray-50 border border-dashed border-gray-300 p-4 text-center rounded"><label class="block text-xs font-bold text-gray-600 mb-2">صورة المنتج</label><input type="file" id="prod-image-file" accept="image/*" class="w-full text-xs text-gray-500"></div>
+                    <button type="submit" id="save-prod-btn" class="w-full bg-black text-white font-bold py-3 mt-2 text-sm hover:bg-gray-800 transition rounded">حفظ</button>
+                </form>
+            </div>
+        </div>
     </div>
+
     <div id="order-modal" class="fixed inset-0 z-[60] bg-black/60 hidden items-center justify-center p-4 backdrop-blur-sm">
-        <!-- محتوى المودال هنا -->
+        <div class="bg-white w-full max-w-lg overflow-hidden flex flex-col max-h-[95vh] md:max-h-[90vh] shadow-2xl border border-gray-200 rounded-lg">
+            <div class="bg-black p-4 md:p-5 flex justify-between items-center shrink-0"><h3 class="text-base md:text-lg text-white">تفاصيل الطلب</h3><button onclick="document.getElementById('order-modal').classList.add('hidden'); document.getElementById('order-modal').classList.remove('flex');" class="text-gray-400 hover:text-white text-2xl">&times;</button></div>
+            <div class="p-4 md:p-6 overflow-y-auto">
+                <div id="order-customer-info" class="mb-6 bg-gray-50 p-4 text-xs border border-gray-200 rounded"></div>
+                <h4 class="font-bold mb-2 border-b pb-2 text-sm">المنتجات:</h4>
+                <div id="order-items-list" class="space-y-2 text-xs mb-6"></div>
+                <h4 class="font-bold mb-2 border-b pb-2 mt-6 text-sm">الشحن والتتبع:</h4>
+                <div class="space-y-3">
+                    <input type="text" id="track-company" placeholder="شركة الشحن" class="w-full border p-2 text-sm bg-gray-50 outline-none rounded">
+                    <input type="text" id="track-number" placeholder="رقم التتبع" class="w-full border p-2 text-sm bg-gray-50 outline-none rounded">
+                    <button onclick="saveTracking()" class="w-full bg-black text-white font-bold py-2.5 text-sm hover:bg-gray-800 transition rounded mb-2">حفظ التتبع</button>
+                    <button onclick="printInvoice()" class="w-full bg-gray-200 text-black font-bold py-2.5 text-sm hover:bg-gray-300 transition rounded"><i class="fa-solid fa-print mr-2"></i> طباعة الفاتورة</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -416,23 +460,23 @@
         }
         function filterOrders() {
             const term = document.getElementById('order-search').value.toLowerCase();
-            const filtered = allOrders.filter(o => o.customer_name.toLowerCase().includes(term) || o.phone.includes(term) || (o.coupon_code && o.coupon_code.toLowerCase().includes(term)));
+            const filtered = allOrders.filter(o => o.customer_name.toLowerCase().includes(term) || o.phone.includes(term) || (o.coupon_code && o.coupon_code.toLowerCase().includes(term)) || (o.city && o.city.toLowerCase().includes(term)));
             renderOrdersTable(filtered);
         }
         function renderOrdersTable(ordersToRender) {
             const list = document.getElementById('orders-list'); list.innerHTML = '';
-            if(ordersToRender.length === 0) { list.innerHTML = '<tr><td colspan="7" class="text-center p-4 text-gray-500">لا يوجد طلبات.</td></tr>'; return; }
+            if(ordersToRender.length === 0) { list.innerHTML = '<tr><td colspan="8" class="text-center p-4 text-gray-500">لا يوجد طلبات.</td></tr>'; return; }
             ordersToRender.forEach(order => {
                 const date = new Date(order.created_at).toLocaleDateString('ar-EG');
                 const statusColors = { pending: 'bg-gray-200 text-gray-800', shipped: 'bg-blue-100 text-blue-700', delivered: 'bg-green-100 text-green-700', cancelled: 'bg-red-100 text-red-700' };
                 const couponBadge = order.coupon_code ? `<span class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-bold" title="خصم ${order.discount_amount} ج.م">${order.coupon_code}</span>` : '<span class="text-gray-400 text-xs">-</span>';
-                list.innerHTML += `<tr class="hover:bg-gray-50 border-b"><td class="p-4 text-xs text-gray-500">${date}</td><td class="p-4 font-bold text-xs">${censorText(order.customer_name)}</td><td class="p-4 text-blue-600 text-xs" dir="ltr">${order.phone}</td><td class="p-4 font-bold text-xs">${order.total_price} ج.م</td><td class="p-4">${couponBadge}</td><td class="p-4"><select onchange="updateOrderStatus(${order.id}, this.value)" class="border p-1 text-xs font-bold outline-none ${statusColors[order.status]} rounded"><option value="pending" ${order.status === 'pending' ? 'selected' : ''}>انتظار</option><option value="shipped" ${order.status === 'shipped' ? 'selected' : ''}>شحن</option><option value="delivered" ${order.status === 'delivered' ? 'selected' : ''}>تسليم</option><option value="cancelled" ${order.status === 'cancelled' ? 'selected' : ''}>ملغي</option></select></td><td class="p-4"><button onclick='openOrderModal(${JSON.stringify(order).replace(/'/g, "&#39;")})' class="bg-black text-white px-3 py-1 font-bold text-xs hover:bg-gray-800 rounded">عرض</button></td></tr>`;
+                list.innerHTML += `<tr class="hover:bg-gray-50 border-b"><td class="p-4 text-xs text-gray-500">${date}</td><td class="p-4 font-bold text-xs">${censorText(order.customer_name)}</td><td class="p-4 text-blue-600 text-xs" dir="ltr">${order.phone}</td><td class="p-4 text-xs font-bold text-gray-700">${censorText(order.city)}</td><td class="p-4 font-bold text-xs">${order.total_price} ج.م</td><td class="p-4">${couponBadge}</td><td class="p-4"><select onchange="updateOrderStatus(${order.id}, this.value)" class="border p-1 text-xs font-bold outline-none ${statusColors[order.status]} rounded"><option value="pending" ${order.status === 'pending' ? 'selected' : ''}>انتظار</option><option value="shipped" ${order.status === 'shipped' ? 'selected' : ''}>شحن</option><option value="delivered" ${order.status === 'delivered' ? 'selected' : ''}>تسليم</option><option value="cancelled" ${order.status === 'cancelled' ? 'selected' : ''}>ملغي</option></select></td><td class="p-4"><button onclick='openOrderModal(${JSON.stringify(order).replace(/'/g, "&#39;")})' class="bg-black text-white px-3 py-1 font-bold text-xs hover:bg-gray-800 rounded">عرض</button></td></tr>`;
             });
         }
         function openOrderModal(order) {
             currentOrderId = order;
             let couponInfo = order.coupon_code ? `<p class="mt-2 text-green-600 font-bold border-t pt-2 border-green-200"><strong>كوبون مستخدم:</strong> ${order.coupon_code} (تم خصم ${order.discount_amount} ج.م)</p>` : '';
-            document.getElementById('order-customer-info').innerHTML = `<p><strong>الاسم:</strong> ${censorText(order.customer_name)}</p><p class="mt-1"><strong>الهاتف:</strong> ${order.phone}</p><p class="mt-1"><strong>العنوان:</strong> ${censorText(order.city)} - ${censorText(order.address)}</p>${couponInfo}`;
+            document.getElementById('order-customer-info').innerHTML = `<p><strong>الاسم:</strong> ${censorText(order.customer_name)}</p><p class="mt-1"><strong>الهاتف:</strong> ${order.phone}</p><p class="mt-1"><strong>المحافظة:</strong> ${censorText(order.city)}</p><p class="mt-1"><strong>العنوان:</strong> ${censorText(order.address)}</p>${couponInfo}`;
             const itemsList = document.getElementById('order-items-list'); itemsList.innerHTML = '';
             let items = order.items; if(typeof items === 'string') items = JSON.parse(items);
             items.forEach(item => { itemsList.innerHTML += `<div class="flex justify-between border-b pb-2"><span>${censorText(item.name)} ${item.size ? `(${item.size})` : ''} × ${item.qty}</span><span class="font-bold">${item.price * item.qty} ج.م</span></div>`; });
@@ -447,7 +491,7 @@
             let items = order.items; if(typeof items === 'string') items = JSON.parse(items);
             let printWindow = window.open('', '', 'width=800,height=600');
             let html = `<html dir="rtl"><head><title>فاتورة #${order.id}</title><style>body{font-family:sans-serif;padding:20px;} table{width:100%;border-collapse:collapse;margin-top:20px;} th,td{border:1px solid #ddd;padding:8px;text-align:right;} th{background:#f2f2f2;}</style></head><body>`;
-            html += `<h2>فاتورة SELECT</h2><p><strong>رقم الطلب:</strong> #${order.id}</p><p><strong>العميل:</strong> ${order.customer_name}</p><p><strong>الهاتف:</strong> ${order.phone}</p><p><strong>العنوان:</strong> ${order.city} - ${order.address}</p>`;
+            html += `<h2>فاتورة SELECT</h2><p><strong>رقم الطلب:</strong> #${order.id}</p><p><strong>العميل:</strong> ${order.customer_name}</p><p><strong>الهاتف:</strong> ${order.phone}</p><p><strong>المحافظة:</strong> ${order.city}</p><p><strong>العنوان:</strong> ${order.address}</p>`;
             html += `<table><thead><tr><th>المنتج</th><th>الكمية</th><th>السعر</th><th>الإجمالي</th></tr></thead><tbody>`;
             items.forEach(item => { html += `<tr><td>${item.name} (${item.size || ''})</td><td>${item.qty}</td><td>${item.price} ج.م</td><td>${item.price * item.qty} ج.م</td></tr>`; });
             html += `</tbody></table><h3 style="text-align:left;margin-top:20px;">الإجمالي: ${order.total_price} ج.م</h3></body></html>`;
@@ -579,15 +623,15 @@
         async function loadSettings() {
             const { data } = await supabaseClient.from('settings').select('*').eq('id', 1).single();
             if (data) { 
-                // الميزات
-                document.getElementById('set-ga-id').value = data.ga_id || '';
-                document.getElementById('set-fb-pixel').value = data.fb_pixel_id || '';
-                document.getElementById('set-wa-msg').value = data.wa_order_text || 'أريد طلب هذا المنتج:';
-                document.getElementById('set-show-wa').checked = data.show_wa_order !== false;
-                document.getElementById('set-urgency-limit').value = data.urgency_limit || 5;
-                document.getElementById('set-show-urgency').checked = data.show_urgency !== false;
-                document.getElementById('set-show-related').checked = data.show_related !== false;
-                document.getElementById('set-show-quiz').checked = data.show_quiz !== false;
+                // الشحن
+                document.getElementById('set-ship-cairo').value = data.shipping_cairo || 60;
+                document.getElementById('set-ship-delta').value = data.shipping_delta || 80;
+                document.getElementById('set-ship-upper').value = data.shipping_upper || 90;
+                document.getElementById('set-free-ship').value = data.free_shipping_threshold || 1500;
+                document.getElementById('set-city-ph').value = data.city_placeholder_text || 'اختر المحافظة';
+                document.getElementById('set-address-ph').value = data.address_placeholder_text || 'الحي، الشارع، رقم العمارة...';
+                document.getElementById('set-ship-label').value = data.shipping_label_text || 'مصاريف الشحن:';
+                document.getElementById('set-free-ship-text').value = data.free_shipping_text || 'شحن مجاني';
 
                 // النصوص الدقيقة
                 document.getElementById('set-ui-top-title').value = data.ui_top_title || 'The Essence of Luxury';
@@ -606,6 +650,16 @@
                 document.getElementById('set-no-reviews-text').value = data.no_reviews_text || 'كن أول من يشاركنا رأيه!';
                 document.getElementById('set-bought-text').value = data.bought_text || 'اشترى:';
                 document.getElementById('set-add-review-text').value = data.add_review_text || 'أضف تقييم';
+
+                // الميزات
+                document.getElementById('set-ga-id').value = data.ga_id || '';
+                document.getElementById('set-fb-pixel').value = data.fb_pixel_id || '';
+                document.getElementById('set-wa-msg').value = data.wa_order_text || 'أريد طلب هذا المنتج:';
+                document.getElementById('set-show-wa').checked = data.show_wa_order !== false;
+                document.getElementById('set-urgency-limit').value = data.urgency_limit || 5;
+                document.getElementById('set-show-urgency').checked = data.show_urgency !== false;
+                document.getElementById('set-show-related').checked = data.show_related !== false;
+                document.getElementById('set-show-quiz').checked = data.show_quiz !== false;
 
                 // الأساسية
                 document.getElementById('set-name').value = data.site_name || ''; 
@@ -678,14 +732,14 @@
             }
 
             const data = { 
-                ga_id: document.getElementById('set-ga-id').value,
-                fb_pixel_id: document.getElementById('set-fb-pixel').value,
-                wa_order_text: document.getElementById('set-wa-msg').value,
-                show_wa_order: document.getElementById('set-show-wa').checked,
-                urgency_limit: parseInt(document.getElementById('set-urgency-limit').value),
-                show_urgency: document.getElementById('set-show-urgency').checked,
-                show_related: document.getElementById('set-show-related').checked,
-                show_quiz: document.getElementById('set-show-quiz').checked,
+                shipping_cairo: parseFloat(document.getElementById('set-ship-cairo').value),
+                shipping_delta: parseFloat(document.getElementById('set-ship-delta').value),
+                shipping_upper: parseFloat(document.getElementById('set-ship-upper').value),
+                free_shipping_threshold: parseFloat(document.getElementById('set-free-ship').value),
+                city_placeholder_text: censorText(document.getElementById('set-city-ph').value),
+                address_placeholder_text: censorText(document.getElementById('set-address-ph').value),
+                shipping_label_text: censorText(document.getElementById('set-ship-label').value),
+                free_shipping_text: censorText(document.getElementById('set-free-ship-text').value),
 
                 ui_top_title: censorText(document.getElementById('set-ui-top-title').value),
                 quiz_btn_text: censorText(document.getElementById('set-quiz-btn-text').value),
@@ -703,6 +757,15 @@
                 no_reviews_text: censorText(document.getElementById('set-no-reviews-text').value),
                 bought_text: censorText(document.getElementById('set-bought-text').value),
                 add_review_text: censorText(document.getElementById('set-add-review-text').value),
+
+                ga_id: document.getElementById('set-ga-id').value,
+                fb_pixel_id: document.getElementById('set-fb-pixel').value,
+                wa_order_text: document.getElementById('set-wa-msg').value,
+                show_wa_order: document.getElementById('set-show-wa').checked,
+                urgency_limit: parseInt(document.getElementById('set-urgency-limit').value),
+                show_urgency: document.getElementById('set-show-urgency').checked,
+                show_related: document.getElementById('set-show-related').checked,
+                show_quiz: document.getElementById('set-show-quiz').checked,
 
                 site_name: censorText(document.getElementById('set-name').value), footer_text: censorText(document.getElementById('set-footer').value), logo_url: logoUrl, hero_title: censorText(document.getElementById('set-title').value), hero_subtitle: censorText(document.getElementById('set-subtitle').value), hero_btn: censorText(document.getElementById('set-hero-btn').value), hero_image: heroImageUrl,
                 top_bar_text: censorText(document.getElementById('set-top-bar').value), section_products_title: censorText(document.getElementById('set-sec-products').value), bundles_title: censorText(document.getElementById('set-bundles-title').value),
