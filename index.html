@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SELECT | الفخامة والتميز</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,600;0,800;1,400&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,800;1,400&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -14,120 +14,134 @@
             theme: { 
                 extend: { 
                     colors: { 
-                        brandBlack: '#111111', brandGold: '#D4AF37', brandWhite: '#FFFFFF', brandOffWhite: '#FAFAFA', brandGray: '#F0F0F0', brandBorder: '#E5E5E5', brandText: '#666666'
+                        brandBlack: '#0A0A0A', 
+                        brandGold: '#C5A880', // ذهبي شامبانيا فخم
+                        brandWhite: '#FFFFFF', 
+                        brandOffWhite: '#F5F5F7', 
+                        brandGray: '#EAEAEA',
+                        brandText: '#555555'
                     }, 
                     fontFamily: { 
-                        arabicBody: ['Tajawal', 'sans-serif'], arabicTitle: ['Amiri', 'serif'], english: ['Playfair Display', 'serif'] 
+                        arabic: ['Cairo', 'sans-serif'], 
+                        english: ['Playfair Display', 'serif'] 
                     } 
                 } 
             } 
         }
     </script>
     <style>
-        body { font-family: 'Tajawal', sans-serif; background-color: #FAFAFA; color: #111111; scroll-behavior: smooth; overflow-x: hidden;}
-        .font-title { font-family: 'Amiri', serif; }
+        body { font-family: 'Cairo', sans-serif; background-color: #F5F5F7; color: #0A0A0A; scroll-behavior: smooth; overflow-x: hidden;}
         .brand-english { font-family: 'Playfair Display', serif; font-weight: 800; letter-spacing: 0.05em; }
-        .arabic-text { letter-spacing: normal !important; }
         .cart-open { transform: translateX(0) !important; }
         .modal-open { opacity: 1 !important; pointer-events: auto !important; }
         .modal-content { transform: translateY(0) scale(1) !important; }
-        .glass-nav { background: rgba(250, 250, 250, 0.95); backdrop-filter: blur(20px); border-bottom: 1px solid #E5E5E5; }
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: #FAFAFA; }
-        ::-webkit-scrollbar-thumb { background: #D4AF37; }
-        #toast { visibility: hidden; min-width: 250px; background-color: #111111; color: #D4AF37; text-align: center; padding: 16px; position: fixed; z-index: 100; left: 50%; bottom: 30px; transform: translateX(-50%); font-weight: 500; opacity: 0; transition: all 0.5s ease; border-radius: 2px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .glass-nav { background: rgba(245, 245, 247, 0.85); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(0,0,0,0.05); }
+        
+        /* سكرول بار رفيع جداً */
+        ::-webkit-scrollbar { width: 3px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #C5A880; }
+        
+        #toast { visibility: hidden; min-width: 250px; background-color: #0A0A0A; color: #C5A880; text-align: center; padding: 16px; position: fixed; z-index: 100; left: 50%; bottom: 30px; transform: translateX(-50%); font-weight: 600; opacity: 0; transition: all 0.5s ease; border-radius: 2px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
         #toast.show { visibility: visible; opacity: 1; bottom: 40px; }
+        
         #mobile-menu { display: none; }
         #mobile-menu.active { display: block; }
-        .hover-lift { transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.4s ease; }
-        .hover-lift:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0,0,0,0.06); }
+        
+        /* تأثيرات فخمة للصور */
         .img-zoom { transition: transform 1.5s cubic-bezier(0.25, 1, 0.5, 1); }
-        .group:hover .img-zoom { transform: scale(1.1); }
-        .gold-underline { position: relative; }
-        .gold-underline::after { content: ''; position: absolute; width: 0; height: 1px; bottom: -4px; left: 0; background-color: #D4AF37; transition: width 0.3s ease; }
-        .gold-underline:hover::after { width: 100%; }
+        .group:hover .img-zoom { transform: scale(1.05); }
+        
+        /* زر يظهر بحركة */
+        .btn-reveal { transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1); }
+        .group:hover .btn-reveal { transform: translateY(0); }
+
+        /* خط فخم للعناوين */
+        .heading-luxury { font-weight: 700; letter-spacing: -0.02em; }
     </style>
 </head>
-<body class="relative min-h-screen flex flex-col selection:bg-brandBlack selection:text-brandGold arabic-text">
+<body class="relative min-h-screen flex flex-col selection:bg-brandBlack selection:text-brandGold">
 
     <div id="toast">تمت العملية بنجاح!</div>
 
-    <div id="ui-top-bar" class="bg-brandBlack text-brandGold text-center py-2 text-[10px] md:text-xs tracking-widest uppercase font-bold">
+    <!-- الشريط العلوي -->
+    <div id="ui-top-bar" class="bg-brandBlack text-brandGold text-center py-2 text-[10px] md:text-xs tracking-[0.2em] uppercase font-semibold">
         Free Shipping on orders over 1500 EGP
     </div>
 
     <!-- ==================== Navbar ==================== -->
     <nav class="glass-nav sticky top-0 z-40 transition-all duration-300">
-        <div class="container mx-auto px-4 md:px-8 py-4 flex justify-between items-center relative">
+        <div class="container mx-auto px-6 md:px-12 py-4 flex justify-between items-center relative">
             <div class="flex items-center cursor-pointer z-20" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
-                <img id="site-logo" src="" class="h-10 md:h-14 object-contain hidden transition-transform hover:scale-105" alt="SELECT Logo">
-                <h1 id="site-name" class="text-3xl md:text-4xl brand-english text-brandBlack">SELECT</h1>
+                <img id="site-logo" src="" class="h-8 md:h-10 object-contain hidden" alt="SELECT Logo">
+                <h1 id="site-name" class="text-2xl md:text-3xl brand-english text-brandBlack">SELECT</h1>
             </div>
-            <div class="hidden md:flex items-center justify-center gap-10 absolute left-1/2 -translate-x-1/2">
-                <a href="#" id="nav-home" class="text-sm font-bold text-brandText hover:text-brandGold transition-colors gold-underline">الرئيسية</a>
-                <a href="#products" id="nav-shop" class="text-sm font-bold text-brandText hover:text-brandGold transition-colors gold-underline">المتجر</a>
+            <div class="hidden md:flex items-center justify-center gap-12 absolute left-1/2 -translate-x-1/2">
+                <a href="#" id="nav-home" class="text-xs font-semibold text-brandText hover:text-brandBlack transition-colors tracking-widest uppercase">الرئيسية</a>
+                <a href="#products" id="nav-shop" class="text-xs font-semibold text-brandText hover:text-brandBlack transition-colors tracking-widest uppercase">المتجر</a>
             </div>
-            <div class="flex items-center gap-4 md:gap-6 z-20">
-                <button onclick="openTrackingModal()" class="text-brandText hover:text-brandGold transition-colors"><i class="fa-solid fa-truck-fast text-lg"></i></button>
+            <div class="flex items-center gap-5 md:gap-7 z-20">
+                <button onclick="openTrackingModal()" class="text-brandText hover:text-brandBlack transition-colors"><i class="fa-solid fa-truck-fast text-lg"></i></button>
                 <div class="relative cursor-pointer group" onclick="toggleCart()">
-                    <span class="text-xl text-brandBlack group-hover:text-brandGold transition-colors"><i class="fa-solid fa-bag-shopping"></i></span>
-                    <span id="cart-count" class="absolute -top-2 -right-2 bg-brandBlack text-brandGold text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border border-brandGold">0</span>
+                    <span class="text-lg text-brandBlack group-hover:text-brandGold transition-colors"><i class="fa-solid fa-bag-shopping"></i></span>
+                    <span id="cart-count" class="absolute -top-2 -right-2 bg-brandGold text-brandBlack text-[9px] font-bold w-4 h-4 flex items-center justify-center rounded-full">0</span>
                 </div>
-                <button onclick="toggleMobileMenu()" class="md:hidden text-brandBlack text-2xl"><i class="fa-solid fa-bars-staggered"></i></button>
+                <button onclick="toggleMobileMenu()" class="md:hidden text-brandBlack text-xl"><i class="fa-solid fa-bars"></i></button>
             </div>
         </div>
-        <div id="mobile-menu" class="md:hidden bg-white border-t border-brandBorder px-4 py-4 absolute w-full shadow-xl">
-            <a href="#" id="nav-home-mobile" class="block py-3 text-sm font-bold text-brandText hover:text-brandGold border-b border-brandBorder">الرئيسية</a>
-            <a href="#products" onclick="toggleMobileMenu()" id="nav-shop-mobile" class="block py-3 text-sm font-bold text-brandText hover:text-brandGold">المتجر</a>
+        <div id="mobile-menu" class="md:hidden bg-brandWhite border-t border-gray-100 px-6 py-4 absolute w-full shadow-2xl">
+            <a href="#" id="nav-home-mobile" class="block py-3 text-sm font-semibold text-brandText hover:text-brandBlack border-b border-gray-100">الرئيسية</a>
+            <a href="#products" onclick="toggleMobileMenu()" id="nav-shop-mobile" class="block py-3 text-sm font-semibold text-brandText hover:text-brandBlack">المتجر</a>
         </div>
     </nav>
 
     <!-- ==================== Hero Section ==================== -->
-    <header class="relative bg-brandBlack text-center flex items-center justify-center min-h-[85vh] md:min-h-screen overflow-hidden">
-        <div id="hero-bg" class="absolute inset-0 bg-cover bg-center transition-transform duration-[30s] hover:scale-105 opacity-80" style="background-image: url('https://images.unsplash.com/photo-1594035910387-fea47794261f?q=80&w=2070&auto=format&fit=crop');"></div>
-        <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
-        <img id="hero-watermark-logo" src="" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] max-w-4xl opacity-5 pointer-events-none hidden mix-blend-overlay">
-        <div class="relative z-10 px-6 max-w-4xl mx-auto flex flex-col items-center mt-10">
-            <span class="text-[10px] md:text-xs font-bold tracking-[0.5em] text-brandGold mb-6 uppercase font-english">The Essence of Luxury</span>
-            <h2 id="hero-title" class="text-5xl md:text-7xl lg:text-8xl font-title font-bold text-white mb-6 leading-[1.3] drop-shadow-lg">اكتشف عطرك المميز</h2>
-            <p id="hero-subtitle" class="text-gray-300 text-sm md:text-lg mb-12 max-w-xl mx-auto font-light leading-relaxed tracking-wide">نقدم لك أفخم العطور الشرقية والفرنسية، لتترك أثراً لا يُنسى أينما ذهبت.</p>
-            <button onclick="document.getElementById('products').scrollIntoView({behavior: 'smooth'})" id="hero-btn" class="bg-transparent text-white px-12 md:px-16 py-4 font-bold text-sm tracking-widest border border-brandGold hover:bg-brandGold hover:text-brandBlack transition-all duration-500 uppercase">تسوق الآن</button>
+    <header class="relative bg-brandBlack text-center flex items-center justify-center min-h-[90vh] overflow-hidden">
+        <div id="hero-bg" class="absolute inset-0 bg-cover bg-center transition-transform duration-[20s] hover:scale-105 opacity-60" style="background-image: url('https://images.unsplash.com/photo-1594035910387-fea47794261f?q=80&w=2070&auto=format&fit=crop');"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-brandBlack via-brandBlack/50 to-transparent"></div>
+        
+        <img id="hero-watermark-logo" src="" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] max-w-3xl opacity-[0.03] pointer-events-none hidden mix-blend-overlay">
+        
+        <div class="relative z-10 px-6 max-w-5xl mx-auto flex flex-col items-center mt-12">
+            <span class="text-[10px] md:text-xs font-semibold tracking-[0.5em] text-brandGold mb-8 uppercase">The Essence of Luxury</span>
+            <h2 id="hero-title" class="text-5xl md:text-7xl lg:text-8xl heading-luxury text-white mb-6 leading-[1.1] drop-shadow-2xl">اكتشف عطرك المميز</h2>
+            <p id="hero-subtitle" class="text-gray-400 text-sm md:text-base mb-12 max-w-xl mx-auto font-light leading-relaxed tracking-wider">نقدم لك أفخم العطور الشرقية والفرنسية، لتترك أثراً لا يُنسى أينما ذهبت.</p>
+            <button onclick="document.getElementById('products').scrollIntoView({behavior: 'smooth'})" id="hero-btn" class="bg-transparent text-white px-10 py-4 font-semibold text-xs tracking-[0.2em] border border-white/30 hover:border-brandGold hover:bg-brandGold hover:text-brandBlack transition-all duration-500 uppercase">تسوق الآن</button>
         </div>
     </header>
 
     <!-- ==================== Bundles Section (تظهر فقط لو فيه باقات) ==================== -->
-    <section id="bundles-section" class="hidden bg-white py-16 md:py-24 border-b border-brandBorder">
-        <div class="container mx-auto px-4 md:px-8">
-            <div class="text-center mb-16">
-                <h3 id="bundles-section-title" class="text-3xl md:text-5xl font-title font-bold text-brandBlack mb-4">عروض خاصة</h3>
-                <div class="w-16 h-[1px] bg-brandGold mx-auto"></div>
+    <section id="bundles-section" class="hidden bg-brandWhite py-20 md:py-28 border-b border-gray-100">
+        <div class="container mx-auto px-6 md:px-12">
+            <div class="flex flex-col items-center mb-16">
+                <h3 id="bundles-section-title" class="text-2xl md:text-4xl heading-luxury text-brandBlack mb-4">عروض خاصة</h3>
+                <div class="w-12 h-[1px] bg-brandGold"></div>
             </div>
             <div id="bundles-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"></div>
         </div>
     </section>
 
     <!-- ==================== Products Section ==================== -->
-    <main class="container mx-auto py-20 md:py-28 px-4 md:px-8 flex-grow" id="products">
-        <div class="text-center mb-16 md:mb-24">
-            <h3 id="ui-sec-products" class="text-3xl md:text-5xl font-title font-bold text-brandBlack mb-4">مجموعتنا الحصرية</h3>
-            <div class="w-16 h-[1px] bg-brandGold mx-auto"></div>
+    <main class="container mx-auto py-20 md:py-28 px-6 md:px-12 flex-grow" id="products">
+        <div class="flex flex-col items-center mb-16">
+            <h3 id="ui-sec-products" class="text-2xl md:text-4xl heading-luxury text-brandBlack mb-4">مجموعتنا الحصرية</h3>
+            <div class="w-12 h-[1px] bg-brandGold"></div>
         </div>
 
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12 border-b border-brandBorder pb-8">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
             <div class="w-full md:w-auto">
-                <div class="flex gap-4 overflow-x-auto pb-2 scrollbar-hide w-full">
-                    <button onclick="filterCategory('all')" id="ui-cat-all" class="cat-btn whitespace-nowrap text-brandBlack border-b-2 border-brandGold pb-1 text-sm font-bold transition">الكل</button>
-                    <button onclick="filterCategory('men')" id="ui-cat-men" class="cat-btn whitespace-nowrap text-brandText border-b-2 border-transparent pb-1 text-sm font-bold hover:text-brandBlack transition">رجالي</button>
-                    <button onclick="filterCategory('women')" id="ui-cat-women" class="cat-btn whitespace-nowrap text-brandText border-b-2 border-transparent pb-1 text-sm font-bold hover:text-brandBlack transition">نسائي</button>
-                    <button onclick="filterCategory('unisex')" id="ui-cat-unisex" class="cat-btn whitespace-nowrap text-brandText border-b-2 border-transparent pb-1 text-sm font-bold hover:text-brandBlack transition">للجنسين</button>
+                <div class="flex gap-6 overflow-x-auto pb-2 scrollbar-hide w-full">
+                    <button onclick="filterCategory('all')" id="ui-cat-all" class="cat-btn whitespace-nowrap text-brandBlack border-b border-brandBlack pb-1 text-xs font-semibold tracking-wider transition">الكل</button>
+                    <button onclick="filterCategory('men')" id="ui-cat-men" class="cat-btn whitespace-nowrap text-brandText border-b border-transparent pb-1 text-xs font-semibold tracking-wider hover:text-brandBlack transition">رجالي</button>
+                    <button onclick="filterCategory('women')" id="ui-cat-women" class="cat-btn whitespace-nowrap text-brandText border-b border-transparent pb-1 text-xs font-semibold tracking-wider hover:text-brandBlack transition">نسائي</button>
+                    <button onclick="filterCategory('unisex')" id="ui-cat-unisex" class="cat-btn whitespace-nowrap text-brandText border-b border-transparent pb-1 text-xs font-semibold tracking-wider hover:text-brandBlack transition">للجنسين</button>
                 </div>
             </div>
-            <div class="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
-                <div class="relative w-full sm:w-64">
-                    <input type="text" id="search-input" placeholder="ابحث عن عطرك..." class="w-full bg-transparent border-b border-brandBorder py-2 px-2 focus:outline-none focus:border-brandGold transition-colors text-sm">
-                    <i class="fa-solid fa-magnifying-glass absolute left-2 top-3 text-gray-400 text-xs"></i>
+            <div class="flex flex-col sm:flex-row gap-6 w-full md:w-auto">
+                <div class="relative w-full sm:w-56">
+                    <input type="text" id="search-input" placeholder="ابحث..." class="w-full bg-transparent border-b border-gray-300 py-2 px-1 focus:outline-none focus:border-brandGold transition-colors text-xs">
                 </div>
-                <select id="price-filter" onchange="renderProducts()" class="bg-transparent border-b border-brandBorder text-brandText py-2 px-2 focus:outline-none focus:border-brandGold outline-none cursor-pointer text-sm font-bold">
+                <select id="price-filter" onchange="renderProducts()" class="bg-transparent border-b border-gray-300 text-brandText py-2 px-1 focus:outline-none focus:border-brandGold outline-none cursor-pointer text-xs font-semibold">
                     <option value="all" id="ui-filter-all">السعر: الكل</option>
                     <option value="low" id="ui-filter-low">أقل من 500 ج.م</option>
                     <option value="mid" id="ui-filter-mid">500 - 1000 ج.م</option>
@@ -136,112 +150,114 @@
             </div>
         </div>
 
-        <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-16"></div>
+        <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-12"></div>
     </main>
 
     <!-- ==================== Reviews Section ==================== -->
-    <section class="bg-white py-20 md:py-28 border-t border-brandBorder">
-        <div class="container mx-auto px-4 md:px-8">
-            <div class="text-center mb-16">
-                <h3 id="ui-sec-reviews" class="text-3xl md:text-4xl font-title font-bold text-brandBlack">آراء عملائنا</h3>
-                <div class="w-12 h-[1px] bg-brandGold mx-auto mt-4"></div>
+    <section class="bg-brandWhite py-20 md:py-28 border-t border-gray-100">
+        <div class="container mx-auto px-6 md:px-12">
+            <div class="flex flex-col items-center mb-16">
+                <h3 id="ui-sec-reviews" class="text-2xl md:text-4xl heading-luxury text-brandBlack mb-4">آراء عملائنا</h3>
+                <div class="w-12 h-[1px] bg-brandGold"></div>
             </div>
             <div id="latest-reviews-container" class="grid grid-cols-1 md:grid-cols-3 gap-8"></div>
         </div>
     </section>
 
     <!-- ==================== Footer ==================== -->
-    <footer class="bg-brandBlack text-white py-16 mt-auto border-t-4 border-brandGold">
+    <footer class="bg-brandBlack text-white py-16 mt-auto">
         <div class="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-10 text-center md:text-right">
             <div class="flex flex-col items-center md:items-start gap-4">
-                <img id="footer-logo" src="" class="h-12 object-contain hidden brightness-0 invert">
-                <h2 id="footer-logo-text" class="text-4xl brand-english text-brandGold">SELECT</h2>
-                <p class="text-gray-500 text-xs mt-2 tracking-widest"><span id="ui-footer-text">جميع الحقوق محفوظة</span> &copy; 2024 <span id="footer-name"></span></p>
+                <img id="footer-logo" src="" class="h-8 object-contain hidden brightness-0 invert">
+                <h2 id="footer-logo-text" class="text-3xl brand-english text-brandGold">SELECT</h2>
+                <p class="text-gray-500 text-[10px] tracking-widest uppercase"><span id="ui-footer-text">جميع الحقوق محفوظة</span> &copy; 2024 <span id="footer-name"></span></p>
             </div>
-            <div id="social-links" class="flex gap-8 text-lg text-gray-400"></div>
+            <div id="social-links" class="flex gap-6 text-sm text-gray-500"></div>
         </div>
     </footer>
 
-    <a id="whatsapp-btn" href="#" target="_blank" class="hidden fixed bottom-8 right-8 bg-brandBlack border border-brandGold text-brandGold w-14 h-14 flex items-center justify-center text-2xl shadow-2xl hover:bg-brandGold hover:text-brandBlack transition-all transform hover:scale-110 z-40 rounded-full"><i class="fa-brands fa-whatsapp"></i></a>
+    <a id="whatsapp-btn" href="#" target="_blank" class="hidden fixed bottom-8 right-8 bg-brandWhite text-brandBlack border border-gray-200 w-12 h-12 flex items-center justify-center text-xl shadow-2xl hover:bg-brandGold hover:text-white transition-all transform hover:scale-110 z-40 rounded-full"><i class="fa-brands fa-whatsapp"></i></a>
 
     <!-- ==================== Modals & Sidebars ==================== -->
-    <div id="overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 hidden transition-opacity" onclick="toggleCart()"></div>
+    <div id="overlay" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 hidden transition-opacity" onclick="toggleCart()"></div>
     
-    <div id="cart-sidebar" class="fixed inset-y-0 left-0 w-full md:w-[420px] bg-brandOffWhite shadow-2xl transform -translate-x-full transition-transform duration-500 z-50 flex flex-col border-l border-brandBorder">
-        <div class="p-8 border-b border-brandBorder flex justify-between items-center bg-white">
-            <h3 id="ui-cart-title" class="text-2xl font-title font-bold text-brandBlack">حقيبة التسوق</h3>
-            <button onclick="toggleCart()" class="text-gray-400 hover:text-brandGold transition"><i class="fa-solid fa-xmark text-2xl"></i></button>
+    <div id="cart-sidebar" class="fixed inset-y-0 left-0 w-full md:w-[400px] bg-brandWhite shadow-2xl transform -translate-x-full transition-transform duration-500 z-50 flex flex-col">
+        <div class="p-8 border-b border-gray-100 flex justify-between items-center">
+            <h3 id="ui-cart-title" class="text-xl font-bold heading-luxury text-brandBlack">حقيبة التسوق</h3>
+            <button onclick="toggleCart()" class="text-gray-400 hover:text-brandBlack transition"><i class="fa-solid fa-xmark text-xl"></i></button>
         </div>
         <div id="cart-items" class="flex-1 p-8 overflow-y-auto"></div>
-        <div class="p-8 border-t border-brandBorder bg-white">
-            <div class="flex gap-2 mb-6">
-                <input type="text" id="coupon-input" placeholder="كود الخصم" class="w-full bg-brandOffWhite border border-brandBorder p-3 text-sm outline-none focus:border-brandGold transition uppercase text-center tracking-widest">
-                <button onclick="applyCoupon()" id="ui-coupon-btn" class="bg-brandBlack text-brandGold px-6 font-bold text-sm hover:bg-gray-800 transition">تطبيق</button>
+        <div class="p-8 border-t border-gray-100 bg-brandOffWhite">
+            <div class="flex gap-2 mb-4">
+                <input type="text" id="coupon-input" placeholder="كود الخصم" class="w-full bg-white border border-gray-200 p-3 text-xs outline-none focus:border-brandGold transition uppercase text-center tracking-widest">
+                <button onclick="applyCoupon()" id="ui-coupon-btn" class="bg-brandBlack text-white px-6 font-semibold text-xs hover:bg-brandGold transition">تطبيق</button>
             </div>
-            <p id="coupon-msg" class="text-xs font-bold mb-4 text-center"></p>
-            <div class="flex justify-between font-bold text-xl mb-3 text-brandBlack font-title"><span id="ui-cart-total">الإجمالي:</span><span id="cart-total">0 ج.م</span></div>
-            <div class="flex justify-between text-sm text-green-600 mb-6 hidden" id="discount-row"><span>الخصم:</span><span id="discount-amount">0 ج.م</span></div>
-            <button onclick="openCheckoutModal()" id="btn-checkout-dyn" class="w-full bg-brandGold text-brandBlack font-bold py-4 hover:bg-yellow-600 transition text-sm tracking-widest uppercase">إتمام الطلب</button>
+            <p id="coupon-msg" class="text-[10px] font-bold mb-3 text-center"></p>
+            <div class="flex justify-between font-bold text-lg mb-2 text-brandBlack"><span id="ui-cart-total">الإجمالي:</span><span id="cart-total">0 ج.م</span></div>
+            <div class="flex justify-between text-xs text-brandGold font-semibold mb-4 hidden" id="discount-row"><span>الخصم:</span><span id="discount-amount">0 ج.م</span></div>
+            <button onclick="openCheckoutModal()" id="btn-checkout-dyn" class="w-full bg-brandGold text-brandBlack font-bold py-4 hover:bg-yellow-600 transition text-xs tracking-widest uppercase mt-2">إتمام الطلب</button>
         </div>
     </div>
 
     <div id="checkout-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity p-4">
-        <div class="bg-white w-full max-w-lg shadow-2xl overflow-hidden transform scale-95 transition-transform duration-300 modal-content flex flex-col max-h-[90vh] border border-brandGold">
-            <div class="p-6 border-b border-brandBorder flex justify-between items-center bg-brandOffWhite"><h3 id="ui-checkout-title" class="text-2xl font-title font-bold text-brandBlack">بيانات الشحن</h3><button onclick="closeCheckoutModal()" class="text-gray-400 hover:text-brandGold"><i class="fa-solid fa-xmark text-2xl"></i></button></div>
+        <div class="bg-white w-full max-w-md shadow-2xl overflow-hidden transform scale-95 transition-transform duration-300 modal-content flex flex-col max-h-[90vh]">
+            <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-brandOffWhite"><h3 id="ui-checkout-title" class="text-xl font-bold heading-luxury text-brandBlack">بيانات الشحن</h3><button onclick="closeCheckoutModal()" class="text-gray-400 hover:text-brandBlack"><i class="fa-solid fa-xmark text-xl"></i></button></div>
             <div class="p-8 overflow-y-auto">
                 <form id="checkout-form" onsubmit="submitOrder(event)" class="space-y-6">
-                    <div><label id="ui-lbl-name" class="block text-xs font-bold text-brandText mb-2 uppercase tracking-widest">الاسم بالكامل</label><input type="text" id="customer_name" required class="w-full bg-brandOffWhite border border-transparent p-3 text-brandBlack focus:border-brandGold outline-none transition"></div>
-                    <div><label id="ui-lbl-phone" class="block text-xs font-bold text-brandText mb-2 uppercase tracking-widest">رقم الهاتف</label><input type="tel" id="phone" required class="w-full bg-brandOffWhite border border-transparent p-3 text-brandBlack focus:border-brandGold outline-none transition"></div>
+                    <div><label id="ui-lbl-name" class="block text-[10px] font-bold text-brandText mb-2 uppercase tracking-widest">الاسم بالكامل</label><input type="text" id="customer_name" required class="w-full bg-brandOffWhite border-b border-gray-200 p-3 text-sm text-brandBlack focus:border-brandGold outline-none transition"></div>
+                    <div><label id="ui-lbl-phone" class="block text-[10px] font-bold text-brandText mb-2 uppercase tracking-widest">رقم الهاتف</label><input type="tel" id="phone" required class="w-full bg-brandOffWhite border-b border-gray-200 p-3 text-sm text-brandBlack focus:border-brandGold outline-none transition"></div>
                     <div class="grid grid-cols-2 gap-4">
-                        <div><label id="ui-lbl-city" class="block text-xs font-bold text-brandText mb-2 uppercase tracking-widest">المحافظة</label><input type="text" id="city" required class="w-full bg-brandOffWhite border border-transparent p-3 text-brandBlack focus:border-brandGold outline-none transition"></div>
-                        <div><label id="ui-lbl-address" class="block text-xs font-bold text-brandText mb-2 uppercase tracking-widest">العنوان</label><input type="text" id="address" required class="w-full bg-brandOffWhite border border-transparent p-3 text-brandBlack focus:border-brandGold outline-none transition"></div>
+                        <div><label id="ui-lbl-city" class="block text-[10px] font-bold text-brandText mb-2 uppercase tracking-widest">المحافظة</label><input type="text" id="city" required class="w-full bg-brandOffWhite border-b border-gray-200 p-3 text-sm text-brandBlack focus:border-brandGold outline-none transition"></div>
+                        <div><label id="ui-lbl-address" class="block text-[10px] font-bold text-brandText mb-2 uppercase tracking-widest">العنوان</label><input type="text" id="address" required class="w-full bg-brandOffWhite border-b border-gray-200 p-3 text-sm text-brandBlack focus:border-brandGold outline-none transition"></div>
                     </div>
-                    <button type="submit" id="submit-btn" class="w-full bg-brandBlack text-brandGold font-bold py-4 mt-4 text-sm tracking-widest hover:bg-gray-800 transition uppercase">تأكيد الطلب</button>
+                    <button type="submit" id="submit-btn" class="w-full bg-brandBlack text-brandGold font-bold py-4 mt-6 text-xs tracking-widest hover:bg-gray-800 transition uppercase">تأكيد الطلب</button>
                 </form>
             </div>
         </div>
     </div>
 
-    <!-- باقي المودالز زي ما هي (النجاح، التتبع، التقييمات) -->
+    <!-- Success Modal -->
     <div id="success-modal" class="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 backdrop-blur-md opacity-0 pointer-events-none transition-opacity p-4">
-        <div class="bg-white w-full max-w-md shadow-2xl p-12 text-center transform scale-90 transition-transform duration-300 modal-content border border-brandGold">
-            <div class="w-20 h-20 bg-brandOffWhite text-brandGold border border-brandGold rounded-full flex items-center justify-center mx-auto mb-8 text-4xl"><i class="fa-solid fa-check"></i></div>
-            <h3 class="text-3xl font-title font-bold text-brandBlack mb-4">تم استلام طلبك</h3>
-            <p class="text-brandText text-sm mb-10 leading-relaxed">شكراً لثقتك بنا. سنتواصل معك قريباً لتأكيد الشحن.</p>
-            <button onclick="document.getElementById('success-modal').classList.remove('modal-open')" class="w-full bg-brandGold text-brandBlack font-bold py-3 text-sm tracking-widest hover:bg-yellow-600 transition">حسناً، شكراً</button>
+        <div class="bg-white w-full max-w-sm shadow-2xl p-10 text-center transform scale-90 transition-transform duration-300 modal-content">
+            <div class="w-16 h-16 bg-brandOffWhite text-brandGold rounded-full flex items-center justify-center mx-auto mb-6 text-2xl"><i class="fa-solid fa-check"></i></div>
+            <h3 class="text-2xl font-bold heading-luxury text-brandBlack mb-3">تم استلام طلبك</h3>
+            <p class="text-brandText text-xs mb-8 leading-relaxed">شكراً لثقتك بنا. سنتواصل معك قريباً لتأكيد الشحن.</p>
+            <button onclick="document.getElementById('success-modal').classList.remove('modal-open')" class="w-full bg-brandBlack text-brandGold font-bold py-3 text-xs tracking-widest hover:bg-gray-800 transition">حسناً، شكراً</button>
         </div>
     </div>
 
+    <!-- Tracking Modal -->
     <div id="tracking-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity p-4">
-        <div class="bg-white w-full max-w-md shadow-2xl p-8 relative modal-content border-t-4 border-brandGold">
-            <button onclick="document.getElementById('tracking-modal').classList.remove('modal-open')" class="absolute top-6 left-6 text-gray-400 hover:text-brandGold transition"><i class="fa-solid fa-xmark text-2xl"></i></button>
-            <div class="text-center mb-8"><h3 class="text-2xl font-title font-bold text-brandBlack">تتبع الطلب</h3></div>
+        <div class="bg-white w-full max-w-sm shadow-2xl p-8 relative modal-content">
+            <button onclick="document.getElementById('tracking-modal').classList.remove('modal-open')" class="absolute top-5 left-5 text-gray-400 hover:text-brandBlack transition"><i class="fa-solid fa-xmark text-xl"></i></button>
+            <div class="text-center mb-8"><h3 class="text-xl font-bold heading-luxury text-brandBlack">تتبع الطلب</h3></div>
             <div class="flex flex-col gap-4 mb-6">
-                <input type="tel" id="track-phone" placeholder="أدخل رقم الهاتف" class="w-full bg-brandOffWhite border border-brandBorder p-3 text-brandBlack text-center focus:border-brandGold outline-none transition tracking-widest">
-                <button onclick="trackOrder()" class="w-full bg-brandBlack text-brandGold py-3 font-bold text-sm tracking-widest hover:bg-gray-800 transition">بحث</button>
+                <input type="tel" id="track-phone" placeholder="أدخل رقم الهاتف" class="w-full bg-brandOffWhite border-b border-gray-200 p-3 text-sm text-brandBlack text-center focus:border-brandGold outline-none transition tracking-widest">
+                <button onclick="trackOrder()" class="w-full bg-brandBlack text-brandGold py-3 font-semibold text-xs tracking-widest hover:bg-gray-800 transition">بحث</button>
             </div>
             <div id="tracking-result" class="hidden space-y-4"></div>
         </div>
     </div>
 
+    <!-- Reviews Modal -->
     <div id="reviews-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity p-4">
-        <div class="bg-white w-full max-w-lg shadow-2xl overflow-hidden flex flex-col modal-content border-t-4 border-brandGold">
-            <div class="p-6 border-b border-brandBorder flex justify-between items-center bg-brandOffWhite">
-                <h3 class="text-2xl font-title font-bold text-brandBlack">أضف تقييمك</h3>
-                <button onclick="document.getElementById('reviews-modal').classList.remove('modal-open')" class="text-gray-400 hover:text-brandGold"><i class="fa-solid fa-xmark text-2xl"></i></button>
+        <div class="bg-white w-full max-w-md shadow-2xl overflow-hidden flex flex-col modal-content">
+            <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-brandOffWhite">
+                <h3 class="text-xl font-bold heading-luxury text-brandBlack">أضف تقييمك</h3>
+                <button onclick="document.getElementById('reviews-modal').classList.remove('modal-open')" class="text-gray-400 hover:text-brandBlack"><i class="fa-solid fa-xmark text-xl"></i></button>
             </div>
             <div class="p-8">
-                <form onsubmit="submitReview(event)" class="space-y-6">
+                <form onsubmit="submitReview(event)" class="space-y-5">
                     <input type="hidden" id="review-product-id">
                     <div>
-                        <label class="block text-xs font-bold text-brandText mb-2 uppercase tracking-widest">تقييمك</label>
-                        <select id="review-rating" required class="w-full bg-brandOffWhite text-brandBlack font-bold p-3 outline-none border border-transparent focus:border-brandGold transition cursor-pointer">
+                        <label class="block text-[10px] font-bold text-brandText mb-2 uppercase tracking-widest">تقييمك</label>
+                        <select id="review-rating" required class="w-full bg-brandOffWhite text-brandBlack font-semibold p-3 outline-none border-b border-gray-200 focus:border-brandGold transition cursor-pointer text-sm">
                             <option value="5">⭐⭐⭐⭐⭐ ممتاز</option><option value="4">⭐⭐⭐⭐ جيد جداً</option><option value="3">⭐⭐⭐ جيد</option><option value="2">⭐⭐ مقبول</option><option value="1">⭐ سيء</option>
                         </select>
                     </div>
-                    <div><label class="block text-xs font-bold text-brandText mb-2 uppercase tracking-widest">اسمك</label><input type="text" id="review-name" required class="w-full bg-brandOffWhite border border-transparent p-3 text-brandBlack outline-none focus:border-brandGold transition"></div>
-                    <div><label class="block text-xs font-bold text-brandText mb-2 uppercase tracking-widest">رأيك</label><textarea id="review-comment" required class="w-full bg-brandOffWhite border border-transparent p-3 text-brandBlack outline-none focus:border-brandGold transition" rows="3"></textarea></div>
-                    <button type="submit" class="w-full bg-brandBlack text-brandGold font-bold py-3 text-sm tracking-widest hover:bg-gray-800 transition mt-4 uppercase">إرسال</button>
+                    <div><label class="block text-[10px] font-bold text-brandText mb-2 uppercase tracking-widest">اسمك</label><input type="text" id="review-name" required class="w-full bg-brandOffWhite border-b border-gray-200 p-3 text-sm text-brandBlack outline-none focus:border-brandGold transition"></div>
+                    <div><label class="block text-[10px] font-bold text-brandText mb-2 uppercase tracking-widest">رأيك</label><textarea id="review-comment" required class="w-full bg-brandOffWhite border-b border-gray-200 p-3 text-sm text-brandBlack outline-none focus:border-brandGold transition" rows="3"></textarea></div>
+                    <button type="submit" class="w-full bg-brandBlack text-brandGold font-bold py-3 text-xs tracking-widest hover:bg-gray-800 transition mt-4 uppercase">إرسال</button>
                 </form>
             </div>
         </div>
@@ -266,7 +282,6 @@
             if (settings) {
                 dynamicTexts = settings; 
                 
-                // تحديث كل النصوص الثابتة من الداتابيز
                 if(settings.top_bar_text) document.getElementById('ui-top-bar').innerText = settings.top_bar_text;
                 if(settings.site_name) { document.getElementById('site-name').innerText = settings.site_name; document.getElementById('footer-name').innerText = settings.site_name; }
                 if(settings.hero_title) document.getElementById('hero-title').innerText = settings.hero_title;
@@ -297,17 +312,14 @@
                 if(settings.address_label) document.getElementById('ui-lbl-address').innerText = settings.address_label;
                 if(settings.confirm_order_btn) document.getElementById('submit-btn').innerText = settings.confirm_order_btn;
 
-                // اللوجو
                 if(settings.logo_url) {
                     const logoImg = document.getElementById('site-logo'); logoImg.src = settings.logo_url; logoImg.classList.remove('hidden'); document.getElementById('site-name').classList.add('hidden'); 
                     const heroWatermark = document.getElementById('hero-watermark-logo'); heroWatermark.src = settings.logo_url; heroWatermark.classList.remove('hidden');
                     const footerLogo = document.getElementById('footer-logo'); footerLogo.src = settings.logo_url; footerLogo.classList.remove('hidden'); document.getElementById('footer-logo-text').classList.add('hidden');
                 }
 
-                // البانر
                 if(settings.hero_image) document.getElementById('hero-bg').style.backgroundImage = `url('${settings.hero_image}')`;
                 
-                // السوشيال والواتساب
                 const waBtn = document.getElementById('whatsapp-btn');
                 if(settings.whatsapp_number) { waBtn.href = `https://wa.me/${settings.whatsapp_number}`; waBtn.classList.remove('hidden'); }
 
@@ -321,8 +333,6 @@
             if(products) allProducts = products;
             const { data: reviews } = await supabaseClient.from('reviews').select('*').eq('status', 'approved');
             if(reviews) allReviews = reviews;
-            
-            // جلب الباقات
             const { data: bundles } = await supabaseClient.from('bundles').select('*').eq('active', true);
             if(bundles) allBundles = bundles;
 
@@ -333,29 +343,29 @@
             const section = document.getElementById('bundles-section');
             const grid = document.getElementById('bundles-grid'); 
             
-            // لو مفيش باقات، القسم كله هيختفي (هيفضل hidden)
             if(allBundles.length === 0) {
                 section.classList.add('hidden');
                 return; 
             }
 
-            // لو فيه باقات، هنشيل كلاس hidden عشان القسم يظهر
             section.classList.remove('hidden');
             grid.innerHTML = '';
             
             allBundles.forEach(b => {
                 grid.innerHTML += `
-                    <div class="group relative bg-white border border-brandBorder p-4 hover:border-brandGold transition-all duration-300 flex flex-col items-center text-center">
-                        <div class="absolute top-0 right-0 bg-red-600 text-white text-[10px] font-bold px-4 py-1 rounded-bl-lg shadow-md z-10">${b.items_count} قطع</div>
-                        <div class="w-full aspect-square overflow-hidden mb-4 relative bg-brandGray">
-                            <img src="${b.image_url}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                    <div class="group relative bg-brandWhite p-2 transition-all duration-300 flex flex-col">
+                        <div class="absolute top-4 right-4 bg-brandBlack text-brandGold text-[9px] font-bold px-3 py-1 rounded-sm uppercase tracking-widest z-10">${b.items_count} Pieces</div>
+                        <div class="w-full aspect-[4/5] overflow-hidden mb-4 relative bg-brandOffWhite">
+                            <img src="${b.image_url}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
                         </div>
-                        <h4 class="text-lg font-title font-bold text-brandBlack mb-1">${censorText(b.name)}</h4>
-                        <div class="flex items-center justify-center gap-3 mb-4">
-                            <span class="text-gray-400 line-through text-sm">${b.original_price} ج.م</span>
-                            <span class="text-brandGold font-bold text-xl">${b.bundle_price} ج.م</span>
+                        <div class="text-center">
+                            <h4 class="text-base font-bold heading-luxury text-brandBlack mb-1">${censorText(b.name)}</h4>
+                            <div class="flex items-center justify-center gap-3 mb-4">
+                                <span class="text-gray-400 line-through text-xs">${b.original_price} EGP</span>
+                                <span class="text-brandBlack font-bold text-sm">${b.bundle_price} EGP</span>
+                            </div>
+                            <button onclick="addToCart('bundle_${b.id}', '${censorText(b.name)}', ${b.bundle_price}, '${b.items_count} Pieces')" class="w-full border border-brandBlack text-brandBlack py-2.5 text-[10px] font-bold tracking-widest uppercase hover:bg-brandBlack hover:text-brandGold transition">أضف الباقة للسلة</button>
                         </div>
-                        <button onclick="addToCart('bundle_${b.id}', '${censorText(b.name)}', ${b.bundle_price}, '${b.items_count} قطع')" class="w-full bg-brandBlack text-white py-2.5 text-xs font-bold tracking-widest uppercase hover:bg-brandGold hover:text-brandBlack transition mt-auto">أضف الباقة للسلة</button>
                     </div>`;
             });
         }
@@ -363,19 +373,19 @@
         function renderLatestReviews() {
             const container = document.getElementById('latest-reviews-container'); container.innerHTML = '';
             const latest = allReviews.slice(-3).reverse(); 
-            if(latest.length === 0) { container.innerHTML = '<p class="text-brandText col-span-3 text-center text-sm font-bold">كن أول من يشاركنا رأيه!</p>'; return; }
+            if(latest.length === 0) { container.innerHTML = '<p class="text-brandText col-span-3 text-center text-sm font-semibold">كن أول من يشاركنا رأيه!</p>'; return; }
             latest.forEach(r => {
                 const product = allProducts.find(p => p.id === r.product_id);
                 container.innerHTML += `
-                <div class="bg-brandOffWhite p-8 border border-brandBorder hover:border-brandGold transition duration-500 relative flex flex-col justify-between">
-                    <i class="fa-solid fa-quote-right absolute top-6 left-6 text-5xl text-gray-200/50"></i>
+                <div class="bg-brandWhite p-8 border border-gray-100 hover:border-brandGold/30 transition duration-500 relative flex flex-col justify-between">
+                    <i class="fa-solid fa-quote-right absolute top-6 left-6 text-4xl text-gray-100"></i>
                     <div>
-                        <div class="flex items-center gap-1 text-brandGold mb-4 relative z-10 text-sm">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</div>
-                        <p class="text-brandBlack font-title text-lg mb-6 leading-relaxed relative z-10">"${censorText(r.comment)}"</p>
+                        <div class="flex items-center gap-1 text-brandGold mb-4 relative z-10 text-xs">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</div>
+                        <p class="text-brandBlack text-sm font-light leading-relaxed relative z-10">"${censorText(r.comment)}"</p>
                     </div>
-                    <div class="text-xs text-brandText border-t border-brandBorder pt-4 flex items-center justify-between relative z-10">
+                    <div class="text-[10px] text-brandText border-t border-gray-100 pt-4 mt-6 flex items-center justify-between relative z-10 uppercase tracking-widest">
                         <span class="font-bold text-brandBlack">${censorText(r.customer_name)}</span>
-                        <span class="opacity-70">اشترى: ${product ? censorText(product.name) : 'منتج'}</span>
+                        <span>${product ? censorText(product.name) : 'منتج'}</span>
                     </div>
                 </div>`;
             });
@@ -383,8 +393,8 @@
 
         function filterCategory(cat) {
             currentFilter = cat;
-            document.querySelectorAll('.cat-btn').forEach(btn => { btn.classList.remove('text-brandBlack', 'border-brandGold'); btn.classList.add('text-brandText', 'border-transparent'); });
-            event.target.classList.remove('text-brandText', 'border-transparent'); event.target.classList.add('text-brandBlack', 'border-brandGold');
+            document.querySelectorAll('.cat-btn').forEach(btn => { btn.classList.remove('text-brandBlack', 'border-brandBlack'); btn.classList.add('text-brandText', 'border-transparent'); });
+            event.target.classList.remove('text-brandText', 'border-transparent'); event.target.classList.add('text-brandBlack', 'border-brandBlack');
             renderProducts();
         }
 
@@ -403,29 +413,33 @@
             filtered.forEach(product => {
                 const isOutOfStock = product.stock <= 0;
                 const productReviews = allReviews.filter(r => r.product_id === product.id);
-                let ratingHTML = productReviews.length > 0 ? `<div class="flex items-center gap-1 text-[11px] text-brandGold font-bold"><i class="fa-solid fa-star text-[9px]"></i> ${(productReviews.reduce((sum, r) => sum + r.rating, 0) / productReviews.length).toFixed(1)} <span class="text-gray-400 font-normal">(${productReviews.length})</span></div>` : `<div class="text-[11px] text-gray-400">جديد</div>`;
-                const reviewBtn = `<button onclick="openReviews(${product.id})" class="text-[10px] text-brandText underline decoration-brandGold underline-offset-4 hover:text-brandBlack transition">أضف تقييمك</button>`;
+                let ratingHTML = productReviews.length > 0 ? `<div class="flex items-center gap-1 text-[10px] text-brandBlack font-semibold"><i class="fa-solid fa-star text-[8px] text-brandGold"></i> ${(productReviews.reduce((sum, r) => sum + r.rating, 0) / productReviews.length).toFixed(1)}</div>` : `<div class="text-[10px] text-gray-400">جديد</div>`;
+                const reviewBtn = `<button onclick="openReviews(${product.id})" class="text-[9px] text-brandText underline decoration-brandGold underline-offset-4 hover:text-brandBlack transition tracking-wider uppercase">أضف تقييم</button>`;
                 const imgUrl = product.image_url ? product.image_url : defaultImage;
 
                 grid.innerHTML += `
-                    <div class="group flex flex-col hover-lift ${isOutOfStock ? 'opacity-60 grayscale' : ''}">
-                        <div class="relative overflow-hidden aspect-[3/4] bg-brandGray mb-5">
+                    <div class="group flex flex-col ${isOutOfStock ? 'opacity-50 grayscale' : ''}">
+                        <div class="relative overflow-hidden aspect-[3/4] bg-brandGray mb-4">
                             <img src="${imgUrl}" onerror="this.src='${defaultImage}'" class="w-full h-full object-cover img-zoom">
-                            <div class="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 text-[9px] font-bold text-brandBlack tracking-[0.2em] uppercase border border-brandBorder">${censorText(product.brand)}</div>
-                            ${isOutOfStock ? `<div class="absolute top-4 left-4 bg-brandBlack text-white px-3 py-1 text-[9px] font-bold tracking-[0.2em] uppercase">Sold Out</div>` : ''}
-                            <div class="absolute bottom-0 left-0 w-full p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-in-out">
-                                <button onclick="addToCart(${product.id}, '${censorText(product.name)}', ${product.price}, '${product.size || '100ml'}')" ${isOutOfStock ? 'disabled' : ''} class="w-full bg-brandGold text-brandBlack py-3 text-xs font-bold tracking-widest uppercase hover:bg-yellow-600 transition ${isOutOfStock ? 'cursor-not-allowed' : ''}">${isOutOfStock ? 'نفذت الكمية' : 'أضف للسلة'}</button>
+                            
+                            ${isOutOfStock ? `<div class="absolute top-4 left-4 bg-brandBlack text-brandGold px-3 py-1 text-[9px] font-bold tracking-[0.2em] uppercase z-10">Sold Out</div>` : ''}
+                            
+                            <div class="absolute bottom-0 left-0 w-full p-4 btn-reveal z-10">
+                                <button onclick="addToCart(${product.id}, '${censorText(product.name)}', ${product.price}, '${product.size || '100ml'}')" ${isOutOfStock ? 'disabled' : ''} class="w-full bg-brandBlack text-brandGold py-3 text-[10px] font-bold tracking-widest uppercase hover:bg-brandGold hover:text-brandBlack transition ${isOutOfStock ? 'cursor-not-allowed' : ''}">${isOutOfStock ? 'نفذت' : 'أضف للسلة'}</button>
                             </div>
                         </div>
-                        <div class="flex flex-col text-center px-2">
-                            <h4 class="text-lg font-title font-bold text-brandBlack line-clamp-1 mb-1">${censorText(product.name)}</h4>
-                            <p class="text-brandText text-[11px] tracking-wider mb-2">${censorText(product.notes)} | ${product.size || '100ml'}</p>
-                            <div class="flex items-center justify-center gap-4 mb-3">
-                                <span class="text-brandGold font-bold text-lg">${product.price} <span class="text-[10px] font-sans">ج.م</span></span>
-                                <div class="w-[1px] h-3 bg-brandBorder"></div>
+                        
+                        <div class="flex flex-col text-center px-1">
+                            <p class="text-brandText text-[10px] tracking-[0.2em] uppercase mb-1">${censorText(product.brand)}</p>
+                            <h4 class="text-base font-bold heading-luxury text-brandBlack line-clamp-1 mb-2">${censorText(product.name)}</h4>
+                            
+                            <div class="flex items-center justify-center gap-3 mb-3">
+                                <span class="text-brandBlack font-semibold text-sm">${product.price} <span class="text-[9px] font-normal">EGP</span></span>
+                                <div class="w-[1px] h-2 bg-gray-300"></div>
                                 ${ratingHTML}
                             </div>
-                            <div class="mt-2">${reviewBtn}</div>
+                            
+                            <div class="mt-1">${reviewBtn}</div>
                         </div>
                     </div>`;
             });
@@ -445,14 +459,14 @@
         async function trackOrder() {
             const phone = document.getElementById('track-phone').value;
             if(!phone) return showToast('اكتب رقم الهاتف');
-            const resultDiv = document.getElementById('tracking-result'); resultDiv.innerHTML = '<p class="text-center text-brandText text-sm">جاري البحث...</p>'; resultDiv.classList.remove('hidden');
+            const resultDiv = document.getElementById('tracking-result'); resultDiv.innerHTML = '<p class="text-center text-brandText text-xs">جاري البحث...</p>'; resultDiv.classList.remove('hidden');
             const { data: orders } = await supabaseClient.from('orders').select('*').eq('phone', phone).order('created_at', { ascending: false }).limit(1);
-            if (!orders || orders.length === 0) { resultDiv.innerHTML = '<p class="text-center text-red-500 font-bold text-sm">مفيش طلبات بالرقم ده!</p>'; return; }
+            if (!orders || orders.length === 0) { resultDiv.innerHTML = '<p class="text-center text-red-500 font-bold text-xs">مفيش طلبات بالرقم ده!</p>'; return; }
             const order = orders[0];
             let statusText = order.status === 'pending' ? 'قيد التجهيز' : order.status === 'shipped' ? 'تم الشحن' : order.status === 'cancelled' ? 'ملغي' : 'تم التسليم';
             let statusColor = order.status === 'pending' ? 'text-yellow-600' : order.status === 'shipped' ? 'text-blue-600' : order.status === 'cancelled' ? 'text-red-500' : 'text-green-600';
-            let actionButtons = order.status === 'pending' ? `<div class="flex gap-3 mt-6"><button onclick="cancelOrder(${order.id})" class="flex-1 bg-white border border-brandBorder text-red-500 py-2 font-bold text-xs hover:bg-red-50 transition uppercase tracking-wider">إلغاء</button><button onclick="reorder(${order.id}, '${phone}')" class="flex-1 bg-brandBlack text-brandGold py-2 font-bold text-xs hover:bg-gray-800 transition uppercase tracking-wider">تعديل</button></div>` : '';
-            resultDiv.innerHTML = `<div class="bg-brandOffWhite p-6 border border-brandGold text-center mt-4"><p class="text-brandText text-[10px] mb-2 uppercase tracking-widest">الطلب #${order.id}</p><p class="text-xl font-title font-bold ${statusColor} mb-3">${statusText}</p><p class="text-sm text-brandBlack">الإجمالي: <strong class="text-brandGold">${order.total_price} ج.م</strong></p>${actionButtons}</div>`;
+            let actionButtons = order.status === 'pending' ? `<div class="flex gap-3 mt-6"><button onclick="cancelOrder(${order.id})" class="flex-1 border border-gray-200 text-red-500 py-2 font-bold text-[10px] hover:bg-red-50 transition uppercase tracking-wider">إلغاء</button><button onclick="reorder(${order.id}, '${phone}')" class="flex-1 bg-brandBlack text-brandGold py-2 font-bold text-[10px] hover:bg-gray-800 transition uppercase tracking-wider">تعديل</button></div>` : '';
+            resultDiv.innerHTML = `<div class="bg-brandOffWhite p-6 border border-gray-100 text-center mt-4"><p class="text-brandText text-[9px] mb-2 uppercase tracking-widest">الطلب #${order.id}</p><p class="text-lg font-bold heading-luxury ${statusColor} mb-3">${statusText}</p><p class="text-xs text-brandBlack">الإجمالي: <strong>${order.total_price} EGP</strong></p>${actionButtons}</div>`;
         }
 
         async function cancelOrder(orderId) { if(!confirm('هل أنت متأكد من إلغاء الطلب؟')) return; const { error } = await supabaseClient.from('orders').update({ status: 'cancelled' }).eq('id', orderId); if(!error) { showToast('تم إلغاء الطلب'); trackOrder(); } }
@@ -468,15 +482,15 @@
         function updateCartUI() {
             const totalCount = cart.reduce((total, item) => total + item.qty, 0); document.getElementById('cart-count').innerText = totalCount;
             const cartItemsDiv = document.getElementById('cart-items'); let totalPrice = 0;
-            if (cart.length === 0) { cartItemsDiv.innerHTML = '<p class="text-center text-gray-400 mt-10 text-sm font-title">حقيبتك فارغة</p>'; document.getElementById('cart-total').innerText = '0 ج.م'; document.getElementById('discount-row').classList.add('hidden'); return; }
+            if (cart.length === 0) { cartItemsDiv.innerHTML = '<p class="text-center text-gray-400 mt-10 text-xs tracking-widest uppercase">حقيبتك فارغة</p>'; document.getElementById('cart-total').innerText = '0 EGP'; document.getElementById('discount-row').classList.add('hidden'); return; }
             cartItemsDiv.innerHTML = '';
             cart.forEach((item, index) => { 
                 totalPrice += item.price * item.qty; 
-                cartItemsDiv.innerHTML += `<div class="flex justify-between items-center border-b border-brandBorder pb-5 mb-5"><div><p class="font-bold text-brandBlack text-sm font-title">${censorText(item.name)} <span class="text-brandText text-xs font-sans">(${item.size || '100ml'})</span></p><p class="text-xs text-brandGold mt-1 font-bold">${item.price} ج.م × ${item.qty}</p></div><button onclick="removeFromCart(${index})" class="text-gray-400 hover:text-red-500 transition"><i class="fa-solid fa-xmark"></i></button></div>`; 
+                cartItemsDiv.innerHTML += `<div class="flex justify-between items-center border-b border-gray-100 pb-4 mb-4"><div><p class="font-bold text-brandBlack text-sm">${censorText(item.name)} <span class="text-brandText text-[10px] font-normal">(${item.size || '100ml'})</span></p><p class="text-[10px] text-brandGold mt-1 font-semibold">${item.price} EGP × ${item.qty}</p></div><button onclick="removeFromCart(${index})" class="text-gray-300 hover:text-red-500 transition"><i class="fa-solid fa-xmark"></i></button></div>`; 
             });
             let discountAmount = (totalPrice * appliedDiscount) / 100;
-            document.getElementById('cart-total').innerText = (totalPrice - discountAmount).toFixed(0) + ' ج.م';
-            if(appliedDiscount > 0) { document.getElementById('discount-row').classList.remove('hidden'); document.getElementById('discount-amount').innerText = discountAmount.toFixed(0) + ' ج.م'; } else { document.getElementById('discount-row').classList.add('hidden'); }
+            document.getElementById('cart-total').innerText = (totalPrice - discountAmount).toFixed(0) + ' EGP';
+            if(appliedDiscount > 0) { document.getElementById('discount-row').classList.remove('hidden'); document.getElementById('discount-amount').innerText = discountAmount.toFixed(0) + ' EGP'; } else { document.getElementById('discount-row').classList.add('hidden'); }
         }
         function removeFromCart(index) { cart.splice(index, 1); saveCart(); }
         function toggleCart() { document.getElementById('cart-sidebar').classList.toggle('cart-open'); document.getElementById('overlay').classList.toggle('hidden'); }
@@ -486,13 +500,13 @@
         async function applyCoupon() { 
             const code = document.getElementById('coupon-input').value.trim().toUpperCase(); 
             const msg = document.getElementById('coupon-msg');
-            if(!code) { msg.innerText = 'اكتب كود الخصم'; msg.className = 'text-red-500 text-xs mb-4 font-bold text-center'; return; }
-            msg.innerText = 'جاري التحقق...'; msg.className = 'text-gray-500 text-xs mb-4 text-center';
+            if(!code) { msg.innerText = 'اكتب كود الخصم'; msg.className = 'text-red-500 text-[10px] mb-3 font-bold text-center'; return; }
+            msg.innerText = 'جاري التحقق...'; msg.className = 'text-gray-500 text-[10px] mb-3 text-center';
             const { data, error } = await supabaseClient.from('coupons').select('*').eq('code', code).maybeSingle();
-            if (error) { console.error("Coupon Error:", error); msg.innerText = 'حدث خطأ في الاتصال'; msg.className = 'text-red-500 text-xs mb-4 font-bold text-center'; return; }
-            if (!data || data.active === false) { appliedDiscount = 0; appliedCouponCode = ''; msg.innerText = 'كود الخصم غير صحيح أو غير نشط'; msg.className = 'text-red-500 text-xs mb-4 font-bold text-center'; updateCartUI(); return; }
-            if (data.used_count >= data.max_uses) { appliedDiscount = 0; appliedCouponCode = ''; msg.innerText = 'هذا الكوبون وصل للحد الأقصى للاستخدام'; msg.className = 'text-red-500 text-xs mb-4 font-bold text-center'; updateCartUI(); return; }
-            appliedDiscount = data.discount_percent; appliedCouponCode = data.code; msg.innerText = `تم تطبيق خصم ${appliedDiscount}%`; msg.className = 'text-green-600 text-xs mb-4 font-bold text-center'; updateCartUI(); 
+            if (error) { console.error("Coupon Error:", error); msg.innerText = 'حدث خطأ في الاتصال'; msg.className = 'text-red-500 text-[10px] mb-3 font-bold text-center'; return; }
+            if (!data || data.active === false) { appliedDiscount = 0; appliedCouponCode = ''; msg.innerText = 'كود الخصم غير صحيح أو غير نشط'; msg.className = 'text-red-500 text-[10px] mb-3 font-bold text-center'; updateCartUI(); return; }
+            if (data.used_count >= data.max_uses) { appliedDiscount = 0; appliedCouponCode = ''; msg.innerText = 'هذا الكوبون وصل للحد الأقصى للاستخدام'; msg.className = 'text-red-500 text-[10px] mb-3 font-bold text-center'; updateCartUI(); return; }
+            appliedDiscount = data.discount_percent; appliedCouponCode = data.code; msg.innerText = `تم تطبيق خصم ${appliedDiscount}%`; msg.className = 'text-green-600 text-[10px] mb-3 font-bold text-center'; updateCartUI(); 
         }
         
         async function submitOrder(e) { 
