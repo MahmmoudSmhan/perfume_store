@@ -296,9 +296,9 @@
 
         async function loadCoupons() {
             const { data } = await supabaseClient.from('coupons').select('*').order('created_at', { ascending: false }); const list = document.getElementById('coupons-list'); list.innerHTML = '';
-            data.forEach(c => { list.innerHTML += `<div class="bg-white border p-4 flex justify-between items-center shadow-sm"><div><span class="bg-gray-100 text-black font-bold px-3 py-1 text-sm border">${c.code}</span><span class="text-gray-600 font-bold text-xs block mt-2">خصم ${c.discount_percent}%</span></div><button onclick="deleteCoupon(${c.id})" class="text-red-500 bg-red-50 p-2 hover:bg-red-100"><i class="fa-solid fa-trash text-xs"></i></button></div>`; });
+            data.forEach(c => { list.innerHTML += `<div class="bg-white border p-4 flex justify-between items-center shadow-sm"><div><span class="bg-gray-100 text-black font-bold px-3 py-1 text-sm border">${c.code}</span><span class="text-gray-600 font-bold text-xs block mt-2">خصم ${c.discount_percent}%</span><span class="text-[10px] ${c.active ? 'text-green-500' : 'text-red-500'}">${c.active ? 'نشط' : 'غير نشط'}</span></div><button onclick="deleteCoupon(${c.id})" class="text-red-500 bg-red-50 p-2 hover:bg-red-100"><i class="fa-solid fa-trash text-xs"></i></button></div>`; });
         }
-        async function saveCoupon(e) { e.preventDefault(); const code = document.getElementById('c-code').value.toUpperCase(); const percent = parseInt(document.getElementById('c-percent').value); const { error } = await supabaseClient.from('coupons').insert([{ code, discount_percent: percent }]); if(error) alert('موجود!'); else { document.getElementById('coupon-form').reset(); loadCoupons(); } }
+        async function saveCoupon(e) { e.preventDefault(); const code = document.getElementById('c-code').value.toUpperCase(); const percent = parseInt(document.getElementById('c-percent').value); const { error } = await supabaseClient.from('coupons').insert([{ code, discount_percent: percent, active: true }]); if(error) alert('موجود!'); else { document.getElementById('coupon-form').reset(); loadCoupons(); } }
         async function deleteCoupon(id) { if(confirm('حذف الكوبون؟')) { await supabaseClient.from('coupons').delete().eq('id', id); loadCoupons(); } }
 
         async function loadSettings() {
