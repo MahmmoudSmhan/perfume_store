@@ -19,8 +19,8 @@
                         brandBlack: '#0A0A0A', 
                         brandGold: '#C5A880', 
                         brandWhite: '#FFFFFF', 
-                        brandCream: '#F8F8F6', // خلفية كريمية فخمة
-                        brandCharcoal: '#1A1A1A', // للوضع الليلي
+                        brandCream: '#F8F8F6', 
+                        brandCharcoal: '#1A1A1A', 
                         brandText: '#666666'
                     }, 
                     fontFamily: { 
@@ -34,58 +34,39 @@
     </script>
     <style>
         body { font-family: 'Tajawal', sans-serif; background-color: #F8F8F6; color: #0A0A0A; scroll-behavior: smooth; overflow-x: hidden;}
-        
-        /* تنسيق العناوين التحريرية */
         .editorial-title { font-family: 'Amiri', serif; font-weight: 700; line-height: 1.2; }
         .brand-english { font-family: 'Playfair Display', serif; font-weight: 800; letter-spacing: 0.05em; }
-        
-        /* حركات السلة والمودال */
         .cart-open { transform: translateX(0) !important; }
         .modal-open { opacity: 1 !important; pointer-events: auto !important; }
         .modal-content { transform: translateY(0) scale(1) !important; }
-        
-        /* شريط التنقل الزجاجي */
         .glass-nav { background: rgba(248, 248, 246, 0.85); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(0,0,0,0.05); }
         
-        /* سكرول بار رفيع جداً */
         ::-webkit-scrollbar { width: 3px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #C5A880; }
         
-        /* الإشعارات */
         #toast { visibility: hidden; min-width: 250px; background-color: #0A0A0A; color: #C5A880; text-align: center; padding: 16px; position: fixed; z-index: 100; left: 50%; bottom: 30px; transform: translateX(-50%); font-weight: 600; opacity: 0; transition: all 0.5s ease; border-radius: 2px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
         #toast.show { visibility: visible; opacity: 1; bottom: 40px; }
         
         #mobile-menu { display: none; }
         #mobile-menu.active { display: block; }
         
-        /* --- الحركات التفاعلية (Immersive) --- */
-        
-        /* 1. Parallax Hero */
         .parallax-bg { transition: transform 0.1s ease-out; will-change: transform; }
-
-        /* 2. تأثيرات الدخول (Scroll Reveal) */
         .reveal { opacity: 0; transform: translateY(40px); transition: all 1s cubic-bezier(0.25, 1, 0.5, 1); }
         .reveal.active { opacity: 1; transform: translateY(0); }
-        
-        /* 3. تأثير التكبير للصور */
         .img-zoom { transition: transform 1.5s cubic-bezier(0.25, 1, 0.5, 1); }
         .group:hover .img-zoom { transform: scale(1.08); }
-        
-        /* 4. ظهور الزرار من تحت */
         .btn-reveal { transform: translateY(100%); transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1); }
         .group:hover .btn-reveal { transform: translateY(0); }
-
-        /* تنسيق خاص للباقات (الوضع الليلي) */
+        
         .bundle-card { background: #1A1A1A; border: 1px solid rgba(197, 168, 128, 0.1); transition: all 0.5s ease; }
         .bundle-card:hover { border-color: #C5A880; transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
     </style>
 </head>
 <body class="relative min-h-screen flex flex-col selection:bg-brandBlack selection:text-brandGold">
 
-    <div id="toast">تمت العملية بنجاح!</div>
+    <div id="toast">تم تحديث المتجر!</div>
 
-    <!-- الشريط العلوي -->
     <div id="ui-top-bar" class="bg-brandBlack text-brandGold text-center py-2 text-[10px] md:text-xs tracking-[0.3em] uppercase font-semibold">
         Free Shipping on orders over 1500 EGP
     </div>
@@ -116,9 +97,8 @@
         </div>
     </nav>
 
-    <!-- ==================== Hero Section (Immersive & Editorial) ==================== -->
+    <!-- ==================== Hero Section ==================== -->
     <header class="relative bg-brandBlack text-center flex items-center justify-center min-h-[95vh] overflow-hidden">
-        <!-- Parallax Background -->
         <div id="hero-bg" class="parallax-bg absolute inset-0 bg-cover bg-center opacity-70" style="background-image: url('https://images.unsplash.com/photo-1594035910387-fea47794261f?q=80&w=2070&auto=format&fit=crop');"></div>
         <div class="absolute inset-0 bg-gradient-to-t from-brandBlack via-brandBlack/40 to-transparent"></div>
         
@@ -132,8 +112,7 @@
         </div>
     </header>
 
-    <!-- ==================== Bundles Section (Dark Mode & Limited Edition) ==================== -->
-    <!-- تظهر فقط لو فيه باقات -->
+    <!-- ==================== Bundles Section (Dark Mode) ==================== -->
     <section id="bundles-section" class="hidden bg-brandCharcoal py-24 md:py-32 border-b border-gray-800">
         <div class="container mx-auto px-6 md:px-12">
             <div class="flex flex-col items-center mb-20 reveal">
@@ -145,14 +124,13 @@
         </div>
     </section>
 
-    <!-- ==================== Products Section (Ultra-Minimalist) ==================== -->
+    <!-- ==================== Products Section (Minimalist) ==================== -->
     <main class="container mx-auto py-24 md:py-32 px-6 md:px-12 flex-grow bg-brandCream" id="products">
         <div class="flex flex-col items-center mb-20 reveal">
             <h3 id="ui-sec-products" class="text-4xl md:text-6xl editorial-title text-brandBlack mb-6">مجموعتنا الحصرية</h3>
             <div class="w-16 h-[1px] bg-brandBlack"></div>
         </div>
 
-        <!-- الفلاتر والبحث -->
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mb-16 reveal">
             <div class="w-full md:w-auto">
                 <div class="flex gap-8 overflow-x-auto pb-2 scrollbar-hide w-full">
@@ -175,11 +153,10 @@
             </div>
         </div>
 
-        <!-- شبكة المنتجات -->
         <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-16"></div>
     </main>
 
-    <!-- ==================== Reviews Section (Editorial) ==================== -->
+    <!-- ==================== Reviews Section ==================== -->
     <section class="bg-brandWhite py-24 md:py-32 border-t border-gray-100">
         <div class="container mx-auto px-6 md:px-12">
             <div class="flex flex-col items-center mb-20 reveal">
@@ -305,38 +282,27 @@
         function showToast(msg) { const toast = document.getElementById("toast"); toast.innerText = msg; toast.className = "show"; setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 3000); }
         function toggleMobileMenu() { document.getElementById('mobile-menu').classList.toggle('active'); }
 
-        // دالة مساعدة عشان نعرف إذا كان العنصر ده باقة ولا منتج عادي
-        function isBundle(item) {
-            return String(item.id).startsWith('bundle_');
-        }
+        function isBundle(item) { return String(item.id).startsWith('bundle_'); }
 
-        // --- التأثيرات التفاعلية (Parallax & Scroll Reveal) ---
+        // --- تأثيرات Parallax & Scroll Reveal ---
         window.addEventListener('scroll', () => {
             const parallax = document.getElementById('hero-bg');
-            if(parallax) {
-                let scrollPosition = window.pageYOffset;
-                parallax.style.transform = `translateY(${scrollPosition * 0.4}px)`;
-            }
+            if(parallax) { let scrollPosition = window.pageYOffset; parallax.style.transform = `translateY(${scrollPosition * 0.4}px)`; }
         });
 
         function initScrollReveal() {
             const reveals = document.querySelectorAll('.reveal');
             const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('active');
-                        observer.unobserve(entry.target);
-                    }
-                });
+                entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('active'); observer.unobserve(entry.target); } });
             }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
             reveals.forEach(reveal => observer.observe(reveal));
         }
 
-        async function initPage() {
+        // --- دوال جلب البيانات (منفصلة عشان الـ Realtime) ---
+        async function fetchSettings() {
             const { data: settings } = await supabaseClient.from('settings').select('*').eq('id', 1).single();
             if (settings) {
                 dynamicTexts = settings; 
-                
                 if(settings.top_bar_text) document.getElementById('ui-top-bar').innerText = settings.top_bar_text;
                 if(settings.site_name) { document.getElementById('site-name').innerText = settings.site_name; document.getElementById('footer-name').innerText = settings.site_name; }
                 if(settings.hero_title) document.getElementById('hero-title').innerText = settings.hero_title;
@@ -372,7 +338,6 @@
                     const heroWatermark = document.getElementById('hero-watermark-logo'); heroWatermark.src = settings.logo_url; heroWatermark.classList.remove('hidden');
                     const footerLogo = document.getElementById('footer-logo'); footerLogo.src = settings.logo_url; footerLogo.classList.remove('hidden'); document.getElementById('footer-logo-text').classList.add('hidden');
                 }
-
                 if(settings.hero_image) document.getElementById('hero-bg').style.backgroundImage = `url('${settings.hero_image}')`;
                 
                 const waBtn = document.getElementById('whatsapp-btn');
@@ -383,31 +348,41 @@
                 if(settings.instagram_url) socialDiv.innerHTML += `<a href="${settings.instagram_url}" target="_blank" class="hover:text-brandGold transition"><i class="fa-brands fa-instagram"></i></a>`;
                 if(settings.tiktok_url) socialDiv.innerHTML += `<a href="${settings.tiktok_url}" target="_blank" class="hover:text-brandGold transition"><i class="fa-brands fa-tiktok"></i></a>`;
             }
+        }
 
+        async function fetchProducts() {
             const { data: products } = await supabaseClient.from('products').select('*');
             if(products) allProducts = products;
+            renderProducts();
+        }
+
+        async function fetchReviews() {
             const { data: reviews } = await supabaseClient.from('reviews').select('*').eq('status', 'approved');
             if(reviews) allReviews = reviews;
+            renderLatestReviews();
+        }
+
+        async function fetchBundles() {
             const { data: bundles } = await supabaseClient.from('bundles').select('*').eq('active', true);
             if(bundles) allBundles = bundles;
+            renderBundles();
+        }
 
-            renderBundles(); renderProducts(); renderLatestReviews();
+        async function initPage() {
+            await fetchSettings();
+            await fetchProducts();
+            await fetchReviews();
+            await fetchBundles();
             initScrollReveal();
         }
 
-        // --- القسم الليلي (الباقات) ---
+        // --- دوال العرض ---
         function renderBundles() {
             const section = document.getElementById('bundles-section');
             const grid = document.getElementById('bundles-grid'); 
-            
-            if(allBundles.length === 0) {
-                section.classList.add('hidden');
-                return; 
-            }
-
+            if(allBundles.length === 0) { section.classList.add('hidden'); return; }
             section.classList.remove('hidden');
             grid.innerHTML = '';
-            
             allBundles.forEach(b => {
                 grid.innerHTML += `
                     <div class="group bundle-card relative p-4 flex flex-col reveal">
@@ -425,9 +400,9 @@
                         </div>
                     </div>`;
             });
+            initScrollReveal();
         }
 
-        // --- قسم التقييمات ---
         function renderLatestReviews() {
             const container = document.getElementById('latest-reviews-container'); container.innerHTML = '';
             const latest = allReviews.slice(-3).reverse(); 
@@ -447,6 +422,7 @@
                     </div>
                 </div>`;
             });
+            initScrollReveal();
         }
 
         function filterCategory(cat) {
@@ -456,7 +432,6 @@
             renderProducts();
         }
 
-        // --- قسم المنتجات (Minimalist) ---
         function renderProducts() {
             const searchText = document.getElementById('search-input').value.toLowerCase();
             const priceFilter = document.getElementById('price-filter').value;
@@ -502,10 +477,12 @@
                         </div>
                     </div>`;
             });
+            initScrollReveal();
         }
         
         document.getElementById('search-input').addEventListener('input', renderProducts);
 
+        // --- باقي الوظائف (السلة، الطلبات، إلخ) زي ما هي ---
         function openReviews(productId) { document.getElementById('reviews-modal').classList.add('modal-open'); document.getElementById('review-product-id').value = productId; }
         async function submitReview(e) {
             e.preventDefault();
@@ -549,21 +526,15 @@
             cartItemsDiv.innerHTML = '';
             
             cart.forEach((item, index) => { 
-                if (isBundle(item)) {
-                    bundleTotal += item.price * item.qty;
-                } else {
-                    regularTotal += item.price * item.qty;
-                }
+                if (isBundle(item)) { bundleTotal += item.price * item.qty; } else { regularTotal += item.price * item.qty; }
                 cartItemsDiv.innerHTML += `<div class="flex justify-between items-center border-b border-gray-100 pb-4 mb-4"><div><p class="font-bold text-brandBlack text-sm">${censorText(item.name)} <span class="text-brandText text-[10px] font-normal">(${item.size || '100ml'})</span></p><p class="text-[10px] text-brandGold mt-1 font-semibold">${item.price} EGP × ${item.qty}</p></div><button onclick="removeFromCart(${index})" class="text-gray-300 hover:text-red-500 transition"><i class="fa-solid fa-xmark"></i></button></div>`; 
             });
 
-            // حساب الخصم فقط على المنتجات العادية
             let discountAmount = (regularTotal * appliedDiscount) / 100;
             let finalTotal = (regularTotal + bundleTotal) - discountAmount;
             
             document.getElementById('cart-total').innerText = finalTotal.toFixed(0) + ' EGP';
             
-            // لو فيه منتجات عادية بس وقتها بنبين الخصم
             if(appliedDiscount > 0 && regularTotal > 0) { 
                 document.getElementById('discount-row').classList.remove('hidden'); 
                 document.getElementById('discount-amount').innerText = discountAmount.toFixed(0) + ' EGP'; 
@@ -581,7 +552,6 @@
             const msg = document.getElementById('coupon-msg');
             if(!code) { msg.innerText = 'اكتب كود الخصم'; msg.className = 'text-red-500 text-[10px] mb-3 font-bold text-center'; return; }
 
-            // التأكد من إن فيه منتجات عادية في السلة عشان الكوبون يشتغل
             const regularTotal = cart.reduce((sum, item) => isBundle(item) ? sum : sum + (item.price * item.qty), 0);
             if (regularTotal === 0) {
                 msg.innerText = 'كوبونات الخصم لا تنطبق على الباقات والعروض.';
@@ -605,7 +575,6 @@
             const btn = document.getElementById('submit-btn'); btn.innerText = 'جاري التحقق...'; btn.disabled = true; 
             const phone = document.getElementById('phone').value;
             
-            // حساب الإجمالي والخصم بناءً على المنتجات العادية فقط
             const regularTotal = cart.reduce((sum, item) => isBundle(item) ? sum : sum + (item.price * item.qty), 0);
             const bundleTotal = cart.reduce((sum, item) => isBundle(item) ? sum + (item.price * item.qty) : sum, 0);
             const discountAmount = (regularTotal * appliedDiscount) / 100;
@@ -646,11 +615,37 @@
             document.getElementById('checkout-form').reset(); btn.innerText = 'تأكيد الطلب'; btn.disabled = false; 
             document.getElementById('coupon-input').value = ''; document.getElementById('coupon-msg').innerText = '';
         }
+        
         async function logVisit() { const lastVisit = sessionStorage.getItem('lastVisit'); if (!lastVisit || Date.now() - lastVisit > 30 * 60 * 1000) { await supabaseClient.from('visits').insert([{}]); sessionStorage.setItem('lastVisit', Date.now()); } }
 
-        supabaseClient.channel('store-realtime').on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, () => initPage()).on('postgres_changes', { event: '*', schema: 'public', table: 'reviews' }, () => initPage()).on('postgres_changes', { event: '*', schema: 'public', table: 'settings' }, () => initPage()).on('postgres_changes', { event: '*', schema: 'public', table: 'bundles' }, () => initPage()).subscribe();
+        // --- التحديث اللحظي (Realtime) المحسن ---
+        const storeChannel = supabaseClient.channel('store-realtime')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, (payload) => {
+                console.log('Products changed!', payload);
+                fetchProducts();
+                showToast('تم تحديث المنتجات!');
+            })
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'bundles' }, (payload) => {
+                console.log('Bundles changed!', payload);
+                fetchBundles();
+                showToast('تم تحديث العروض!');
+            })
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'settings' }, (payload) => {
+                console.log('Settings changed!', payload);
+                fetchSettings();
+                showToast('تم تحديث إعدادات المتجر!');
+            })
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'reviews' }, (payload) => {
+                console.log('Reviews changed!', payload);
+                fetchReviews();
+                showToast('تم تحديث التقييمات!');
+            })
+            .subscribe();
 
-        initPage(); updateCartUI(); logVisit();
+        // تشغيل الصفحة أول مرة
+        initPage(); 
+        updateCartUI(); 
+        logVisit();
     </script>
 </body>
 </html>
