@@ -106,15 +106,15 @@
                             <table class="w-full text-right border-collapse min-w-[900px]">
                                 <thead class="bg-gray-50 text-gray-500 text-xs">
                                     <tr>
-                                        <th class="p-4 border-b">التاريخ</th>
-                                        <th class="p-4 border-b">العميل</th>
-                                        <th class="p-4 border-b">الهاتف</th>
-                                        <th class="p-4 border-b">المحافظة</th>
-                                        <th class="p-4 border-b">الشحن</th>
-                                        <th class="p-4 border-b">الإجمالي</th>
-                                        <th class="p-4 border-b">كوبون</th>
-                                        <th class="p-4 border-b">الحالة</th>
-                                        <th class="p-4 border-b">عرض</th>
+                                        <th class="p-4 border-b whitespace-nowrap">التاريخ</th>
+                                        <th class="p-4 border-b whitespace-nowrap">العميل</th>
+                                        <th class="p-4 border-b whitespace-nowrap">الهاتف</th>
+                                        <th class="p-4 border-b whitespace-nowrap">المحافظة</th>
+                                        <th class="p-4 border-b whitespace-nowrap">الشحن</th>
+                                        <th class="p-4 border-b whitespace-nowrap">الإجمالي</th>
+                                        <th class="p-4 border-b whitespace-nowrap">كوبون</th>
+                                        <th class="p-4 border-b whitespace-nowrap">الحالة</th>
+                                        <th class="p-4 border-b whitespace-nowrap">عرض</th>
                                     </tr>
                                 </thead>
                                 <tbody id="orders-list" class="text-gray-700 text-sm divide-y divide-gray-100"></tbody>
@@ -233,7 +233,7 @@
                                     <div><label class="block text-xs font-bold mb-1">اسم الموقع</label><input type="text" id="set-name" class="w-full border p-2 text-sm bg-gray-50 outline-none rounded"></div>
                                     <div><label class="block text-xs font-bold mb-1">حقوق الفوتر</label><input type="text" id="set-footer" class="w-full border p-2 text-sm bg-gray-50 outline-none rounded"></div>
                                     
-                                    <!-- الخانة الجديدة هنا -->
+                                    <!-- خانة نص الفوتر الكامل -->
                                     <div class="md:col-span-2">
                                         <label class="block text-xs font-bold mb-1">النص الكامل لحقوق الفوتر (يظهر أسفل الموقع)</label>
                                         <input type="text" id="set-footer-full-text" class="w-full border p-2 text-sm bg-gray-50 outline-none rounded" placeholder="© SELECT FRAGRANCEC 2024 . جميع الحقوق محفوظة">
@@ -382,6 +382,7 @@
         const SUPABASE_KEY = 'sb_publishable_M05JYZ9LKlIfeDjuCJqzxQ_Ay6EbRKj';
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         let salesChartInstance = null, visitsChartInstance = null, allOrders = [], currentOrderId = null, allProductsList = [];
+        let currentLogoUrl = ''; // متغير جديد لحفظ اللوجو
 
         const badWords = ['كسم', 'خرا', 'زبالة', 'حيوان', 'غبي', 'عبيط', 'كلب', 'عرص', 'شرموط', 'قحب', 'خول', 'لبوة', 'طيز', 'كس', 'نيك', 'متناك', 'شرموطة', 'fuck', 'shit', 'bitch', 'asshole', 'pussy'];
         function censorText(text) { if (!text) return ''; let clean = text; badWords.forEach(word => { const regex = new RegExp(word, 'gi'); clean = clean.replace(regex, '***'); }); return clean; }
@@ -506,14 +507,73 @@
 
         function printInvoice() {
             const order = currentOrderId;
-            let items = order.items; if(typeof items === 'string') items = JSON.parse(items);
+            let items = order.items; 
+            if(typeof items === 'string') items = JSON.parse(items);
+            
+            let subTotal = 0;
+            let itemsHTML = '';
+            items.forEach(item => { 
+                subTotal += (item.price * item.qty);
+                itemsHTML += `<tr><td>${item.name} (${item.size || ''})</td><td>${item.qty}</td><td>${item.price} ج.م</td><td>${item.price * item.qty} ج.م</td></tr>`; 
+            });
+
+            let discountHTML = '';
+            if (order.discount_amount && order.discount_amount > 0) {
+                discountHTML = `<tr><td style="text-align:left; color: #C5A880; font-weight:bold;">الخصم (${order.coupon_code || ''}):</td><td style="text-align:left; color: #C5A880; font-weight:bold;">- ${order.discount_amount} ج.م</td></tr>`;
+            }
+
+            let shippingText = (order.shipping_cost === 0 || !order.shipping_cost) ? 'شحن مجاني' : `${order.shipping_cost} ج.م`;
+
+            // الجزء الخاص باللوجو
+            let headerLogoHTML = '';
+            if (currentLogoUrl) {
+                headerLogoHTML = `<img src="${currentLogoUrl}" style="max-height: 80px; max-width: 200px; object-fit: contain; margin-bottom: 10px; display: block; margin-left: auto; margin-right: auto;">`;
+            } else {
+                headerLogoHTML = `<h2>SELECT</h2>`;
+            }
+
             let printWindow = window.open('', '', 'width=800,height=600');
-            let html = `<html dir="rtl"><head><title>فاتورة #${order.id}</title><style>body{font-family:sans-serif;padding:20px;} table{width:100%;border-collapse:collapse;margin-top:20px;} th,td{border:1px solid #ddd;padding:8px;text-align:right;} th{background:#f2f2f2;}</style></head><body>`;
-            html += `<h2>فاتورة SELECT</h2><p><strong>رقم الطلب:</strong> #${order.id}</p><p><strong>العميل:</strong> ${order.customer_name}</p><p><strong>الهاتف:</strong> ${order.phone}</p><p><strong>المحافظة:</strong> ${order.city}</p><p><strong>العنوان:</strong> ${order.address}</p>`;
+            let html = `<html dir="rtl"><head><title>فاتورة #${order.id}</title>
+            <style>
+                body{ font-family: 'Tajawal', sans-serif; padding: 30px; color: #333; }
+                .header { text-align: center; border-bottom: 2px solid #0A0A0A; padding-bottom: 15px; margin-bottom: 25px; }
+                .header h2 { margin: 0; font-family: 'Playfair Display', serif; letter-spacing: 2px; font-size: 28px; }
+                .info { margin-bottom: 30px; line-height: 1.8; font-size: 14px; background: #F8F8F6; padding: 15px; border-radius: 8px;}
+                table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 14px; }
+                th, td { border: 1px solid #ddd; padding: 12px; text-align: right; }
+                th { background: #0A0A0A; color: #fff; font-weight: bold; }
+                .totals { width: 60%; margin-right: auto; margin-left: 0; border: 1px solid #ddd; }
+                .totals td { border: none; border-bottom: 1px solid #eee; padding: 10px 15px; }
+                .totals .final-row { border-top: 2px solid #0A0A0A; font-weight: bold; font-size: 18px; background: #F8F8F6;}
+            </style></head><body>`;
+            
+            // إضافة اللوجو هنا
+            html += `<div class="header">${headerLogoHTML}<p style="margin-top:10px; color:#666;">فاتورة الطلب #${order.id}</p></div>`;
+            
+            html += `<div class="info">
+                <p><strong>العميل:</strong> ${order.customer_name}</p>
+                <p><strong>الهاتف:</strong> ${order.phone}</p>
+                <p><strong>المحافظة:</strong> ${order.city}</p>
+                <p><strong>العنوان:</strong> ${order.address}</p>
+                <p><strong>التاريخ:</strong> ${new Date(order.created_at).toLocaleDateString('ar-EG')}</p>
+            </div>`;
+            
             html += `<table><thead><tr><th>المنتج</th><th>الكمية</th><th>السعر</th><th>الإجمالي</th></tr></thead><tbody>`;
-            items.forEach(item => { html += `<tr><td>${item.name} (${item.size || ''})</td><td>${item.qty}</td><td>${item.price} ج.م</td><td>${item.price * item.qty} ج.م</td></tr>`; });
-            html += `</tbody></table><h3 style="text-align:left;margin-top:20px;">الشحن: ${order.shipping_cost || 0} ج.م</h3><h3 style="text-align:left;margin-top:10px;">الإجمالي: ${order.total_price} ج.م</h3></body></html>`;
-            printWindow.document.write(html); printWindow.document.close(); printWindow.print();
+            html += itemsHTML;
+            html += `</tbody></table>`;
+            
+            html += `<table class="totals">
+                <tr><td>المنتجات:</td><td>${subTotal} ج.م</td></tr>
+                ${discountHTML}
+                <tr><td>الشحن:</td><td style="${(order.shipping_cost === 0 || !order.shipping_cost) ? 'color: green; font-weight: bold;' : ''}">${shippingText}</td></tr>
+                <tr class="final-row"><td>الإجمالي النهائي:</td><td>${order.total_price} ج.م</td></tr>
+            </table>`;
+            
+            html += `</body></html>`;
+            
+            printWindow.document.write(html); 
+            printWindow.document.close(); 
+            printWindow.print();
         }
 
         function exportOrdersToCSV() {
@@ -682,8 +742,11 @@
                 // الأساسية
                 document.getElementById('set-name').value = data.site_name || ''; 
                 document.getElementById('set-footer').value = data.footer_text || ''; 
-                document.getElementById('set-footer-full-text').value = data.footer_full_text || ''; // الخانة الجديدة
+                document.getElementById('set-footer-full-text').value = data.footer_full_text || ''; 
                 
+                // حفظ اللوجو في المتغير عشان الفاتورة
+                currentLogoUrl = data.logo_url || '';
+
                 document.getElementById('set-logo-url').value = data.logo_url || '';
                 const logoPreview = document.getElementById('current-logo-preview');
                 if(data.logo_url) { logoPreview.src = data.logo_url; logoPreview.classList.remove('hidden'); } else { logoPreview.classList.add('hidden'); }
@@ -789,7 +852,7 @@
 
                 site_name: censorText(document.getElementById('set-name').value), 
                 footer_text: censorText(document.getElementById('set-footer').value), 
-                footer_full_text: censorText(document.getElementById('set-footer-full-text').value), // تم إضافة الحفظ هنا
+                footer_full_text: censorText(document.getElementById('set-footer-full-text').value), 
                 logo_url: logoUrl, 
                 hero_title: censorText(document.getElementById('set-title').value), 
                 hero_subtitle: censorText(document.getElementById('set-subtitle').value), 
