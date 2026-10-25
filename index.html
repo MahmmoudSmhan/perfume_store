@@ -244,7 +244,7 @@
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         
         let cart = JSON.parse(localStorage.getItem('cart')) || [];
-        let allProducts = [], allReviews = [], appliedDiscount = 0, dynamicTexts = {}, currentFilter = 'all';
+        let allProducts = [], allReviews = [], appliedDiscount = 0, appliedCouponCode = '', dynamicTexts = {}, currentFilter = 'all';
 
         const badWords = ['كسم', 'خرا', 'زبالة', 'حيوان', 'غبي', 'عبيط', 'كلب', 'عرص', 'شرموط', 'قحب', 'خول', 'لبوة', 'طيز', 'كس', 'نيك', 'متناك', 'شرموطة', 'fuck', 'shit', 'bitch', 'asshole', 'pussy'];
         function censorText(text) { if (!text) return ''; let clean = text; badWords.forEach(word => { const regex = new RegExp(word, 'gi'); clean = clean.replace(regex, '***'); }); return clean; }
@@ -442,32 +442,89 @@
             }
             
             if (!data || data.active === false) {
-                appliedDiscount = 0; 
+                appliedDiscount = 0; appliedCouponCode = '';
                 msg.innerText = 'كود الخصم غير صحيح أو غير نشط';
                 msg.className = 'text-red-500 text-xs mb-3 font-bold'; 
                 updateCartUI();
                 return;
             }
 
+            if (data.used_count >= data.max_uses) {
+                appliedDiscount = 0; appliedCouponCode = '';
+                msg.innerText = 'هذا الكوبون وصل للحد الأقصى للاستخدام';
+                msg.className = 'text-red-500 text-xs mb-3 font-bold'; 
+                updateCartUI();
+                return;
+            }
+
             appliedDiscount = data.discount_percent; 
+            appliedCouponCode = data.code; 
             msg.innerText = `تم تطبيق خصم ${appliedDiscount}%`; 
             msg.className = 'text-green-600 text-xs mb-3 font-bold'; 
             updateCartUI(); 
         }
         
+        // ✅ دالة تأكيد الطلب المعدلة (بتمنع استخدام الكوبون أكتر من مرة لنفس الرقم)
         async function submitOrder(e) { 
             e.preventDefault(); 
-            const btn = document.getElementById('submit-btn'); btn.innerText = 'جاري المعالجة...'; btn.disabled = true; 
-            const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.qty), 0); 
-            const finalTotal = totalPrice - ((totalPrice * appliedDiscount) / 100); 
+            const btn = document.getElementById('submit-btn'); 
+            btn.innerText = 'جاري التحقق...'; 
+            btn.disabled = true; 
+
+            const phone = document.getElementById('phone').value;
+
+            // لو فيه كوبون متطبق، نتأكد إن الرقم ده مستخدمهوش قبل كده
+            if (appliedCouponCode) {
+                const { data: previousOrders, error: checkError } = await supabaseClient
+                    .from('orders')
+                    .select('id')
+                    .eq('phone', phone)
+                    .eq('coupon_code', appliedCouponCode)
+                    .neq('status', 'cancelled');
+
+                if (checkError) {
+                    console.error(checkError);
+                    showToast('حدث خطأ أثناء التحقق من الكوبون.');
+                    btn.innerText = 'تأكيد الطلب'; btn.disabled = false; return;
+                }
+
+                if (previousOrders && previousOrders.length > 0) {
+                    showToast('عذراً، لقد استخدمت هذا الكوبون من قبل! كل كوبون صالح لمرة واحدة لكل عميل.');
+                    btn.innerText = 'تأكيد الطلب'; btn.disabled = false; 
+                    return; // وقف العملية
+                }
+            }
+
+            // لو تمام، نكمل تسجيل الطلب
+            btn.innerText = 'جاري المعالجة...'; 
             
-            const orderData = { customer_name: censorText(document.getElementById('customer_name').value), phone: document.getElementById('phone').value, city: censorText(document.getElementById('city').value), address: censorText(document.getElementById('address').value), total_price: finalTotal, items: cart, status: 'pending' }; 
+            const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.qty), 0); 
+            const discountAmount = (totalPrice * appliedDiscount) / 100;
+            const finalTotal = totalPrice - discountAmount; 
+            
+            const orderData = { 
+                customer_name: censorText(document.getElementById('customer_name').value), 
+                phone: phone, 
+                city: censorText(document.getElementById('city').value), 
+                address: censorText(document.getElementById('address').value), 
+                total_price: finalTotal, 
+                coupon_code: appliedCouponCode || null, 
+                discount_amount: discountAmount, 
+                items: cart, 
+                status: 'pending' 
+            }; 
             
             const { error } = await supabaseClient.from('orders').insert([orderData]); 
-            if (error) { showToast('حدث خطأ!'); btn.innerText = 'تأكيد الطلب'; btn.disabled = false; return; } 
+            if (error) { 
+                console.error(error);
+                showToast('حدث خطأ!'); btn.innerText = 'تأكيد الطلب'; btn.disabled = false; return; 
+            } 
             
             closeCheckoutModal(); document.getElementById('success-modal').classList.add('modal-open');
-            cart = []; appliedDiscount = 0; saveCart(); document.getElementById('checkout-form').reset(); btn.innerText = 'تأكيد الطلب'; btn.disabled = false; document.getElementById('coupon-input').value = ''; document.getElementById('coupon-msg').innerText = '';
+            cart = []; appliedDiscount = 0; appliedCouponCode = ''; 
+            saveCart(); 
+            document.getElementById('checkout-form').reset(); btn.innerText = 'تأكيد الطلب'; btn.disabled = false; 
+            document.getElementById('coupon-input').value = ''; document.getElementById('coupon-msg').innerText = '';
         }
         
         async function logVisit() { const lastVisit = sessionStorage.getItem('lastVisit'); if (!lastVisit || Date.now() - lastVisit > 30 * 60 * 1000) { await supabaseClient.from('visits').insert([{}]); sessionStorage.setItem('lastVisit', Date.now()); } }
