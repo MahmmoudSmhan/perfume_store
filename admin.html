@@ -101,7 +101,7 @@
                 <h2 class="text-2xl font-bold mb-8">الباقات والعروض</h2>
                 <div class="bg-white p-6 border border-gray-200 shadow-sm mb-8">
                     <form id="bundle-form" onsubmit="saveBundle(event)" class="flex flex-col md:flex-row gap-4 items-end flex-wrap">
-                        <div class="flex-1 w-full min-w-[200px]"><label class="block text-xs font-bold mb-2">اسم الباقة</label><input type="text" id="b-name" required class="w-full border p-2 text-sm bg-gray-50 outline-none" placeholder="مثال: بوكس الشتاء"></div>
+                        <div class="flex-1 w-full min-w-[200px]"><label class="block text-xs font-bold mb-2">اسم العرض / الباقة</label><input type="text" id="b-name" required class="w-full border p-2 text-sm bg-gray-50 outline-none" placeholder="مثال: عرض الشتاء"></div>
                         <div class="flex-1 w-full min-w-[150px]"><label class="block text-xs font-bold mb-2">السعر الأصلي</label><input type="number" id="b-original" required class="w-full border p-2 text-sm bg-gray-50 outline-none"></div>
                         <div class="flex-1 w-full min-w-[150px]"><label class="block text-xs font-bold mb-2">سعر الباقة</label><input type="number" id="b-price" required class="w-full border p-2 text-sm bg-gray-50 outline-none"></div>
                         <div class="flex-1 w-full min-w-[150px]"><label class="block text-xs font-bold mb-2">عدد القطع</label><input type="number" id="b-count" required class="w-full border p-2 text-sm bg-gray-50 outline-none"></div>
@@ -135,12 +135,13 @@
             <!-- 7. Settings -->
             <div id="view-settings" class="view-section">
                 <h2 class="text-2xl font-bold mb-8">الإعدادات</h2>
-                <div class="bg-white p-8 border border-gray-200 shadow-sm max-w-4xl">
-                    <form id="settings-form" onsubmit="saveSettings(event)" class="space-y-8">
+                <div class="bg-white p-8 border border-gray-200 shadow-sm max-w-5xl">
+                    <form id="settings-form" onsubmit="saveSettings(event)" class="space-y-10">
+                        <!-- معلومات أساسية -->
                         <div>
-                            <h3 class="font-bold text-sm border-b pb-2 mb-4">معلومات المتجر</h3>
+                            <h3 class="font-bold text-sm border-b pb-2 mb-4 text-black">معلومات المتجر واللوجو</h3>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div><label class="block text-xs font-bold mb-1">اسم الموقع (نص)</label><input type="text" id="set-name" class="w-full border p-2 text-sm bg-gray-50 outline-none"></div>
+                                <div><label class="block text-xs font-bold mb-1">اسم الموقع</label><input type="text" id="set-name" class="w-full border p-2 text-sm bg-gray-50 outline-none"></div>
                                 <div><label class="block text-xs font-bold mb-1">حقوق الفوتر</label><input type="text" id="set-footer" class="w-full border p-2 text-sm bg-gray-50 outline-none"></div>
                                 <div class="md:col-span-2 bg-gray-50 p-4 border border-gray-200 mt-2">
                                     <label class="block text-xs font-bold mb-2">شعار الموقع (اللوجو)</label>
@@ -152,32 +153,58 @@
                                 </div>
                             </div>
                         </div>
+
+                        <!-- البانر الرئيسي -->
                         <div>
-                            <h3 class="font-bold text-sm border-b pb-2 mb-4">البانر الرئيسي</h3>
-                            <div class="space-y-4">
-                                <input type="text" id="set-title" placeholder="عنوان البانر" class="w-full border p-2 text-sm bg-gray-50 outline-none">
-                                <input type="text" id="set-subtitle" placeholder="الوصف" class="w-full border p-2 text-sm bg-gray-50 outline-none">
-                                <input type="text" id="set-hero-btn" placeholder="نص الزرار" class="w-full border p-2 text-sm bg-gray-50 outline-none">
-                                <div class="bg-gray-50 p-4 border border-gray-200 mt-2">
+                            <h3 class="font-bold text-sm border-b pb-2 mb-4 text-black">البانر الرئيسي</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div><label class="block text-xs font-bold mb-1">عنوان البانر</label><input type="text" id="set-title" class="w-full border p-2 text-sm bg-gray-50 outline-none"></div>
+                                <div><label class="block text-xs font-bold mb-1">وصف البانر</label><input type="text" id="set-subtitle" class="w-full border p-2 text-sm bg-gray-50 outline-none"></div>
+                                <div><label class="block text-xs font-bold mb-1">نص زرار البانر</label><input type="text" id="set-hero-btn" class="w-full border p-2 text-sm bg-gray-50 outline-none"></div>
+                                <div class="bg-gray-50 p-4 border border-gray-200">
                                     <label class="block text-xs font-bold mb-2">صورة خلفية البانر</label>
-                                    <div class="flex items-center gap-4">
-                                        <input type="file" id="set-image-file" accept="image/*" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:border-0 file:text-xs file:font-bold file:bg-black file:text-white hover:file:bg-gray-800 transition">
-                                        <input type="hidden" id="set-image-url">
-                                    </div>
+                                    <input type="file" id="set-image-file" accept="image/*" class="w-full text-sm text-gray-500">
+                                    <input type="hidden" id="set-image-url">
                                 </div>
                             </div>
                         </div>
-                        <!-- قسم العروض الجديد -->
+
+                        <!-- نصوص الواجهة (الجديد) -->
                         <div>
-                            <h3 class="font-bold text-sm border-b pb-2 mb-4">إعدادات العروض والباقات</h3>
-                            <div>
-                                <label class="block text-xs font-bold mb-1">عنوان قسم العروض في المتجر</label>
-                                <input type="text" id="set-bundles-title" placeholder="مثال: عروض الشتاء، عروض لا تُقاوم" class="w-full border p-2 text-sm bg-gray-50 outline-none">
-                                <p class="text-[10px] text-gray-400 mt-1">هذا النص سيظهر كعنوان للقسم الذي يحتوي على الباقات.</p>
+                            <h3 class="font-bold text-sm border-b pb-2 mb-4 text-black">نصوص واجهة المتجر (كل كلمة في الموقع)</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div><label class="block text-xs font-bold mb-1">الشريط العلوي</label><input type="text" id="set-top-bar" class="w-full border p-2 text-sm bg-gray-50 outline-none"></div>
+                                <div><label class="block text-xs font-bold mb-1">عنوان قسم المنتجات</label><input type="text" id="set-sec-products" class="w-full border p-2 text-sm bg-gray-50 outline-none"></div>
+                                <div><label class="block text-xs font-bold mb-1">عنوان قسم العروض (يظهر لو فيه عروض)</label><input type="text" id="set-bundles-title" class="w-full border p-2 text-sm bg-gray-50 outline-none"></div>
+                                
+                                <div><label class="block text-xs font-bold mb-1">تصنيف: الكل</label><input type="text" id="set-cat-all" class="w-full border p-2 text-sm bg-gray-50 outline-none"></div>
+                                <div><label class="block text-xs font-bold mb-1">تصنيف: رجالي</label><input type="text" id="set-cat-men" class="w-full border p-2 text-sm bg-gray-50 outline-none"></div>
+                                <div><label class="block text-xs font-bold mb-1">تصنيف: نسائي</label><input type="text" id="set-cat-women" class="w-full border p-2 text-sm bg-gray-50 outline-none"></div>
+                                <div><label class="block text-xs font-bold mb-1">تصنيف: للجنسين</label><input type="text" id="set-cat-unisex" class="w-full border p-2 text-sm bg-gray-50 outline-none"></div>
+                                <div><label class="block text-xs font-bold mb-1">نص البحث (Placeholder)</label><input type="text" id="set-search" class="w-full border p-2 text-sm bg-gray-50 outline-none"></div>
+                                <div><label class="block text-xs font-bold mb-1">فلتر السعر: الكل</label><input type="text" id="set-filter-all" class="w-full border p-2 text-sm bg-gray-50 outline-none"></div>
+                                <div><label class="block text-xs font-bold mb-1">فلتر: أقل من 500</label><input type="text" id="set-filter-low" class="w-full border p-2 text-sm bg-gray-50 outline-none"></div>
+                                <div><label class="block text-xs font-bold mb-1">فلتر: 500-1000</label><input type="text" id="set-filter-mid" class="w-full border p-2 text-sm bg-gray-50 outline-none"></div>
+                                <div><label class="block text-xs font-bold mb-1">فلتر: أكثر من 1000</label><input type="text" id="set-filter-high" class="w-full border p-2 text-sm bg-gray-50 outline-none"></div>
+
+                                <div><label class="block text-xs font-bold mb-1">عنوان قسم التقييمات</label><input type="text" id="set-sec-reviews" class="w-full border p-2 text-sm bg-gray-50 outline-none"></div>
+                                <div><label class="block text-xs font-bold mb-1">عنوان السلة</label><input type="text" id="set-cart-title" class="w-full border p-2 text-sm bg-gray-50 outline-none"></div>
+                                <div><label class="block text-xs font-bold mb-1">نص كوبون الخصم</label><input type="text" id="set-coupon-ph" class="w-full border p-2 text-sm bg-gray-50 outline-none"></div>
+                                <div><label class="block text-xs font-bold mb-1">زرار تطبيق الكوبون</label><input type="text" id="set-coupon-btn" class="w-full border p-2 text-sm bg-gray-50 outline-none"></div>
+                                <div><label class="block text-xs font-bold mb-1">نص الإجمالي</label><input type="text" id="set-cart-total" class="w-full border p-2 text-sm bg-gray-50 outline-none"></div>
+                                <div><label class="block text-xs font-bold mb-1">عنوان صفحة الشحن</label><input type="text" id="set-checkout-title" class="w-full border p-2 text-sm bg-gray-50 outline-none"></div>
+                                
+                                <div><label class="block text-xs font-bold mb-1">حقل: الاسم</label><input type="text" id="set-lbl-name" class="w-full border p-2 text-sm bg-gray-50 outline-none"></div>
+                                <div><label class="block text-xs font-bold mb-1">حقل: الهاتف</label><input type="text" id="set-lbl-phone" class="w-full border p-2 text-sm bg-gray-50 outline-none"></div>
+                                <div><label class="block text-xs font-bold mb-1">حقل: المحافظة</label><input type="text" id="set-lbl-city" class="w-full border p-2 text-sm bg-gray-50 outline-none"></div>
+                                <div><label class="block text-xs font-bold mb-1">حقل: العنوان</label><input type="text" id="set-lbl-address" class="w-full border p-2 text-sm bg-gray-50 outline-none"></div>
+                                <div><label class="block text-xs font-bold mb-1">زرار تأكيد الطلب</label><input type="text" id="set-confirm-btn" class="w-full border p-2 text-sm bg-gray-50 outline-none"></div>
                             </div>
                         </div>
+
+                        <!-- التواصل -->
                         <div>
-                            <h3 class="font-bold text-sm border-b pb-2 mb-4">التواصل</h3>
+                            <h3 class="font-bold text-sm border-b pb-2 mb-4 text-black">التواصل</h3>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <input type="text" id="set-whatsapp" placeholder="رقم الواتساب" dir="ltr" class="w-full border p-2 text-sm bg-gray-50 outline-none text-left">
                                 <input type="url" id="set-facebook" placeholder="رابط فيسبوك" dir="ltr" class="w-full border p-2 text-sm bg-gray-50 outline-none text-left">
@@ -400,20 +427,61 @@
         async function loadSettings() {
             const { data } = await supabaseClient.from('settings').select('*').eq('id', 1).single();
             if (data) { 
-                document.getElementById('set-name').value = data.site_name || ''; document.getElementById('set-footer').value = data.footer_text || ''; document.getElementById('set-title').value = data.hero_title || ''; document.getElementById('set-subtitle').value = data.hero_subtitle || ''; document.getElementById('set-hero-btn').value = data.hero_btn || ''; document.getElementById('set-whatsapp').value = data.whatsapp_number || ''; document.getElementById('set-facebook').value = data.facebook_url || ''; document.getElementById('set-instagram').value = data.instagram_url || ''; document.getElementById('set-tiktok').value = data.tiktok_url || ''; 
-                document.getElementById('set-bundles-title').value = data.bundles_title || 'عروض لا تُقاوم';
+                // معلومات أساسية
+                document.getElementById('set-name').value = data.site_name || ''; 
+                document.getElementById('set-footer').value = data.footer_text || ''; 
                 document.getElementById('set-logo-url').value = data.logo_url || '';
                 const logoPreview = document.getElementById('current-logo-preview');
                 if(data.logo_url) { logoPreview.src = data.logo_url; logoPreview.classList.remove('hidden'); } else { logoPreview.classList.add('hidden'); }
+
+                // البانر
+                document.getElementById('set-title').value = data.hero_title || ''; 
+                document.getElementById('set-subtitle').value = data.hero_subtitle || ''; 
+                document.getElementById('set-hero-btn').value = data.hero_btn || ''; 
                 document.getElementById('set-image-url').value = data.hero_image || '';
+
+                // النصوص الجديدة
+                document.getElementById('set-top-bar').value = data.top_bar_text || 'Free Shipping on orders over 1500 EGP';
+                document.getElementById('set-sec-products').value = data.section_products_title || 'مجموعتنا الحصرية';
+                document.getElementById('set-bundles-title').value = data.bundles_title || 'عروض لا تُقاوم';
+                document.getElementById('set-cat-all').value = data.cat_all || 'الكل';
+                document.getElementById('set-cat-men').value = data.cat_men || 'رجالي';
+                document.getElementById('set-cat-women').value = data.cat_women || 'نسائي';
+                document.getElementById('set-cat-unisex').value = data.cat_unisex || 'للجنسين';
+                document.getElementById('set-search').value = data.search_placeholder || 'ابحث عن عطرك...';
+                document.getElementById('set-filter-all').value = data.filter_all || 'السعر: الكل';
+                document.getElementById('set-filter-low').value = data.filter_low || 'أقل من 500 ج.م';
+                document.getElementById('set-filter-mid').value = data.filter_mid || '500 - 1000 ج.م';
+                document.getElementById('set-filter-high').value = data.filter_high || 'أكثر من 1000 ج.م';
+                document.getElementById('set-sec-reviews').value = data.section_reviews_title || 'آراء عملائنا';
+                document.getElementById('set-cart-title').value = data.cart_title || 'حقيبة التسوق';
+                document.getElementById('set-coupon-ph').value = data.coupon_placeholder || 'كود الخصم';
+                document.getElementById('set-coupon-btn').value = data.coupon_btn || 'تطبيق';
+                document.getElementById('set-cart-total').value = data.cart_total_text || 'الإجمالي:';
+                document.getElementById('set-checkout-title').value = data.checkout_title || 'بيانات الشحن';
+                document.getElementById('set-lbl-name').value = data.name_label || 'الاسم بالكامل';
+                document.getElementById('set-lbl-phone').value = data.phone_label || 'رقم الهاتف';
+                document.getElementById('set-lbl-city').value = data.city_label || 'المحافظة';
+                document.getElementById('set-lbl-address').value = data.address_label || 'العنوان';
+                document.getElementById('set-confirm-btn').value = data.confirm_order_btn || 'تأكيد الطلب';
+
+                // التواصل
+                document.getElementById('set-whatsapp').value = data.whatsapp_number || ''; 
+                document.getElementById('set-facebook').value = data.facebook_url || ''; 
+                document.getElementById('set-instagram').value = data.instagram_url || ''; 
+                document.getElementById('set-tiktok').value = data.tiktok_url || ''; 
+
+                // تحديث اللوجو الجانبي
                 const sidebarLogo = document.getElementById('admin-sidebar-logo');
                 const sidebarText = document.getElementById('admin-sidebar-text');
                 if (data.logo_url) { sidebarLogo.src = data.logo_url; sidebarLogo.classList.remove('hidden'); sidebarText.classList.add('hidden'); } else { sidebarLogo.classList.add('hidden'); sidebarText.classList.remove('hidden'); }
             }
         }
+
         async function saveSettings(e) {
             e.preventDefault();
             const btn = e.target.querySelector('button[type="submit"]'); const oldText = btn.innerText; btn.innerText = 'جاري الحفظ...'; btn.disabled = true;
+            
             let logoUrl = document.getElementById('set-logo-url').value;
             const logoFileInput = document.getElementById('set-logo-file');
             if (logoFileInput.files.length > 0) {
@@ -432,10 +500,48 @@
                 const { error: uploadError } = await supabaseClient.storage.from('product-images').upload(fileName, file);
                 if (!uploadError) { const { data: urlData } = supabaseClient.storage.from('product-images').getPublicUrl(fileName); heroImageUrl = urlData.publicUrl; }
             }
-            const data = { site_name: censorText(document.getElementById('set-name').value), footer_text: censorText(document.getElementById('set-footer').value), hero_title: censorText(document.getElementById('set-title').value), hero_subtitle: censorText(document.getElementById('set-subtitle').value), hero_image: heroImageUrl, hero_btn: censorText(document.getElementById('set-hero-btn').value), whatsapp_number: document.getElementById('set-whatsapp').value, facebook_url: document.getElementById('set-facebook').value, instagram_url: document.getElementById('set-instagram').value, tiktok_url: document.getElementById('set-tiktok').value, logo_url: logoUrl, bundles_title: censorText(document.getElementById('set-bundles-title').value) };
+
+            const data = { 
+                site_name: censorText(document.getElementById('set-name').value), 
+                footer_text: censorText(document.getElementById('set-footer').value), 
+                logo_url: logoUrl,
+                hero_title: censorText(document.getElementById('set-title').value), 
+                hero_subtitle: censorText(document.getElementById('set-subtitle').value), 
+                hero_btn: censorText(document.getElementById('set-hero-btn').value),
+                hero_image: heroImageUrl,
+                top_bar_text: censorText(document.getElementById('set-top-bar').value),
+                section_products_title: censorText(document.getElementById('set-sec-products').value),
+                bundles_title: censorText(document.getElementById('set-bundles-title').value),
+                cat_all: censorText(document.getElementById('set-cat-all').value),
+                cat_men: censorText(document.getElementById('set-cat-men').value),
+                cat_women: censorText(document.getElementById('set-cat-women').value),
+                cat_unisex: censorText(document.getElementById('set-cat-unisex').value),
+                search_placeholder: censorText(document.getElementById('set-search').value),
+                filter_all: censorText(document.getElementById('set-filter-all').value),
+                filter_low: censorText(document.getElementById('set-filter-low').value),
+                filter_mid: censorText(document.getElementById('set-filter-mid').value),
+                filter_high: censorText(document.getElementById('set-filter-high').value),
+                section_reviews_title: censorText(document.getElementById('set-sec-reviews').value),
+                cart_title: censorText(document.getElementById('set-cart-title').value),
+                coupon_placeholder: censorText(document.getElementById('set-coupon-ph').value),
+                coupon_btn: censorText(document.getElementById('set-coupon-btn').value),
+                cart_total_text: censorText(document.getElementById('set-cart-total').value),
+                checkout_title: censorText(document.getElementById('set-checkout-title').value),
+                name_label: censorText(document.getElementById('set-lbl-name').value),
+                phone_label: censorText(document.getElementById('set-lbl-phone').value),
+                city_label: censorText(document.getElementById('set-lbl-city').value),
+                address_label: censorText(document.getElementById('set-lbl-address').value),
+                confirm_order_btn: censorText(document.getElementById('set-confirm-btn').value),
+                whatsapp_number: document.getElementById('set-whatsapp').value, 
+                facebook_url: document.getElementById('set-facebook').value, 
+                instagram_url: document.getElementById('set-instagram').value, 
+                tiktok_url: document.getElementById('set-tiktok').value 
+            };
+            
             const { error } = await supabaseClient.from('settings').update(data).eq('id', 1);
             if(error) alert('خطأ! ' + error.message); else { btn.innerHTML = 'تم الحفظ!'; loadSettings(); setTimeout(() => { btn.innerText = oldText; btn.disabled = false; }, 2000); }
         }
+
         async function deleteAllData() {
             if(!confirm('⚠️ تحذير: سيتم مسح جميع البيانات. هل أنت متأكد؟')) return;
             const btn = event.target; btn.innerText = 'جاري المسح...'; btn.disabled = true;
