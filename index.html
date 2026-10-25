@@ -95,11 +95,12 @@
         </div>
     </header>
 
-    <!-- ==================== Bundles Section (جديد) ==================== -->
+    <!-- ==================== Bundles Section ==================== -->
     <section class="bg-white py-16 md:py-24 border-b border-brandBorder">
         <div class="container mx-auto px-4 md:px-8">
             <div class="text-center mb-16">
-                <h3 class="text-3xl md:text-5xl font-title font-bold text-brandBlack mb-4">عروض لا تُقاوم</h3>
+                <!-- العنوان هنا بقى ديناميكي -->
+                <h3 id="bundles-section-title" class="text-3xl md:text-5xl font-title font-bold text-brandBlack mb-4">عروض لا تُقاوم</h3>
                 <div class="w-16 h-[1px] bg-brandGold mx-auto"></div>
             </div>
             <div id="bundles-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"></div>
@@ -280,6 +281,10 @@
                 document.getElementById('hero-btn').innerText = censorText(settings.hero_btn) || 'تسوق الآن';
                 document.getElementById('btn-checkout-dyn').innerText = censorText(settings.btn_checkout) || 'إتمام الطلب';
                 document.getElementById('footer-text').innerText = censorText(settings.footer_text) || 'جميع الحقوق محفوظة';
+                
+                // تحديث عنوان الباقات الديناميكي
+                document.getElementById('bundles-section-title').innerText = censorText(settings.bundles_title) || 'عروض لا تُقاوم';
+
                 if(settings.hero_image) document.getElementById('hero-bg').style.backgroundImage = `url('${settings.hero_image}')`;
                 
                 const waBtn = document.getElementById('whatsapp-btn');
@@ -312,12 +317,12 @@
                         <div class="w-full aspect-square overflow-hidden mb-4 relative bg-brandGray">
                             <img src="${b.image_url}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
                         </div>
-                        <h4 class="text-lg font-title font-bold text-brandBlack mb-1">${b.name}</h4>
+                        <h4 class="text-lg font-title font-bold text-brandBlack mb-1">${censorText(b.name)}</h4>
                         <div class="flex items-center justify-center gap-3 mb-4">
                             <span class="text-gray-400 line-through text-sm">${b.original_price} ج.م</span>
                             <span class="text-brandGold font-bold text-xl">${b.bundle_price} ج.م</span>
                         </div>
-                        <button onclick="addToCart('bundle_${b.id}', '${b.name}', ${b.bundle_price}, '${b.items_count} قطع')" class="w-full bg-brandBlack text-white py-2.5 text-xs font-bold tracking-widest uppercase hover:bg-brandGold hover:text-brandBlack transition mt-auto">أضف الباقة للسلة</button>
+                        <button onclick="addToCart('bundle_${b.id}', '${censorText(b.name)}', ${b.bundle_price}, '${b.items_count} قطع')" class="w-full bg-brandBlack text-white py-2.5 text-xs font-bold tracking-widest uppercase hover:bg-brandGold hover:text-brandBlack transition mt-auto">أضف الباقة للسلة</button>
                     </div>`;
             });
         }
