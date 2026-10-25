@@ -22,6 +22,13 @@
         
         #admin-toast { visibility: hidden; min-width: 300px; background-color: #0A0A0A; color: #C5A880; text-align: center; padding: 16px; position: fixed; z-index: 1000; left: 50%; bottom: 30px; transform: translateX(-50%); font-weight: bold; opacity: 0; transition: all 0.5s ease; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); border: 2px solid #C5A880; }
         #admin-toast.show { visibility: visible; opacity: 1; bottom: 40px; }
+
+        /* أنيميشن النبض لعداد الطلبات */
+        @keyframes pulse-red {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.7; }
+        }
+        .animate-badge { animation: pulse-red 2s infinite; }
     </style>
 </head>
 <body class="h-screen overflow-hidden flex bg-[#F7F7F7]">
@@ -61,11 +68,13 @@
             <nav class="flex-1 py-6 md:py-8 space-y-1 overflow-y-auto px-4">
                 <button onclick="switchView('overview', this); closeSidebarOnMobile();" class="nav-btn w-full flex items-center px-6 py-4 text-gray-400 hover:bg-gray-900 hover:text-white transition-all rounded-lg"><i class="fa-solid fa-chart-pie w-6 mr-3"></i> نظرة عامة</button>
                 
+                <!-- زر الطلبات مع عداد الإشعارات -->
                 <button onclick="switchView('orders', this); closeSidebarOnMobile();" class="nav-btn w-full flex items-center justify-between px-6 py-4 text-gray-400 hover:bg-gray-900 hover:text-white transition-all rounded-lg">
                     <div class="flex items-center">
                         <i class="fa-solid fa-box w-6 mr-3"></i> الطلبات
                     </div>
-                    <span id="orders-badge" class="hidden bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">0</span>
+                    <!-- العداد -->
+                    <span id="orders-badge" class="hidden bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full animate-badge shadow-lg">0</span>
                 </button>
                 
                 <button onclick="switchView('products', this); closeSidebarOnMobile();" class="nav-btn w-full flex items-center px-6 py-4 text-gray-400 hover:bg-gray-900 hover:text-white transition-all rounded-lg"><i class="fa-solid fa-bottle-droplet w-6 mr-3"></i> المنتجات</button>
@@ -400,6 +409,7 @@
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         let salesChartInstance = null, visitsChartInstance = null, allOrders = [], currentOrderId = null, allProductsList = [];
         let currentLogoUrl = ''; 
+        
         let newOrdersCount = 0;
         let isFirstLoad = true; 
         let audioCtx;
@@ -468,6 +478,7 @@
         function closeSidebarOnMobile() { if (window.innerWidth < 768) toggleSidebar(); }
 
         document.getElementById('login-form').addEventListener('submit', async (e) => { e.preventDefault(); const { error } = await supabaseClient.auth.signInWithPassword({ email: document.getElementById('email').value, password: document.getElementById('password').value }); if (error) document.getElementById('login-error').classList.remove('hidden'); else checkSession(); });
+        
         async function checkSession() { 
             const { data: { session } } = await supabaseClient.auth.getSession(); 
             if (session) { 
@@ -488,9 +499,12 @@
             document.querySelectorAll('.nav-btn').forEach(btn => { btn.classList.remove('bg-gray-900', 'text-white'); btn.classList.add('text-gray-400'); }); 
             btnElement.classList.add('bg-gray-900', 'text-white'); btnElement.classList.remove('text-gray-400'); 
             
+            // لو دخل على قسم الطلبات، نصفر العداد ونخفي الإشعار
             if(viewId === 'orders') {
                 newOrdersCount = 0;
-                document.getElementById('orders-badge').classList.add('hidden');
+                const badge = document.getElementById('orders-badge');
+                badge.classList.add('hidden');
+                badge.classList.remove('animate-badge');
                 stopFlashingTitle();
             }
 
@@ -583,13 +597,27 @@
                 return;
             }
 
-            allOrders = orders || []; renderOrdersTable(allOrders);
+            allOrders = orders || []; 
+            
+            // حساب عدد الأوردرات المعلقة (Pending) عشان يظهر في العداد
+            const pendingOrders = allOrders.filter(o => o.status === 'pending');
+            if (pendingOrders.length > 0 && !document.getElementById('view-orders').classList.contains('active')) {
+                newOrdersCount = pendingOrders.length;
+                const badge = document.getElementById('orders-badge');
+                badge.innerText = newOrdersCount;
+                badge.classList.remove('hidden');
+                badge.classList.add('animate-badge');
+            }
+
+            renderOrdersTable(allOrders);
         }
+        
         function filterOrders() {
             const term = document.getElementById('order-search').value.toLowerCase();
             const filtered = allOrders.filter(o => o.customer_name.toLowerCase().includes(term) || o.phone.includes(term) || (o.coupon_code && o.coupon_code.toLowerCase().includes(term)) || (o.city && o.city.toLowerCase().includes(term)));
             renderOrdersTable(filtered);
         }
+        
         function renderOrdersTable(ordersToRender) {
             const list = document.getElementById('orders-list'); list.innerHTML = '';
             if(ordersToRender.length === 0) { list.innerHTML = '<tr><td colspan="9" class="text-center p-4 text-gray-500">لا يوجد طلبات.</td></tr>'; return; }
@@ -601,6 +629,7 @@
                 list.innerHTML += `<tr class="hover:bg-gray-50 border-b"><td class="p-4 text-xs text-gray-500">${date}</td><td class="p-4 font-bold text-xs">${censorText(order.customer_name)}</td><td class="p-4 text-blue-600 text-xs" dir="ltr">${order.phone}</td><td class="p-4 text-xs font-bold text-gray-700">${censorText(order.city)}</td><td class="p-4 text-xs font-bold text-gray-700">${shippingCost} ج.م</td><td class="p-4 font-bold text-xs">${order.total_price} ج.م</td><td class="p-4">${couponBadge}</td><td class="p-4"><select onchange="updateOrderStatus(${order.id}, this.value)" class="border p-1 text-xs font-bold outline-none ${statusColors[order.status]} rounded"><option value="pending" ${order.status === 'pending' ? 'selected' : ''}>انتظار</option><option value="shipped" ${order.status === 'shipped' ? 'selected' : ''}>شحن</option><option value="delivered" ${order.status === 'delivered' ? 'selected' : ''}>تسليم</option><option value="cancelled" ${order.status === 'cancelled' ? 'selected' : ''}>ملغي</option></select></td><td class="p-4"><button onclick='openOrderModal(${JSON.stringify(order).replace(/'/g, "&#39;")})' class="bg-black text-white px-3 py-1 font-bold text-xs hover:bg-gray-800 rounded">عرض</button></td></tr>`;
             });
         }
+        
         function openOrderModal(order) {
             currentOrderId = order;
             let couponInfo = order.coupon_code ? `<p class="mt-2 text-green-600 font-bold border-t pt-2 border-green-200"><strong>كوبون مستخدم:</strong> ${order.coupon_code} (تم خصم ${order.discount_amount} ج.م)</p>` : '';
@@ -620,8 +649,14 @@
             document.getElementById('track-company').value = censorText(order.shipping_company) || ''; document.getElementById('track-number').value = order.tracking_number || '';
             document.getElementById('order-modal').classList.remove('hidden'); document.getElementById('order-modal').classList.add('flex');
         }
+        
         async function saveTracking() { const company = document.getElementById('track-company').value; const number = document.getElementById('track-number').value; await supabaseClient.from('orders').update({ shipping_company: company, tracking_number: number }).eq('id', currentOrderId.id); alert('تم الحفظ!'); document.getElementById('order-modal').classList.add('hidden'); document.getElementById('order-modal').classList.remove('flex'); loadOrders(); }
-        async function updateOrderStatus(id, status) { await supabaseClient.from('orders').update({ status }).eq('id', id); loadStatsAndCharts(); }
+        
+        async function updateOrderStatus(id, status) { 
+            await supabaseClient.from('orders').update({ status }).eq('id', id); 
+            loadOrders(); 
+            loadStatsAndCharts(); 
+        }
 
         function printInvoice() {
             const order = currentOrderId;
@@ -860,7 +895,6 @@
                 document.getElementById('set-footer').value = data.footer_text || ''; 
                 document.getElementById('set-footer-full-text').value = data.footer_full_text || ''; 
                 
-                // حفظ اللوجو في المتغير عشان الفاتورة
                 currentLogoUrl = data.logo_url || '';
 
                 document.getElementById('set-logo-url').value = data.logo_url || '';
@@ -1036,6 +1070,7 @@
                     const badge = document.getElementById('orders-badge');
                     badge.innerText = newOrdersCount;
                     badge.classList.remove('hidden');
+                    badge.classList.add('animate-badge'); // إضافة الأنيميشن
                     
                     playNotificationSound();
                     showAdminToast('🔔 لديك طلب جديد!');
