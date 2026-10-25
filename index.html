@@ -31,7 +31,7 @@
     </script>
     <style>
         body { font-family: 'Tajawal', sans-serif; background-color: #F8F8F6; color: #0A0A0A; scroll-behavior: smooth; overflow-x: hidden;}
-        .editorial-title { font-family: 'Amiri', serif; font-weight: 700; line-height: 1.2; }
+        .editorial-title { font-family: 'Amiri', serif; font-weight: 700; line-height: 1.4; }
         .brand-english { font-family: 'Playfair Display', serif; font-weight: 800; letter-spacing: 0.05em; }
         .cart-open { transform: translateX(0) !important; }
         .modal-open { opacity: 1 !important; pointer-events: auto !important; }
@@ -60,7 +60,7 @@
             .group:hover .btn-reveal { transform: translateY(0); }
         }
         
-        .bundle-card { background: #1A1A1A; border: 1px solid rgba(197, 168, 128, 0.1); transition: all 0.5s ease; }
+        .bundle-card { background: #1A1A1A; border: 1px solid rgba(197, 168, 128, 0.1); transition: all 0.5s ease; height: 100%; }
         .bundle-card:hover { border-color: #C5A880; transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
 
         @keyframes pulse-red { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
@@ -117,6 +117,7 @@
         </div>
     </header>
 
+    <!-- قسم العروض (تم تحسين التصميم ليستوعب أكثر من عرض بجانب بعضهم) -->
     <section id="bundles-section" class="hidden bg-brandCharcoal py-16 md:py-32 border-b border-gray-800">
         <div class="container mx-auto px-4 md:px-12">
             <div class="flex flex-col items-center mb-12 md:mb-20 reveal">
@@ -124,7 +125,8 @@
                 <h3 id="bundles-section-title" class="text-3xl md:text-6xl editorial-title text-white mb-4 md:mb-6 text-center">عروض خاصة</h3>
                 <div class="w-12 md:w-16 h-[1px] bg-brandGold"></div>
             </div>
-            <div id="bundles-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8"></div>
+            <!-- استخدام grid عشان الكروت تظهر جنب بعضها -->
+            <div id="bundles-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8 items-stretch"></div>
         </div>
     </section>
 
@@ -385,6 +387,7 @@
             reveals.forEach(reveal => observer.observe(reveal));
         }
 
+        // دالة حساب الشحن (تم التعديل هنا)
         function calculateShipping() {
             const citySelect = document.getElementById('city');
             const selectedCity = citySelect.value;
@@ -393,13 +396,19 @@
             const region = governoratesData[selectedCity] || 'delta'; 
             const regularTotal = cart.reduce((sum, item) => isBundle(item) ? sum : sum + (item.price * item.qty), 0);
             const bundleTotal = cart.reduce((sum, item) => isBundle(item) ? sum + (item.price * item.qty) : sum, 0);
-            const subTotalBeforeShipping = regularTotal + bundleTotal - ((regularTotal * appliedDiscount) / 100);
+            
+            // التحقق من تفعيل الشحن المجاني
+            let isFreeShippingEnabled = settingsData.enable_free_shipping === true; 
+            let freeThreshold = settingsData.free_shipping_threshold || 1500;
+            
+            // حساب الإجمالي للمنتجات العادية فقط (بدون الباقات) لمعرفة إذا وصل للحد
+            const subTotalForFreeShipping = regularTotal - ((regularTotal * appliedDiscount) / 100);
 
-            const freeThreshold = settingsData.free_shipping_threshold || 1500;
-
-            if (subTotalBeforeShipping >= freeThreshold) {
+            // الشحن المجاني بيتحسب بس لو الميزة متفعلة والمنتجات العادية عدت الـ 1500
+            if (isFreeShippingEnabled && subTotalForFreeShipping >= freeThreshold && regularTotal > 0) {
                 currentShippingCost = 0;
             } else {
+                // لو الميزة مقفولة أو لسه موصلش للحد، يتحسب شحن عادي
                 if (region === 'cairo') currentShippingCost = settingsData.shipping_cairo || 60;
                 else if (region === 'delta') currentShippingCost = settingsData.shipping_delta || 80;
                 else if (region === 'upper') currentShippingCost = settingsData.shipping_upper || 90;
@@ -423,7 +432,8 @@
                 document.getElementById('checkout-discount-row').style.display = 'none';
             }
 
-            if (currentShippingCost === 0 && document.getElementById('city').value !== "") {
+            // لو الشحن مجاني بيظهر كلمة شحن مجاني، غير كده بيظهر السعر
+            if (currentShippingCost === 0 && document.getElementById('city').value !== "" && settingsData.enable_free_shipping === true && (regularTotal > 0)) {
                 document.getElementById('checkout-shipping').innerText = settingsData.free_shipping_text || 'شحن مجاني';
                 document.getElementById('checkout-shipping').classList.add('text-green-600', 'font-bold');
             } else {
@@ -569,19 +579,22 @@
             grid.innerHTML = '';
             allBundles.forEach(b => {
                 grid.innerHTML += `
-                    <div class="group bundle-card relative p-3 md:p-4 flex flex-col reveal">
-                        <div class="absolute top-4 right-4 md:top-6 md:right-6 bg-brandGold text-brandBlack text-[8px] md:text-[9px] font-bold px-2 md:px-3 py-1 rounded-sm uppercase tracking-widest z-10">${b.items_count} Pieces</div>
-                        <div class="w-full aspect-[4/5] overflow-hidden mb-4 md:mb-6 relative bg-[#222]">
-                            <img src="${b.image_url}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-90 group-hover:opacity-100">
+                    <div class="group bundle-card relative p-4 flex flex-col reveal h-full justify-between">
+                        <div>
+                            <div class="absolute top-4 right-4 md:top-6 md:right-6 bg-brandGold text-brandBlack text-[8px] md:text-[9px] font-bold px-2 md:px-3 py-1 rounded-sm uppercase tracking-widest z-10">${b.items_count} Pieces</div>
+                            <div class="w-full aspect-[4/5] overflow-hidden mb-4 md:mb-6 relative bg-[#222]">
+                                <img src="${b.image_url}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-90 group-hover:opacity-100">
+                            </div>
                         </div>
-                        <div class="text-center">
-                            <h4 class="text-base md:text-xl editorial-title text-white mb-2">${censorText(b.name)}</h4>
-                            <div class="flex items-center justify-center gap-2 md:gap-4 mb-4 md:mb-6">
+                        <div class="text-center px-2 flex-1 flex flex-col justify-end pb-2">
+                            <!-- لضمان أن الاسم لا يتداخل -->
+                            <h4 class="text-lg md:text-xl editorial-title text-white mb-2 break-words whitespace-normal leading-relaxed font-bold" style="word-break: break-word;">${censorText(b.name)}</h4>
+                            <div class="flex items-center justify-center gap-2 md:gap-4 mb-4 md:mb-6 mt-auto">
                                 <span class="text-gray-500 line-through text-[10px] md:text-xs">${b.original_price} EGP</span>
                                 <span class="text-brandGold font-bold text-sm md:text-lg">${b.bundle_price} EGP</span>
                             </div>
-                            <button onclick="addToCart('bundle_${b.id}', '${censorText(b.name)}', ${b.bundle_price}, '${b.items_count} Pieces', 1)" class="w-full border border-brandGold text-brandGold py-2 md:py-3 text-[9px] md:text-[10px] font-bold tracking-widest uppercase hover:bg-brandGold hover:text-brandBlack transition">${settingsData.add_to_cart_text || 'أضف للسلة'}</button>
                         </div>
+                        <button onclick="addToCart('bundle_${b.id}', '${censorText(b.name)}', ${b.bundle_price}, '${b.items_count} Pieces', 1)" class="w-full border border-brandGold text-brandGold py-2 md:py-3 text-[9px] md:text-[10px] font-bold tracking-widest uppercase hover:bg-brandGold hover:text-brandBlack transition mt-auto">${settingsData.add_to_cart_text || 'أضف للسلة'}</button>
                     </div>`;
             });
             initScrollReveal();
