@@ -20,7 +20,6 @@
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
-        /* ستايل إشعار الطلب الجديد */
         #admin-toast { visibility: hidden; min-width: 300px; background-color: #0A0A0A; color: #C5A880; text-align: center; padding: 16px; position: fixed; z-index: 1000; left: 50%; bottom: 30px; transform: translateX(-50%); font-weight: bold; opacity: 0; transition: all 0.5s ease; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); border: 2px solid #C5A880; }
         #admin-toast.show { visibility: visible; opacity: 1; bottom: 40px; }
     </style>
@@ -53,7 +52,6 @@
                 <button onclick="toggleSidebar()" class="md:hidden text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-2xl"></i></button>
             </div>
             
-            <!-- زرار تفعيل الصوت -->
             <div class="px-4 py-2 bg-gray-900 border-b border-gray-800">
                 <button id="enable-sound-btn" onclick="enableSound()" class="w-full bg-brandGold text-black font-bold py-2 text-xs rounded hover:bg-yellow-600 transition flex items-center justify-center">
                     <i class="fa-solid fa-volume-high mr-2"></i> تفعيل صوت الإشعارات
@@ -63,7 +61,6 @@
             <nav class="flex-1 py-6 md:py-8 space-y-1 overflow-y-auto px-4">
                 <button onclick="switchView('overview', this); closeSidebarOnMobile();" class="nav-btn w-full flex items-center px-6 py-4 text-gray-400 hover:bg-gray-900 hover:text-white transition-all rounded-lg"><i class="fa-solid fa-chart-pie w-6 mr-3"></i> نظرة عامة</button>
                 
-                <!-- زر الطلبات مع عداد الإشعارات -->
                 <button onclick="switchView('orders', this); closeSidebarOnMobile();" class="nav-btn w-full flex items-center justify-between px-6 py-4 text-gray-400 hover:bg-gray-900 hover:text-white transition-all rounded-lg">
                     <div class="flex items-center">
                         <i class="fa-solid fa-box w-6 mr-3"></i> الطلبات
@@ -254,7 +251,6 @@
                                     <div><label class="block text-xs font-bold mb-1">اسم الموقع</label><input type="text" id="set-name" class="w-full border p-2 text-sm bg-gray-50 outline-none rounded"></div>
                                     <div><label class="block text-xs font-bold mb-1">حقوق الفوتر</label><input type="text" id="set-footer" class="w-full border p-2 text-sm bg-gray-50 outline-none rounded"></div>
                                     
-                                    <!-- خانة نص الفوتر الكامل -->
                                     <div class="md:col-span-2">
                                         <label class="block text-xs font-bold mb-1">النص الكامل لحقوق الفوتر (يظهر أسفل الموقع)</label>
                                         <input type="text" id="set-footer-full-text" class="w-full border p-2 text-sm bg-gray-50 outline-none rounded" placeholder="© SELECT FRAGRANCEC 2024 . جميع الحقوق محفوظة">
@@ -404,8 +400,6 @@
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         let salesChartInstance = null, visitsChartInstance = null, allOrders = [], currentOrderId = null, allProductsList = [];
         let currentLogoUrl = ''; 
-        
-        // متغيرات الإشعارات
         let newOrdersCount = 0;
         let isFirstLoad = true; 
         let audioCtx;
@@ -415,18 +409,13 @@
         const badWords = ['كسم', 'خرا', 'زبالة', 'حيوان', 'غبي', 'عبيط', 'كلب', 'عرص', 'شرموط', 'قحب', 'خول', 'لبوة', 'طيز', 'كس', 'نيك', 'متناك', 'شرموطة', 'fuck', 'shit', 'bitch', 'asshole', 'pussy'];
         function censorText(text) { if (!text) return ''; let clean = text; badWords.forEach(word => { const regex = new RegExp(word, 'gi'); clean = clean.replace(regex, '***'); }); return clean; }
 
-        // دالة تفعيل الصوت (لازم يضغط عليها المستخدم مرة واحدة)
         function enableSound() {
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            }
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
+            if (!audioCtx) { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+            if (audioCtx.state === 'suspended') { audioCtx.resume(); }
             document.getElementById('enable-sound-btn').innerHTML = '<i class="fa-solid fa-check mr-2"></i> الصوت مفعل';
             document.getElementById('enable-sound-btn').classList.remove('bg-brandGold');
             document.getElementById('enable-sound-btn').classList.add('bg-green-600', 'text-white');
-            playNotificationSound(); // تشغيل صوت تجريبي للتأكيد
+            playNotificationSound(); 
         }
 
         function playNotificationSound() {
@@ -446,7 +435,6 @@
             } catch(e) { console.log('Audio play failed:', e); }
         }
 
-        // دالة إظهار إشعار في الأدمن
         function showAdminToast(msg) {
             const toast = document.getElementById('admin-toast');
             toast.innerText = msg;
@@ -454,7 +442,6 @@
             setTimeout(() => { toast.classList.remove('show'); }, 5000); 
         }
 
-        // تأثير رفرفة العنوان
         function startFlashingTitle() {
             if(flashInterval) return;
             let isOriginal = true;
@@ -470,10 +457,7 @@
             document.title = originalTitle;
         }
 
-        // لما المستخدم يرجع للصفحة، نوقف الرفرفة
-        window.addEventListener('focus', () => {
-            stopFlashingTitle();
-        });
+        window.addEventListener('focus', () => { stopFlashingTitle(); });
 
         function toggleSidebar() {
             const sidebar = document.getElementById('admin-sidebar');
@@ -507,24 +491,23 @@
             if(viewId === 'orders') {
                 newOrdersCount = 0;
                 document.getElementById('orders-badge').classList.add('hidden');
-                stopFlashingTitle(); // إيقاف رفرفة العنوان لو دخل قسم الطلبات
+                stopFlashingTitle();
             }
 
-            if(viewId === 'overview') loadStatsAndCharts();
+            if(viewId === 'overview') {
+                try { loadStatsAndCharts(); } catch(e) { console.error(e); }
+            }
         }
         
         async function loadData() { 
-            await loadStatsAndCharts(); 
-            await loadOrders(); 
-            await loadProducts(); 
-            await loadBundles(); 
-            await loadCoupons(); 
-            await loadReviews(); 
-            await loadSettings(); 
+            try { await loadStatsAndCharts(); } catch (e) { console.error("خطأ في الشارت:", e); }
+            try { await loadOrders(); } catch (e) { console.error("خطأ في الطلبات:", e); }
+            try { await loadProducts(); } catch (e) {}
+            try { await loadBundles(); } catch (e) {}
+            try { await loadCoupons(); } catch (e) {}
+            try { await loadReviews(); } catch (e) {}
+            try { await loadSettings(); } catch (e) {}
         }
-
-        // ... (باقي دوال loadStatsAndCharts, loadOrders, loadProducts, إلخ زي ما هي بالظبط) ...
-        // ملاحظة: لقد قمت بإضافة الدوال دي في الكود اللي فوق، أنت بس هتنسخ الكود كامل.
 
         async function loadStatsAndCharts() {
             const { data: orders } = await supabaseClient.from('orders').select('*').neq('status', 'cancelled');
@@ -546,42 +529,60 @@
                 });
             });
 
-            document.getElementById('stat-orders').innerText = orders ? orders.length : 0;
-            document.getElementById('stat-revenue').innerText = totalRev.toLocaleString();
-            document.getElementById('stat-visits').innerText = visitCount || 0;
-            document.getElementById('stat-aov').innerText = orders && orders.length > 0 ? (totalRev / orders.length).toFixed(0) : 0;
+            if(document.getElementById('stat-orders')) document.getElementById('stat-orders').innerText = orders ? orders.length : 0;
+            if(document.getElementById('stat-revenue')) document.getElementById('stat-revenue').innerText = totalRev.toLocaleString();
+            if(document.getElementById('stat-visits')) document.getElementById('stat-visits').innerText = visitCount || 0;
+            if(document.getElementById('stat-aov')) document.getElementById('stat-aov').innerText = orders && orders.length > 0 ? (totalRev / orders.length).toFixed(0) : 0;
 
             const topProducts = Object.keys(productSales).map(name => ({ name, qty: productSales[name] })).sort((a,b) => b.qty - a.qty).slice(0, 5);
-            const topList = document.getElementById('top-products-list'); topList.innerHTML = '';
-            if(topProducts.length === 0) topList.innerHTML = '<li class="text-gray-500">لا يوجد مبيعات بعد.</li>';
-            topProducts.forEach(p => {
-                topList.innerHTML += `<li class="flex justify-between items-center border-b pb-2"><span class="font-bold">${censorText(p.name)}</span> <span class="bg-gray-100 text-black px-2 py-1 rounded text-xs font-bold">${p.qty} مبيعات</span></li>`;
-            });
+            const topList = document.getElementById('top-products-list'); 
+            if(topList) {
+                topList.innerHTML = '';
+                if(topProducts.length === 0) topList.innerHTML = '<li class="text-gray-500">لا يوجد مبيعات بعد.</li>';
+                topProducts.forEach(p => {
+                    topList.innerHTML += `<li class="flex justify-between items-center border-b pb-2"><span class="font-bold">${censorText(p.name)}</span> <span class="bg-gray-100 text-black px-2 py-1 rounded text-xs font-bold">${p.qty} مبيعات</span></li>`;
+                });
+            }
 
             const lowStock = allProductsList.filter(p => p.stock <= 5);
             const alertsDiv = document.getElementById('stock-alerts');
             const listUl = document.getElementById('low-stock-list');
-            if(lowStock.length > 0) {
-                alertsDiv.classList.remove('hidden');
-                listUl.innerHTML = '';
-                lowStock.forEach(p => {
-                    listUl.innerHTML += `<li><i class="fa-solid fa-circle-exclamation text-[10px] mr-1"></i> ${censorText(p.name)} (المتبقي: ${p.stock})</li>`;
-                });
-            } else { alertsDiv.classList.add('hidden'); }
+            if(alertsDiv && listUl) {
+                if(lowStock.length > 0) {
+                    alertsDiv.classList.remove('hidden');
+                    listUl.innerHTML = '';
+                    lowStock.forEach(p => {
+                        listUl.innerHTML += `<li><i class="fa-solid fa-circle-exclamation text-[10px] mr-1"></i> ${censorText(p.name)} (المتبقي: ${p.stock})</li>`;
+                    });
+                } else { alertsDiv.classList.add('hidden'); }
+            }
 
-            const last7Days = [...Array(7)].map((_, i) => { const d = new Date(); d.setDate(d.getDate() - i); return d.toISOString().split('T')[0]; }).reverse();
-            const salesData = last7Days.map(date => { const dayOrders = orders?.filter(o => o.created_at.startsWith(date)); return dayOrders?.reduce((sum, o) => sum + Number(o.total_price), 0) || 0; });
-            const { data: visits } = await supabaseClient.from('visits').select('visited_at');
-            const visitsData = last7Days.map(date => visits?.filter(v => v.visited_at.startsWith(date)).length || 0);
-            
-            if(salesChartInstance) salesChartInstance.destroy();
-            salesChartInstance = new Chart(document.getElementById('salesChart').getContext('2d'), { type: 'line', data: { labels: last7Days.map(d => d.split('-').slice(1).reverse().join('/')), datasets: [{ label: 'المبيعات', data: salesData, borderColor: '#111111', backgroundColor: 'rgba(17, 17, 17, 0.05)', borderWidth: 2, fill: true, tension: 0.4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } } });
-            if(visitsChartInstance) visitsChartInstance.destroy();
-            visitsChartInstance = new Chart(document.getElementById('visitsChart').getContext('2d'), { type: 'bar', data: { labels: last7Days.map(d => d.split('-').slice(1).reverse().join('/')), datasets: [{ label: 'الزيارات', data: visitsData, backgroundColor: '#E5E5E5', borderRadius: 4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } } });
+            const salesCanvas = document.getElementById('salesChart');
+            const visitsCanvas = document.getElementById('visitsChart');
+
+            if(salesCanvas && visitsCanvas) {
+                const last7Days = [...Array(7)].map((_, i) => { const d = new Date(); d.setDate(d.getDate() - i); return d.toISOString().split('T')[0]; }).reverse();
+                const salesData = last7Days.map(date => { const dayOrders = orders?.filter(o => o.created_at.startsWith(date)); return dayOrders?.reduce((sum, o) => sum + Number(o.total_price), 0) || 0; });
+                const { data: visits } = await supabaseClient.from('visits').select('visited_at');
+                const visitsData = last7Days.map(date => visits?.filter(v => v.visited_at.startsWith(date)).length || 0);
+                
+                if(salesChartInstance) salesChartInstance.destroy();
+                salesChartInstance = new Chart(salesCanvas.getContext('2d'), { type: 'line', data: { labels: last7Days.map(d => d.split('-').slice(1).reverse().join('/')), datasets: [{ label: 'المبيعات', data: salesData, borderColor: '#111111', backgroundColor: 'rgba(17, 17, 17, 0.05)', borderWidth: 2, fill: true, tension: 0.4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } } });
+                
+                if(visitsChartInstance) visitsChartInstance.destroy();
+                visitsChartInstance = new Chart(visitsCanvas.getContext('2d'), { type: 'bar', data: { labels: last7Days.map(d => d.split('-').slice(1).reverse().join('/')), datasets: [{ label: 'الزيارات', data: visitsData, backgroundColor: '#E5E5E5', borderRadius: 4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } } });
+            }
         }
 
         async function loadOrders() {
-            const { data: orders } = await supabaseClient.from('orders').select('*').order('created_at', { ascending: false });
+            const { data: orders, error } = await supabaseClient.from('orders').select('*').order('created_at', { ascending: false });
+            
+            if (error) {
+                console.error("Error fetching orders:", error);
+                document.getElementById('orders-list').innerHTML = `<tr><td colspan="9" class="text-center p-4 text-red-500 font-bold">حدث خطأ في تحميل الطلبات: ${error.message}</td></tr>`;
+                return;
+            }
+
             allOrders = orders || []; renderOrdersTable(allOrders);
         }
         function filterOrders() {
@@ -1028,10 +1029,8 @@
             alert('تم مسح جميع البيانات بنجاح.'); loadData(); btn.innerHTML = '<i class="fa-solid fa-trash mr-2"></i> مسح كل البيانات'; btn.disabled = false;
         }
 
-        // Realtime Listener
         supabaseClient.channel('admin-updates')
             .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'orders' }, (payload) => { 
-                // لو مش أول تحميل، اعرض الإشعار وزود العداد
                 if (!isFirstLoad) {
                     newOrdersCount++;
                     const badge = document.getElementById('orders-badge');
@@ -1042,7 +1041,6 @@
                     showAdminToast('🔔 لديك طلب جديد!');
                     startFlashingTitle();
 
-                    // إشعار ديسكتوب (لو المتصفح بيسمح)
                     if (Notification.permission === "granted") {
                         new Notification("طلب جديد من SELECT", { body: "لقد تم استلام طلب جديد." });
                     }
@@ -1050,23 +1048,14 @@
                 loadOrders(); 
                 loadStatsAndCharts(); 
             })
-            .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'orders' }, () => { 
-                loadOrders(); 
-                loadStatsAndCharts(); 
-            })
-            .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'orders' }, () => { 
-                loadOrders(); 
-                loadStatsAndCharts(); 
-            })
+            .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'orders' }, () => { loadOrders(); loadStatsAndCharts(); })
+            .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'orders' }, () => { loadOrders(); loadStatsAndCharts(); })
             .on('postgres_changes', { event: '*', schema: 'public', table: 'reviews' }, () => { loadReviews(); })
             .on('postgres_changes', { event: '*', schema: 'public', table: 'coupons' }, () => { loadCoupons(); })
             .on('postgres_changes', { event: '*', schema: 'public', table: 'bundles' }, () => { loadBundles(); })
             .subscribe();
 
-        // طلب صلاحية الإشعارات من المتصفح
-        if ("Notification" in window) {
-            Notification.requestPermission();
-        }
+        if ("Notification" in window) { Notification.requestPermission(); }
 
         checkSession();
     </script>
