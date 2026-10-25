@@ -21,7 +21,6 @@
 </head>
 <body class="h-screen overflow-hidden flex bg-[#F7F7F7]">
 
-    <!-- Login -->
     <div id="login-screen" class="fixed inset-0 z-50 flex items-center justify-center bg-white/90 backdrop-blur-sm">
         <div class="bg-white p-10 border border-gray-200 shadow-xl w-full max-w-sm">
             <div class="text-center mb-8"><h2 class="text-3xl brand-english text-black">SELECT</h2><p class="text-gray-500 text-sm mt-2">لوحة الإدارة</p></div>
@@ -34,7 +33,6 @@
         </div>
     </div>
 
-    <!-- Dashboard -->
     <div id="dashboard" class="hidden w-full h-full flex">
         <aside class="w-72 bg-black text-white flex flex-col shadow-2xl z-20">
             <div class="h-28 flex items-center justify-center border-b border-gray-800 px-6 transition-all duration-300 hover:bg-gray-900">
@@ -103,7 +101,7 @@
                 <h2 class="text-2xl font-bold mb-8">الباقات والعروض</h2>
                 <div class="bg-white p-6 border border-gray-200 shadow-sm mb-8">
                     <form id="bundle-form" onsubmit="saveBundle(event)" class="flex flex-col md:flex-row gap-4 items-end flex-wrap">
-                        <div class="flex-1 w-full min-w-[200px]"><label class="block text-xs font-bold mb-2">اسم الباقة</label><input type="text" id="b-name" required class="w-full border p-2 text-sm bg-gray-50 outline-none"></div>
+                        <div class="flex-1 w-full min-w-[200px]"><label class="block text-xs font-bold mb-2">اسم الباقة</label><input type="text" id="b-name" required class="w-full border p-2 text-sm bg-gray-50 outline-none" placeholder="مثال: بوكس الشتاء"></div>
                         <div class="flex-1 w-full min-w-[150px]"><label class="block text-xs font-bold mb-2">السعر الأصلي</label><input type="number" id="b-original" required class="w-full border p-2 text-sm bg-gray-50 outline-none"></div>
                         <div class="flex-1 w-full min-w-[150px]"><label class="block text-xs font-bold mb-2">سعر الباقة</label><input type="number" id="b-price" required class="w-full border p-2 text-sm bg-gray-50 outline-none"></div>
                         <div class="flex-1 w-full min-w-[150px]"><label class="block text-xs font-bold mb-2">عدد القطع</label><input type="number" id="b-count" required class="w-full border p-2 text-sm bg-gray-50 outline-none"></div>
@@ -167,6 +165,15 @@
                                         <input type="hidden" id="set-image-url">
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                        <!-- قسم العروض الجديد -->
+                        <div>
+                            <h3 class="font-bold text-sm border-b pb-2 mb-4">إعدادات العروض والباقات</h3>
+                            <div>
+                                <label class="block text-xs font-bold mb-1">عنوان قسم العروض في المتجر</label>
+                                <input type="text" id="set-bundles-title" placeholder="مثال: عروض الشتاء، عروض لا تُقاوم" class="w-full border p-2 text-sm bg-gray-50 outline-none">
+                                <p class="text-[10px] text-gray-400 mt-1">هذا النص سيظهر كعنوان للقسم الذي يحتوي على الباقات.</p>
                             </div>
                         </div>
                         <div>
@@ -394,6 +401,7 @@
             const { data } = await supabaseClient.from('settings').select('*').eq('id', 1).single();
             if (data) { 
                 document.getElementById('set-name').value = data.site_name || ''; document.getElementById('set-footer').value = data.footer_text || ''; document.getElementById('set-title').value = data.hero_title || ''; document.getElementById('set-subtitle').value = data.hero_subtitle || ''; document.getElementById('set-hero-btn').value = data.hero_btn || ''; document.getElementById('set-whatsapp').value = data.whatsapp_number || ''; document.getElementById('set-facebook').value = data.facebook_url || ''; document.getElementById('set-instagram').value = data.instagram_url || ''; document.getElementById('set-tiktok').value = data.tiktok_url || ''; 
+                document.getElementById('set-bundles-title').value = data.bundles_title || 'عروض لا تُقاوم';
                 document.getElementById('set-logo-url').value = data.logo_url || '';
                 const logoPreview = document.getElementById('current-logo-preview');
                 if(data.logo_url) { logoPreview.src = data.logo_url; logoPreview.classList.remove('hidden'); } else { logoPreview.classList.add('hidden'); }
@@ -424,7 +432,7 @@
                 const { error: uploadError } = await supabaseClient.storage.from('product-images').upload(fileName, file);
                 if (!uploadError) { const { data: urlData } = supabaseClient.storage.from('product-images').getPublicUrl(fileName); heroImageUrl = urlData.publicUrl; }
             }
-            const data = { site_name: censorText(document.getElementById('set-name').value), footer_text: censorText(document.getElementById('set-footer').value), hero_title: censorText(document.getElementById('set-title').value), hero_subtitle: censorText(document.getElementById('set-subtitle').value), hero_image: heroImageUrl, hero_btn: censorText(document.getElementById('set-hero-btn').value), whatsapp_number: document.getElementById('set-whatsapp').value, facebook_url: document.getElementById('set-facebook').value, instagram_url: document.getElementById('set-instagram').value, tiktok_url: document.getElementById('set-tiktok').value, logo_url: logoUrl };
+            const data = { site_name: censorText(document.getElementById('set-name').value), footer_text: censorText(document.getElementById('set-footer').value), hero_title: censorText(document.getElementById('set-title').value), hero_subtitle: censorText(document.getElementById('set-subtitle').value), hero_image: heroImageUrl, hero_btn: censorText(document.getElementById('set-hero-btn').value), whatsapp_number: document.getElementById('set-whatsapp').value, facebook_url: document.getElementById('set-facebook').value, instagram_url: document.getElementById('set-instagram').value, tiktok_url: document.getElementById('set-tiktok').value, logo_url: logoUrl, bundles_title: censorText(document.getElementById('set-bundles-title').value) };
             const { error } = await supabaseClient.from('settings').update(data).eq('id', 1);
             if(error) alert('خطأ! ' + error.message); else { btn.innerHTML = 'تم الحفظ!'; loadSettings(); setTimeout(() => { btn.innerText = oldText; btn.disabled = false; }, 2000); }
         }
