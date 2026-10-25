@@ -402,7 +402,6 @@
         async function cancelOrder(orderId) { if(!confirm('هل أنت متأكد من إلغاء الطلب؟')) return; const { error } = await supabaseClient.from('orders').update({ status: 'cancelled' }).eq('id', orderId); if(!error) { showToast('تم إلغاء الطلب'); trackOrder(); } }
         async function reorder(orderId, phone) { const { data: order } = await supabaseClient.from('orders').select('items').eq('id', orderId).single(); if(order && order.items) { cart = order.items; saveCart(); toggleCart(); document.getElementById('tracking-modal').classList.remove('modal-open'); showToast('تم نقل المنتجات للسلة'); await supabaseClient.from('orders').update({ status: 'cancelled' }).eq('id', orderId); } }
 
-        // ✅ إضافة الحجم للسلة
         function addToCart(id, name, price, size) { 
             const existing = cart.find(item => item.id === id); 
             if (existing) { existing.qty += 1; } 
@@ -429,27 +428,31 @@
         function openCheckoutModal() { if (cart.length === 0) return showToast('السلة فارغة!'); document.getElementById('checkout-modal').classList.add('modal-open'); document.getElementById('cart-sidebar').classList.remove('cart-open'); document.getElementById('overlay').classList.add('hidden'); }
         function closeCheckoutModal() { document.getElementById('checkout-modal').classList.remove('modal-open'); }
         
-        // ✅ تصليح الكوبونات
         async function applyCoupon() { 
             const code = document.getElementById('coupon-input').value.trim().toUpperCase(); 
             const msg = document.getElementById('coupon-msg');
-            if(!code) return;
-            msg.innerText = 'جاري التحقق...';
-            msg.className = 'text-gray-500 text-xs mb-3';
+            if(!code) { msg.innerText = 'اكتب كود الخصم'; msg.className = 'text-red-500 text-xs mb-3 font-bold'; return; }
+            msg.innerText = 'جاري التحقق...'; msg.className = 'text-gray-500 text-xs mb-3';
             
-            const { data, error } = await supabaseClient.from('coupons').select('*').eq('code', code).eq('active', true).single(); 
+            const { data, error } = await supabaseClient.from('coupons').select('*').eq('code', code).maybeSingle();
+
+            if (error) {
+                console.error("Coupon Error:", error);
+                msg.innerText = 'حدث خطأ في الاتصال'; msg.className = 'text-red-500 text-xs mb-3 font-bold'; return;
+            }
             
-            if(data) { 
-                appliedDiscount = data.discount_percent; 
-                msg.innerText = `تم تطبيق خصم ${appliedDiscount}%`; 
-                msg.className = 'text-green-600 text-xs mb-3 font-bold'; 
-                updateCartUI(); 
-            } else { 
+            if (!data || data.active === false) {
                 appliedDiscount = 0; 
-                msg.innerText = 'كود الخصم غير صحيح أو غير نشط'; 
+                msg.innerText = 'كود الخصم غير صحيح أو غير نشط';
                 msg.className = 'text-red-500 text-xs mb-3 font-bold'; 
-                updateCartUI(); 
-            } 
+                updateCartUI();
+                return;
+            }
+
+            appliedDiscount = data.discount_percent; 
+            msg.innerText = `تم تطبيق خصم ${appliedDiscount}%`; 
+            msg.className = 'text-green-600 text-xs mb-3 font-bold'; 
+            updateCartUI(); 
         }
         
         async function submitOrder(e) { 
