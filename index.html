@@ -193,8 +193,8 @@
                 <button onclick="applyCoupon()" id="ui-coupon-btn" class="bg-brandBlack text-white px-6 font-semibold text-xs hover:bg-brandGold transition">تطبيق</button>
             </div>
             <p id="coupon-msg" class="text-[10px] font-bold mb-3 text-center"></p>
-            <div class="flex justify-between font-bold text-lg mb-2 text-brandBlack"><span id="ui-cart-total">الإجمالي:</span><span id="cart-total">0 ج.م</span></div>
-            <div class="flex justify-between text-xs text-brandGold font-semibold mb-4 hidden" id="discount-row"><span>الخصم:</span><span id="discount-amount">0 ج.م</span></div>
+            <div class="flex justify-between font-bold text-lg mb-2 text-brandBlack"><span id="ui-cart-total">الإجمالي:</span><span id="cart-total">0 EGP</span></div>
+            <div class="flex justify-between text-xs text-brandGold font-semibold mb-4 hidden" id="discount-row"><span>الخصم:</span><span id="discount-amount">0 EGP</span></div>
             <button onclick="openCheckoutModal()" id="btn-checkout-dyn" class="w-full bg-brandGold text-brandBlack font-bold py-4 hover:bg-yellow-600 transition text-xs tracking-widest uppercase mt-2">إتمام الطلب</button>
         </div>
     </div>
@@ -276,6 +276,11 @@
 
         function showToast(msg) { const toast = document.getElementById("toast"); toast.innerText = msg; toast.className = "show"; setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 3000); }
         function toggleMobileMenu() { document.getElementById('mobile-menu').classList.toggle('active'); }
+
+        // دالة مساعدة عشان نعرف إذا كان العنصر ده باقة ولا منتج عادي
+        function isBundle(item) {
+            return String(item.id).startsWith('bundle_');
+        }
 
         async function initPage() {
             const { data: settings } = await supabaseClient.from('settings').select('*').eq('id', 1).single();
@@ -481,16 +486,36 @@
         
         function updateCartUI() {
             const totalCount = cart.reduce((total, item) => total + item.qty, 0); document.getElementById('cart-count').innerText = totalCount;
-            const cartItemsDiv = document.getElementById('cart-items'); let totalPrice = 0;
+            const cartItemsDiv = document.getElementById('cart-items'); 
+            
+            let regularTotal = 0;
+            let bundleTotal = 0;
+
             if (cart.length === 0) { cartItemsDiv.innerHTML = '<p class="text-center text-gray-400 mt-10 text-xs tracking-widest uppercase">حقيبتك فارغة</p>'; document.getElementById('cart-total').innerText = '0 EGP'; document.getElementById('discount-row').classList.add('hidden'); return; }
             cartItemsDiv.innerHTML = '';
+            
             cart.forEach((item, index) => { 
-                totalPrice += item.price * item.qty; 
+                if (isBundle(item)) {
+                    bundleTotal += item.price * item.qty;
+                } else {
+                    regularTotal += item.price * item.qty;
+                }
                 cartItemsDiv.innerHTML += `<div class="flex justify-between items-center border-b border-gray-100 pb-4 mb-4"><div><p class="font-bold text-brandBlack text-sm">${censorText(item.name)} <span class="text-brandText text-[10px] font-normal">(${item.size || '100ml'})</span></p><p class="text-[10px] text-brandGold mt-1 font-semibold">${item.price} EGP × ${item.qty}</p></div><button onclick="removeFromCart(${index})" class="text-gray-300 hover:text-red-500 transition"><i class="fa-solid fa-xmark"></i></button></div>`; 
             });
-            let discountAmount = (totalPrice * appliedDiscount) / 100;
-            document.getElementById('cart-total').innerText = (totalPrice - discountAmount).toFixed(0) + ' EGP';
-            if(appliedDiscount > 0) { document.getElementById('discount-row').classList.remove('hidden'); document.getElementById('discount-amount').innerText = discountAmount.toFixed(0) + ' EGP'; } else { document.getElementById('discount-row').classList.add('hidden'); }
+
+            // حساب الخصم فقط على المنتجات العادية
+            let discountAmount = (regularTotal * appliedDiscount) / 100;
+            let finalTotal = (regularTotal + bundleTotal) - discountAmount;
+            
+            document.getElementById('cart-total').innerText = finalTotal.toFixed(0) + ' EGP';
+            
+            // لو فيه منتجات عادية بس وقتها بنبين الخصم
+            if(appliedDiscount > 0 && regularTotal > 0) { 
+                document.getElementById('discount-row').classList.remove('hidden'); 
+                document.getElementById('discount-amount').innerText = discountAmount.toFixed(0) + ' EGP'; 
+            } else { 
+                document.getElementById('discount-row').classList.add('hidden'); 
+            }
         }
         function removeFromCart(index) { cart.splice(index, 1); saveCart(); }
         function toggleCart() { document.getElementById('cart-sidebar').classList.toggle('cart-open'); document.getElementById('overlay').classList.toggle('hidden'); }
@@ -501,11 +526,23 @@
             const code = document.getElementById('coupon-input').value.trim().toUpperCase(); 
             const msg = document.getElementById('coupon-msg');
             if(!code) { msg.innerText = 'اكتب كود الخصم'; msg.className = 'text-red-500 text-[10px] mb-3 font-bold text-center'; return; }
+
+            // التأكد من إن فيه منتجات عادية في السلة عشان الكوبون يشتغل
+            const regularTotal = cart.reduce((sum, item) => isBundle(item) ? sum : sum + (item.price * item.qty), 0);
+            if (regularTotal === 0) {
+                msg.innerText = 'كوبونات الخصم لا تنطبق على الباقات والعروض.';
+                msg.className = 'text-red-500 text-[10px] mb-3 font-bold text-center'; 
+                appliedDiscount = 0; appliedCouponCode = '';
+                updateCartUI();
+                return;
+            }
+
             msg.innerText = 'جاري التحقق...'; msg.className = 'text-gray-500 text-[10px] mb-3 text-center';
             const { data, error } = await supabaseClient.from('coupons').select('*').eq('code', code).maybeSingle();
             if (error) { console.error("Coupon Error:", error); msg.innerText = 'حدث خطأ في الاتصال'; msg.className = 'text-red-500 text-[10px] mb-3 font-bold text-center'; return; }
             if (!data || data.active === false) { appliedDiscount = 0; appliedCouponCode = ''; msg.innerText = 'كود الخصم غير صحيح أو غير نشط'; msg.className = 'text-red-500 text-[10px] mb-3 font-bold text-center'; updateCartUI(); return; }
             if (data.used_count >= data.max_uses) { appliedDiscount = 0; appliedCouponCode = ''; msg.innerText = 'هذا الكوبون وصل للحد الأقصى للاستخدام'; msg.className = 'text-red-500 text-[10px] mb-3 font-bold text-center'; updateCartUI(); return; }
+            
             appliedDiscount = data.discount_percent; appliedCouponCode = data.code; msg.innerText = `تم تطبيق خصم ${appliedDiscount}%`; msg.className = 'text-green-600 text-[10px] mb-3 font-bold text-center'; updateCartUI(); 
         }
         
@@ -513,25 +550,43 @@
             e.preventDefault(); 
             const btn = document.getElementById('submit-btn'); btn.innerText = 'جاري التحقق...'; btn.disabled = true; 
             const phone = document.getElementById('phone').value;
-            if (appliedCouponCode) {
+            
+            // حساب الإجمالي والخصم بناءً على المنتجات العادية فقط
+            const regularTotal = cart.reduce((sum, item) => isBundle(item) ? sum : sum + (item.price * item.qty), 0);
+            const bundleTotal = cart.reduce((sum, item) => isBundle(item) ? sum + (item.price * item.qty) : sum, 0);
+            const discountAmount = (regularTotal * appliedDiscount) / 100;
+            const finalTotal = (regularTotal + bundleTotal) - discountAmount;
+
+            if (appliedCouponCode && regularTotal > 0) {
                 const { data: previousOrders, error: checkError } = await supabaseClient.from('orders').select('id').eq('phone', phone).eq('coupon_code', appliedCouponCode).neq('status', 'cancelled');
                 if (checkError) { console.error(checkError); showToast('حدث خطأ أثناء التحقق من الكوبون.'); btn.innerText = 'تأكيد الطلب'; btn.disabled = false; return; }
                 if (previousOrders && previousOrders.length > 0) { showToast('عذراً، لقد استخدمت هذا الكوبون من قبل! كل كوبون صالح لمرة واحدة لكل عميل.'); btn.innerText = 'تأكيد الطلب'; btn.disabled = false; return; }
             }
+            
             btn.innerText = 'جاري المعالجة...'; 
-            const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.qty), 0); 
-            const discountAmount = (totalPrice * appliedDiscount) / 100;
-            const finalTotal = totalPrice - discountAmount; 
-            const orderData = { customer_name: censorText(document.getElementById('customer_name').value), phone: phone, city: censorText(document.getElementById('city').value), address: censorText(document.getElementById('address').value), total_price: finalTotal, coupon_code: appliedCouponCode || null, discount_amount: discountAmount, items: cart, status: 'pending' }; 
+            const orderData = { 
+                customer_name: censorText(document.getElementById('customer_name').value), 
+                phone: phone, 
+                city: censorText(document.getElementById('city').value), 
+                address: censorText(document.getElementById('address').value), 
+                total_price: finalTotal, 
+                coupon_code: (appliedCouponCode && regularTotal > 0) ? appliedCouponCode : null, 
+                discount_amount: discountAmount, 
+                items: cart, 
+                status: 'pending' 
+            }; 
+            
             const { error } = await supabaseClient.from('orders').insert([orderData]); 
             if (error) { console.error(error); showToast('حدث خطأ!'); btn.innerText = 'تأكيد الطلب'; btn.disabled = false; return; } 
-            if (appliedCouponCode) {
+            
+            if (appliedCouponCode && regularTotal > 0) {
                 const { data: couponData } = await supabaseClient.from('coupons').select('used_count').eq('code', appliedCouponCode).single();
                 if (couponData) {
                     const { error: updateError } = await supabaseClient.from('coupons').update({ used_count: (couponData.used_count || 0) + 1 }).eq('code', appliedCouponCode);
                     if (updateError) { console.error("خطأ في تحديث عداد الكوبون:", updateError); }
                 }
             }
+            
             closeCheckoutModal(); document.getElementById('success-modal').classList.add('modal-open');
             cart = []; appliedDiscount = 0; appliedCouponCode = ''; saveCart(); 
             document.getElementById('checkout-form').reset(); btn.innerText = 'تأكيد الطلب'; btn.disabled = false; 
