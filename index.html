@@ -75,6 +75,7 @@
         Free Shipping on orders over 1500 EGP
     </div>
 
+    <!-- ==================== Navbar ==================== -->
     <nav class="glass-nav sticky top-0 z-40 transition-all duration-300">
         <div class="container mx-auto px-4 md:px-12 py-4 flex justify-between items-center relative">
             <div class="flex items-center cursor-pointer z-20" onclick="window.location.href = window.location.pathname;">
@@ -100,6 +101,7 @@
         </div>
     </nav>
 
+    <!-- ==================== Hero Section ==================== -->
     <header class="relative bg-brandBlack text-center flex items-center justify-center min-h-[80vh] md:min-h-[95vh] overflow-hidden">
         <div id="hero-bg" class="parallax-bg absolute inset-0 bg-cover bg-center opacity-70" style="background-image: url('https://images.unsplash.com/photo-1594035910387-fea47794261f?q=80&w=2070&auto=format&fit=crop');"></div>
         <div class="absolute inset-0 bg-gradient-to-t from-brandBlack via-brandBlack/40 to-transparent"></div>
@@ -117,6 +119,7 @@
         </div>
     </header>
 
+    <!-- ==================== Bundles Section ==================== -->
     <section id="bundles-section" class="hidden bg-brandCharcoal py-16 md:py-32 border-b border-gray-800">
         <div class="container mx-auto px-4 md:px-12">
             <div class="flex flex-col items-center mb-12 md:mb-20 reveal">
@@ -128,6 +131,7 @@
         </div>
     </section>
 
+    <!-- ==================== Products Section ==================== -->
     <main class="container mx-auto py-16 md:py-32 px-4 md:px-12 flex-grow bg-brandCream" id="products">
         <div class="flex flex-col items-center mb-12 md:mb-20 reveal">
             <h3 id="ui-sec-products" class="text-3xl md:text-6xl editorial-title text-brandBlack mb-4 md:mb-6 text-center">مجموعتنا الحصرية</h3>
@@ -160,6 +164,7 @@
         <div id="products-grid" class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-3 gap-y-8 md:gap-x-8 md:gap-y-16"></div>
     </main>
 
+    <!-- ==================== Reviews Section ==================== -->
     <section class="bg-brandWhite py-16 md:py-32 border-t border-gray-100">
         <div class="container mx-auto px-4 md:px-12">
             <div class="flex flex-col items-center mb-12 md:mb-20 reveal">
@@ -170,21 +175,43 @@
         </div>
     </section>
 
-    <footer class="bg-brandBlack text-white py-12 md:py-20 mt-auto">
-        <div class="container mx-auto px-4 md:px-6 flex flex-col md:flex-row justify-between items-center gap-8 md:gap-12 text-center md:text-right">
-            <div class="flex flex-col items-center md:items-start gap-3 md:gap-4">
-                <img id="footer-logo" src="" class="h-8 md:h-10 object-contain hidden brightness-0 invert">
-                <h2 id="footer-logo-text" class="text-2xl md:text-4xl brand-english text-brandGold">SELECT</h2>
-                <p class="text-gray-500 text-[9px] md:text-[10px] tracking-widest uppercase mt-1 md:mt-2"><span id="ui-footer-text">جميع الحقوق محفوظة</span> &copy; <span id="ui-footer-year">2024</span> <span id="footer-name"></span></p>
+    <!-- ==================== Footer (تم إعادة تصميمه) ==================== -->
+    <footer class="bg-brandBlack text-white pt-16 pb-8 mt-auto border-t border-gray-800">
+        <div class="container mx-auto px-4 md:px-12">
+            <!-- الجزء العلوي من الفوتر -->
+            <div class="flex flex-col md:flex-row justify-between items-center gap-10 pb-10 border-b border-gray-800/50">
+                <!-- اللوجو والوصف -->
+                <div class="flex flex-col items-center md:items-start gap-4">
+                    <!-- اللوجو: لو الصورة بايظة هيخفيها ويظهر النص -->
+                    <img id="footer-logo" src="" class="h-10 md:h-12 object-contain hidden" onerror="this.style.display='none'; document.getElementById('footer-logo-text').classList.remove('hidden');">
+                    <h2 id="footer-logo-text" class="text-3xl md:text-4xl brand-english text-brandGold">SELECT</h2>
+                    <p class="text-gray-400 text-xs max-w-xs text-center md:text-right leading-relaxed">نقدم لك أفخم العطور الشرقية والفرنسية، لتترك أثراً لا يُنسى أينما ذهبت.</p>
+                </div>
+
+                <!-- السوشيال ميديا -->
+                <div class="flex flex-col items-center gap-4">
+                    <span class="text-[10px] tracking-[0.2em] text-gray-500 uppercase">تابعنا على</span>
+                    <div id="social-links" class="flex gap-6 text-xl text-gray-400"></div>
+                </div>
             </div>
-            <div id="social-links" class="flex gap-6 md:gap-8 text-base md:text-lg text-gray-500"></div>
+
+            <!-- الجزء السفلي (حقوق النشر) -->
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4 pt-8 text-[10px] md:text-xs text-gray-500 tracking-[0.1em] uppercase">
+                <p>&copy; <span id="ui-footer-year">2024</span> <span id="footer-name"></span>. <span id="ui-footer-text">جميع الحقوق محفوظة</span></p>
+                <div class="flex gap-6 opacity-50 text-lg">
+                    <i class="fa-brands fa-cc-visa"></i>
+                    <i class="fa-brands fa-cc-mastercard"></i>
+                    <i class="fa-solid fa-money-bill-wave"></i>
+                </div>
+            </div>
         </div>
     </footer>
 
     <a id="whatsapp-btn" href="#" target="_blank" class="hidden fixed bottom-6 right-6 md:bottom-8 md:right-8 bg-brandWhite text-brandBlack border border-gray-200 w-12 h-12 md:w-14 md:h-14 flex items-center justify-center text-xl md:text-2xl shadow-2xl hover:bg-brandGold hover:text-white transition-all transform hover:scale-110 z-40 rounded-full"><i class="fa-brands fa-whatsapp"></i></a>
 
-    <!-- Cart Sidebar -->
+    <!-- ==================== Modals & Sidebars ==================== -->
     <div id="overlay" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 hidden transition-opacity" onclick="toggleCart()"></div>
+    
     <div id="cart-sidebar" class="fixed inset-y-0 left-0 w-full md:w-[420px] bg-brandWhite shadow-2xl transform -translate-x-full transition-transform duration-500 z-50 flex flex-col">
         <div class="p-4 md:p-8 border-b border-gray-100 flex justify-between items-center">
             <h3 id="ui-cart-title" class="text-xl md:text-2xl editorial-title font-bold text-brandBlack">حقيبة التسوق</h3>
@@ -375,14 +402,16 @@
                 if(settings.address_label) document.getElementById('ui-lbl-address').innerText = settings.address_label;
                 if(settings.confirm_order_btn) document.getElementById('submit-btn').innerText = settings.confirm_order_btn;
 
-                // باقي النصوص الديناميكية هتتحدث داخل دوال الرندر
-
                 if(settings.show_quiz) document.getElementById('quiz-btn').classList.remove('hidden');
 
                 if(settings.logo_url) {
                     const logoImg = document.getElementById('site-logo'); logoImg.src = settings.logo_url; logoImg.classList.remove('hidden'); document.getElementById('site-name').classList.add('hidden'); 
                     const heroWatermark = document.getElementById('hero-watermark-logo'); heroWatermark.src = settings.logo_url; heroWatermark.classList.remove('hidden');
-                    const footerLogo = document.getElementById('footer-logo'); footerLogo.src = settings.logo_url; footerLogo.classList.remove('hidden'); document.getElementById('footer-logo-text').classList.add('hidden');
+                    
+                    const footerLogo = document.getElementById('footer-logo'); 
+                    footerLogo.src = settings.logo_url; 
+                    footerLogo.classList.remove('hidden'); 
+                    document.getElementById('footer-logo-text').classList.add('hidden');
                 }
                 if(settings.hero_image) document.getElementById('hero-bg').style.backgroundImage = `url('${settings.hero_image}')`;
                 
