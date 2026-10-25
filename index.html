@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SELECT | الفخامة والتميز</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Playfair للعناوين الإنجليزية، Tajawal للعربي -->
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,800;1,400&family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -32,33 +31,19 @@
     <style>
         body { font-family: 'Tajawal', sans-serif; background-color: #FFFFFF; color: #0A0A0A; scroll-behavior: smooth; overflow-x: hidden;}
         .brand-english { font-family: 'Playfair Display', serif; font-weight: 800; letter-spacing: 0.05em; }
-        
-        /* Animations & Modals */
         .cart-open { transform: translateX(0) !important; }
         .modal-open { opacity: 1 !important; pointer-events: auto !important; }
         .modal-content { transform: translateY(0) scale(1) !important; }
-        
-        /* Glass Navbar */
         .glass-nav { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); border-bottom: 1px solid #EAEAEA; }
-        
-        /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: #F7F7F7; }
         ::-webkit-scrollbar-thumb { background: #0A0A0A; }
-
-        /* Toast */
         #toast { visibility: hidden; min-width: 250px; background-color: #0A0A0A; color: #FFF; text-align: center; padding: 16px; position: fixed; z-index: 100; left: 50%; bottom: 30px; transform: translateX(-50%); font-weight: 500; opacity: 0; transition: all 0.5s ease; border-radius: 4px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
         #toast.show { visibility: visible; opacity: 1; bottom: 40px; }
-        
-        /* Mobile Menu */
         #mobile-menu { display: none; }
         #mobile-menu.active { display: block; }
-
-        /* Hover Effects */
         .hover-lift { transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.4s ease; }
         .hover-lift:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0,0,0,0.08); }
-        
-        /* Image Zoom */
         .img-zoom { transition: transform 1.2s cubic-bezier(0.25, 1, 0.5, 1); }
         .group:hover .img-zoom { transform: scale(1.08); }
     </style>
@@ -71,19 +56,16 @@
     <nav class="glass-nav sticky top-0 z-40 transition-all duration-300">
         <div class="container mx-auto px-4 md:px-8 py-4 flex justify-between items-center relative">
             
-            <!-- Logo (Right in RTL) -->
             <div class="flex items-center cursor-pointer z-20" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
                 <img id="site-logo" src="" class="h-8 md:h-10 object-contain hidden" alt="SELECT Logo">
                 <h1 id="site-name" class="text-2xl md:text-3xl brand-english text-brandBlack">SELECT</h1>
             </div>
 
-            <!-- Desktop Links (Center) -->
             <div class="hidden md:flex items-center justify-center gap-10 absolute left-1/2 -translate-x-1/2">
                 <a href="#" id="nav-home" class="text-sm font-bold text-brandText hover:text-brandBlack transition-colors">الرئيسية</a>
                 <a href="#products" id="nav-shop" class="text-sm font-bold text-brandText hover:text-brandBlack transition-colors">المتجر</a>
             </div>
 
-            <!-- Icons & Mobile Menu Button (Left) -->
             <div class="flex items-center gap-4 md:gap-6 z-20">
                 <button onclick="openTrackingModal()" class="text-brandText hover:text-brandBlack transition-colors">
                     <i class="fa-solid fa-truck-fast text-lg"></i>
@@ -92,14 +74,12 @@
                     <span class="text-xl text-brandBlack group-hover:text-gray-500 transition-colors"><i class="fa-solid fa-bag-shopping"></i></span>
                     <span id="cart-count" class="absolute -top-2 -right-2 bg-brandBlack text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full">0</span>
                 </div>
-                <!-- Hamburger Icon for Mobile -->
                 <button onclick="toggleMobileMenu()" class="md:hidden text-brandBlack text-2xl">
                     <i class="fa-solid fa-bars-staggered"></i>
                 </button>
             </div>
         </div>
         
-        <!-- Mobile Menu Dropdown -->
         <div id="mobile-menu" class="md:hidden bg-white border-t border-brandBorder px-4 py-4 absolute w-full shadow-xl">
             <a href="#" id="nav-home-mobile" class="block py-3 text-sm font-bold text-brandText hover:text-brandBlack border-b border-brandBorder">الرئيسية</a>
             <a href="#products" onclick="toggleMobileMenu()" id="nav-shop-mobile" class="block py-3 text-sm font-bold text-brandText hover:text-brandBlack">المتجر</a>
@@ -108,32 +88,25 @@
 
     <!-- ==================== Hero Section ==================== -->
     <header class="relative bg-brandBlack text-center flex items-center justify-center min-h-[85vh] md:min-h-screen overflow-hidden">
-        <!-- Background Image with Dark Gradient Overlay for Text Clarity -->
         <div id="hero-bg" class="absolute inset-0 bg-cover bg-center transition-transform duration-[30s] hover:scale-105" style="background-image: url('https://images.unsplash.com/photo-1616949755610-8c9bbc08f138?q=80&w=2070&auto=format&fit=crop');"></div>
         <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/30"></div>
         
-        <!-- Huge Watermark Logo (If uploaded) -->
         <img id="hero-watermark-logo" src="" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] max-w-4xl opacity-10 pointer-events-none hidden mix-blend-overlay">
         
-        <!-- Hero Content -->
         <div class="relative z-10 px-6 max-w-4xl mx-auto flex flex-col items-center mt-10">
             <span class="text-xs md:text-sm font-bold tracking-[0.4em] text-white/80 mb-6 uppercase">The Essence of Luxury</span>
             <h2 id="hero-title" class="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-[1.2]">اكتشف عطرك المميز</h2>
             <p id="hero-subtitle" class="text-gray-300 text-base md:text-xl mb-10 max-w-xl mx-auto font-light leading-relaxed">نقدم لك أفخم العطور الشرقية والفرنسية، لتترك أثراً لا يُنسى أينما ذهبت.</p>
-            <button onclick="document.getElementById('products').scrollIntoView({behavior: 'smooth'})" id="hero-btn" class="bg-white text-brandBlack px-10 md:px-14 py-4 font-bold text-sm tracking-widest hover:bg-brandBlack hover:text-white border border-white transition-all duration-300">
-                تسوق الآن
-            </button>
+            <button onclick="document.getElementById('products').scrollIntoView({behavior: 'smooth'})" id="hero-btn" class="bg-white text-brandBlack px-10 md:px-14 py-4 font-bold text-sm tracking-widest hover:bg-brandBlack hover:text-white border border-white transition-all duration-300">تسوق الآن</button>
         </div>
     </header>
 
     <!-- ==================== Products Section ==================== -->
     <main class="container mx-auto py-16 md:py-24 px-4 md:px-8 flex-grow" id="products">
         
-        <!-- Filters Header -->
         <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-12 md:mb-20">
             <div class="w-full md:w-auto">
                 <h3 class="text-2xl md:text-3xl font-bold text-brandBlack mb-6">تسوق حسب</h3>
-                <!-- Scrollable Category Pills on Mobile -->
                 <div class="flex gap-2 overflow-x-auto pb-2 scrollbar-hide w-full">
                     <button onclick="filterCategory('all')" class="cat-btn whitespace-nowrap bg-brandBlack text-white px-6 py-2 text-sm font-bold transition">الكل</button>
                     <button onclick="filterCategory('men')" class="cat-btn whitespace-nowrap bg-transparent text-brandText border border-brandBorder px-6 py-2 text-sm font-bold hover:border-brandBlack hover:text-brandBlack transition">رجالي</button>
@@ -156,7 +129,6 @@
             </div>
         </div>
 
-        <!-- Products Grid -->
         <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-4 gap-y-12 md:gap-x-8 md:gap-y-16"></div>
     </main>
 
@@ -179,21 +151,14 @@
                 <h2 id="footer-logo-text" class="text-3xl brand-english text-white">SELECT</h2>
                 <p class="text-gray-400 text-sm mt-2"><span id="footer-text">جميع الحقوق محفوظة</span> &copy; 2024 <span id="footer-name"></span></p>
             </div>
-            <div id="social-links" class="flex gap-6 text-xl text-gray-400">
-                <!-- Social icons injected here -->
-            </div>
+            <div id="social-links" class="flex gap-6 text-xl text-gray-400"></div>
         </div>
     </footer>
 
-    <!-- Floating WhatsApp Button -->
     <a id="whatsapp-btn" href="#" target="_blank" class="hidden fixed bottom-6 right-6 bg-[#25D366] text-white w-14 h-14 flex items-center justify-center text-2xl shadow-2xl hover:bg-[#20b858] transition-transform transform hover:scale-110 z-40 rounded-full"><i class="fa-brands fa-whatsapp"></i></a>
 
     <!-- ==================== Modals & Sidebars ==================== -->
-
-    <!-- Overlay -->
     <div id="overlay" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 hidden transition-opacity" onclick="toggleCart()"></div>
-
-    <!-- Cart Sidebar -->
     <div id="cart-sidebar" class="fixed inset-y-0 left-0 w-full md:w-[400px] bg-white shadow-2xl transform -translate-x-full transition-transform duration-500 z-50 flex flex-col border-l border-brandBorder">
         <div class="p-6 border-b border-brandBorder flex justify-between items-center">
             <h3 class="text-xl font-bold text-brandBlack">سلة المشتريات</h3>
@@ -212,7 +177,6 @@
         </div>
     </div>
 
-    <!-- Checkout Modal -->
     <div id="checkout-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity p-4">
         <div class="bg-white w-full max-w-lg shadow-2xl overflow-hidden transform scale-95 transition-transform duration-300 modal-content flex flex-col max-h-[90vh]">
             <div class="p-6 border-b border-brandBorder flex justify-between items-center"><h3 class="text-xl font-bold text-brandBlack">بيانات الشحن</h3><button onclick="closeCheckoutModal()" class="text-gray-400 hover:text-brandBlack"><i class="fa-solid fa-xmark text-2xl"></i></button></div>
@@ -230,7 +194,6 @@
         </div>
     </div>
 
-    <!-- Success Modal -->
     <div id="success-modal" class="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 backdrop-blur-md opacity-0 pointer-events-none transition-opacity p-4">
         <div class="bg-white w-full max-w-md shadow-2xl p-10 text-center transform scale-90 transition-transform duration-300 modal-content">
             <div class="w-20 h-20 bg-brandGray text-brandBlack rounded-full flex items-center justify-center mx-auto mb-6 text-4xl"><i class="fa-solid fa-check"></i></div>
@@ -240,7 +203,6 @@
         </div>
     </div>
 
-    <!-- Tracking Modal -->
     <div id="tracking-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity p-4">
         <div class="bg-white w-full max-w-md shadow-2xl p-6 relative modal-content">
             <button onclick="document.getElementById('tracking-modal').classList.remove('modal-open')" class="absolute top-4 left-4 text-gray-400 hover:text-brandBlack transition"><i class="fa-solid fa-xmark text-2xl"></i></button>
@@ -253,7 +215,6 @@
         </div>
     </div>
 
-    <!-- Review Modal -->
     <div id="reviews-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity p-4">
         <div class="bg-white w-full max-w-lg shadow-2xl overflow-hidden flex flex-col modal-content">
             <div class="p-6 border-b border-brandBorder flex justify-between items-center">
@@ -277,7 +238,6 @@
         </div>
     </div>
 
-    <!-- ==================== JavaScript ==================== -->
     <script>
         const SUPABASE_URL = 'https://icmvrjmkcyjuoxekvvfw.supabase.co'; 
         const SUPABASE_KEY = 'sb_publishable_M05JYZ9LKlIfeDjuCJqzxQ_Ay6EbRKj';
@@ -386,20 +346,18 @@
                 
                 grid.innerHTML += `
                     <div class="group flex flex-col hover-lift ${isOutOfStock ? 'opacity-60 grayscale' : ''}">
-                        <!-- Image Container -->
                         <div class="relative overflow-hidden aspect-[4/5] bg-brandGray mb-4">
                             <img src="${product.image_url}" class="w-full h-full object-cover img-zoom">
                             <div class="absolute top-3 right-3 bg-white/90 backdrop-blur px-2 py-1 text-[10px] font-bold text-brandBlack tracking-widest uppercase border border-brandBorder">${censorText(product.brand)}</div>
+                            <div class="absolute top-3 left-3 bg-black/80 backdrop-blur px-2 py-1 text-[10px] font-bold text-white tracking-widest uppercase">${product.size || '100ml'}</div>
                             
-                            <!-- Quick Add Button (Mobile visible, Desktop hover) -->
                             <div class="absolute bottom-0 left-0 w-full p-3 translate-y-0 md:translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                                <button onclick="addToCart(${product.id}, '${censorText(product.name)}', ${product.price})" ${isOutOfStock ? 'disabled' : ''} class="w-full bg-brandBlack/90 backdrop-blur text-white py-2.5 text-xs font-bold hover:bg-brandBlack transition ${isOutOfStock ? 'cursor-not-allowed' : ''}">
+                                <button onclick="addToCart(${product.id}, '${censorText(product.name)}', ${product.price}, '${product.size || '100ml'}')" ${isOutOfStock ? 'disabled' : ''} class="w-full bg-brandBlack/90 backdrop-blur text-white py-2.5 text-xs font-bold hover:bg-brandBlack transition ${isOutOfStock ? 'cursor-not-allowed' : ''}">
                                     ${isOutOfStock ? 'نفذت' : 'أضف للسلة'}
                                 </button>
                             </div>
                         </div>
                         
-                        <!-- Details -->
                         <div class="flex flex-col px-1">
                             <div class="flex justify-between items-start mb-1">
                                 <h4 class="text-sm md:text-base font-bold text-brandBlack line-clamp-1">${censorText(product.name)}</h4>
@@ -444,14 +402,24 @@
         async function cancelOrder(orderId) { if(!confirm('هل أنت متأكد من إلغاء الطلب؟')) return; const { error } = await supabaseClient.from('orders').update({ status: 'cancelled' }).eq('id', orderId); if(!error) { showToast('تم إلغاء الطلب'); trackOrder(); } }
         async function reorder(orderId, phone) { const { data: order } = await supabaseClient.from('orders').select('items').eq('id', orderId).single(); if(order && order.items) { cart = order.items; saveCart(); toggleCart(); document.getElementById('tracking-modal').classList.remove('modal-open'); showToast('تم نقل المنتجات للسلة'); await supabaseClient.from('orders').update({ status: 'cancelled' }).eq('id', orderId); } }
 
-        function addToCart(id, name, price) { const existing = cart.find(item => item.id === id); if (existing) { existing.qty += 1; } else { cart.push({ id, name, price, qty: 1 }); } saveCart(); toggleCart(); }
+        // ✅ إضافة الحجم للسلة
+        function addToCart(id, name, price, size) { 
+            const existing = cart.find(item => item.id === id); 
+            if (existing) { existing.qty += 1; } 
+            else { cart.push({ id, name, price, size, qty: 1 }); } 
+            saveCart(); toggleCart(); 
+        }
         function saveCart() { localStorage.setItem('cart', JSON.stringify(cart)); updateCartUI(); }
+        
         function updateCartUI() {
             const totalCount = cart.reduce((total, item) => total + item.qty, 0); document.getElementById('cart-count').innerText = totalCount;
             const cartItemsDiv = document.getElementById('cart-items'); let totalPrice = 0;
-            if (cart.length === 0) { cartItemsDiv.innerHTML = '<p class="text-center text-gray-400 mt-10 text-sm">السلة فارغة</p>'; document.getElementById('cart-total').innerText = '0 ج.م'; return; }
+            if (cart.length === 0) { cartItemsDiv.innerHTML = '<p class="text-center text-gray-400 mt-10 text-sm">السلة فارغة</p>'; document.getElementById('cart-total').innerText = '0 ج.م'; document.getElementById('discount-row').classList.add('hidden'); return; }
             cartItemsDiv.innerHTML = '';
-            cart.forEach((item, index) => { totalPrice += item.price * item.qty; cartItemsDiv.innerHTML += `<div class="flex justify-between items-center border-b border-brandBorder pb-4 mb-4"><div><p class="font-bold text-brandBlack text-sm">${censorText(item.name)}</p><p class="text-xs text-brandText mt-1">${item.price} ج.م × ${item.qty}</p></div><button onclick="removeFromCart(${index})" class="text-gray-400 hover:text-red-500 transition"><i class="fa-solid fa-xmark"></i></button></div>`; });
+            cart.forEach((item, index) => { 
+                totalPrice += item.price * item.qty; 
+                cartItemsDiv.innerHTML += `<div class="flex justify-between items-center border-b border-brandBorder pb-4 mb-4"><div><p class="font-bold text-brandBlack text-sm">${censorText(item.name)} <span class="text-gray-500 text-xs">(${item.size || '100ml'})</span></p><p class="text-xs text-brandText mt-1">${item.price} ج.م × ${item.qty}</p></div><button onclick="removeFromCart(${index})" class="text-gray-400 hover:text-red-500 transition"><i class="fa-solid fa-xmark"></i></button></div>`; 
+            });
             let discountAmount = (totalPrice * appliedDiscount) / 100;
             document.getElementById('cart-total').innerText = (totalPrice - discountAmount).toFixed(0) + ' ج.م';
             if(appliedDiscount > 0) { document.getElementById('discount-row').classList.remove('hidden'); document.getElementById('discount-amount').innerText = discountAmount.toFixed(0) + ' ج.م'; } else { document.getElementById('discount-row').classList.add('hidden'); }
@@ -461,11 +429,27 @@
         function openCheckoutModal() { if (cart.length === 0) return showToast('السلة فارغة!'); document.getElementById('checkout-modal').classList.add('modal-open'); document.getElementById('cart-sidebar').classList.remove('cart-open'); document.getElementById('overlay').classList.add('hidden'); }
         function closeCheckoutModal() { document.getElementById('checkout-modal').classList.remove('modal-open'); }
         
+        // ✅ تصليح الكوبونات
         async function applyCoupon() { 
             const code = document.getElementById('coupon-input').value.trim().toUpperCase(); 
-            const { data } = await supabaseClient.from('coupons').select('*').eq('code', code).eq('active', true).single(); 
-            if(data) { appliedDiscount = data.discount_percent; document.getElementById('coupon-msg').innerText = `تم تطبيق خصم ${appliedDiscount}%`; document.getElementById('coupon-msg').className = 'text-green-600 text-xs mb-3 font-bold'; updateCartUI(); } 
-            else { appliedDiscount = 0; document.getElementById('coupon-msg').innerText = 'كود الخصم غير صحيح'; document.getElementById('coupon-msg').className = 'text-red-500 text-xs mb-3 font-bold'; updateCartUI(); } 
+            const msg = document.getElementById('coupon-msg');
+            if(!code) return;
+            msg.innerText = 'جاري التحقق...';
+            msg.className = 'text-gray-500 text-xs mb-3';
+            
+            const { data, error } = await supabaseClient.from('coupons').select('*').eq('code', code).eq('active', true).single(); 
+            
+            if(data) { 
+                appliedDiscount = data.discount_percent; 
+                msg.innerText = `تم تطبيق خصم ${appliedDiscount}%`; 
+                msg.className = 'text-green-600 text-xs mb-3 font-bold'; 
+                updateCartUI(); 
+            } else { 
+                appliedDiscount = 0; 
+                msg.innerText = 'كود الخصم غير صحيح أو غير نشط'; 
+                msg.className = 'text-red-500 text-xs mb-3 font-bold'; 
+                updateCartUI(); 
+            } 
         }
         
         async function submitOrder(e) { 
@@ -480,7 +464,7 @@
             if (error) { showToast('حدث خطأ!'); btn.innerText = 'تأكيد الطلب'; btn.disabled = false; return; } 
             
             closeCheckoutModal(); document.getElementById('success-modal').classList.add('modal-open');
-            cart = []; appliedDiscount = 0; saveCart(); document.getElementById('checkout-form').reset(); btn.innerText = 'تأكيد الطلب'; btn.disabled = false; 
+            cart = []; appliedDiscount = 0; saveCart(); document.getElementById('checkout-form').reset(); btn.innerText = 'تأكيد الطلب'; btn.disabled = false; document.getElementById('coupon-input').value = ''; document.getElementById('coupon-msg').innerText = '';
         }
         
         async function logVisit() { const lastVisit = sessionStorage.getItem('lastVisit'); if (!lastVisit || Date.now() - lastVisit > 30 * 60 * 1000) { await supabaseClient.from('visits').insert([{}]); sessionStorage.setItem('lastVisit', Date.now()); } }
