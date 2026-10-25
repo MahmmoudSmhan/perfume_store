@@ -117,15 +117,10 @@
         </div>
     </header>
 
-    <!-- قسم العروض (تم تحسين التصميم ليستوعب أكثر من عرض بجانب بعضهم) -->
+    <!-- قسم العروض (تم إزالة العنوان الكبير من فوق لتبدأ بالكروت مباشرة) -->
     <section id="bundles-section" class="hidden bg-brandCharcoal py-16 md:py-32 border-b border-gray-800">
         <div class="container mx-auto px-4 md:px-12">
-            <div class="flex flex-col items-center mb-12 md:mb-20 reveal">
-                <span class="text-brandGold text-[9px] md:text-[10px] tracking-[0.3em] md:tracking-[0.4em] uppercase mb-3 md:mb-4">Limited Edition</span>
-                <h3 id="bundles-section-title" class="text-3xl md:text-6xl editorial-title text-white mb-4 md:mb-6 text-center">عروض خاصة</h3>
-                <div class="w-12 md:w-16 h-[1px] bg-brandGold"></div>
-            </div>
-            <!-- استخدام grid عشان الكروت تظهر جنب بعضها -->
+            <!-- تم إزالة العنوان الرئيسي للقسم بناءً على طلبك -->
             <div id="bundles-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8 items-stretch"></div>
         </div>
     </section>
@@ -387,7 +382,6 @@
             reveals.forEach(reveal => observer.observe(reveal));
         }
 
-        // دالة حساب الشحن (تم التعديل هنا)
         function calculateShipping() {
             const citySelect = document.getElementById('city');
             const selectedCity = citySelect.value;
@@ -401,14 +395,11 @@
             let isFreeShippingEnabled = settingsData.enable_free_shipping === true; 
             let freeThreshold = settingsData.free_shipping_threshold || 1500;
             
-            // حساب الإجمالي للمنتجات العادية فقط (بدون الباقات) لمعرفة إذا وصل للحد
             const subTotalForFreeShipping = regularTotal - ((regularTotal * appliedDiscount) / 100);
 
-            // الشحن المجاني بيتحسب بس لو الميزة متفعلة والمنتجات العادية عدت الـ 1500
             if (isFreeShippingEnabled && subTotalForFreeShipping >= freeThreshold && regularTotal > 0) {
                 currentShippingCost = 0;
             } else {
-                // لو الميزة مقفولة أو لسه موصلش للحد، يتحسب شحن عادي
                 if (region === 'cairo') currentShippingCost = settingsData.shipping_cairo || 60;
                 else if (region === 'delta') currentShippingCost = settingsData.shipping_delta || 80;
                 else if (region === 'upper') currentShippingCost = settingsData.shipping_upper || 90;
@@ -432,7 +423,6 @@
                 document.getElementById('checkout-discount-row').style.display = 'none';
             }
 
-            // لو الشحن مجاني بيظهر كلمة شحن مجاني، غير كده بيظهر السعر
             if (currentShippingCost === 0 && document.getElementById('city').value !== "" && settingsData.enable_free_shipping === true && (regularTotal > 0)) {
                 document.getElementById('checkout-shipping').innerText = settingsData.free_shipping_text || 'شحن مجاني';
                 document.getElementById('checkout-shipping').classList.add('text-green-600', 'font-bold');
@@ -479,7 +469,11 @@
                 if(settings.hero_btn) document.getElementById('hero-btn').innerText = settings.hero_btn;
                 if(settings.quiz_btn_text) document.getElementById('quiz-btn-text').innerText = settings.quiz_btn_text;
                 if(settings.section_products_title) document.getElementById('ui-sec-products').innerText = settings.section_products_title;
-                if(settings.bundles_title) document.getElementById('bundles-section-title').innerText = settings.bundles_title;
+                
+                // تم تعديل التحقق هنا لعدم حدوث خطأ في حال حذف العنصر
+                const bundlesTitleEl = document.getElementById('bundles-section-title');
+                if(bundlesTitleEl && settings.bundles_title) bundlesTitleEl.innerText = settings.bundles_title;
+
                 if(settings.cat_all) document.getElementById('ui-cat-all').innerText = settings.cat_all;
                 if(settings.cat_men) document.getElementById('ui-cat-men').innerText = settings.cat_men;
                 if(settings.cat_women) document.getElementById('ui-cat-women').innerText = settings.cat_women;
@@ -587,7 +581,6 @@
                             </div>
                         </div>
                         <div class="text-center px-2 flex-1 flex flex-col justify-end pb-2">
-                            <!-- لضمان أن الاسم لا يتداخل -->
                             <h4 class="text-lg md:text-xl editorial-title text-white mb-2 break-words whitespace-normal leading-relaxed font-bold" style="word-break: break-word;">${censorText(b.name)}</h4>
                             <div class="flex items-center justify-center gap-2 md:gap-4 mb-4 md:mb-6 mt-auto">
                                 <span class="text-gray-500 line-through text-[10px] md:text-xs">${b.original_price} EGP</span>
