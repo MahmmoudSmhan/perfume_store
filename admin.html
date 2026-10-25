@@ -103,13 +103,14 @@
                     </div>
                     <div class="bg-white border border-gray-200 shadow-sm overflow-hidden rounded-lg">
                         <div class="overflow-x-auto w-full no-scrollbar">
-                            <table class="w-full text-right border-collapse min-w-[800px]">
+                            <table class="w-full text-right border-collapse min-w-[900px]">
                                 <thead class="bg-gray-50 text-gray-500 text-xs">
                                     <tr>
                                         <th class="p-4 border-b">التاريخ</th>
                                         <th class="p-4 border-b">العميل</th>
                                         <th class="p-4 border-b">الهاتف</th>
                                         <th class="p-4 border-b">المحافظة</th>
+                                        <th class="p-4 border-b">الشحن</th>
                                         <th class="p-4 border-b">الإجمالي</th>
                                         <th class="p-4 border-b">كوبون</th>
                                         <th class="p-4 border-b">الحالة</th>
@@ -174,7 +175,7 @@
                             <div class="bg-blue-50 border border-blue-200 p-4 md:p-6 rounded-lg">
                                 <h3 class="font-bold text-sm border-b border-blue-200 pb-2 mb-4 text-blue-800">إعدادات الشحن والتوصيل</h3>
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <div><label class="block text-xs font-bold mb-1 text-blue-900">سعر الشحن للقاهرة والجيزة</label><input type="number" id="set-ship-cairo" class="w-full border border-blue-300 p-2 text-sm bg-white outline-none rounded"></div>
+                                    <div><label class="block text-xs font-bold mb-1 text-blue-900">سعر الشحن للقاهرة والجيزة والقليوبية</label><input type="number" id="set-ship-cairo" class="w-full border border-blue-300 p-2 text-sm bg-white outline-none rounded"></div>
                                     <div><label class="block text-xs font-bold mb-1 text-blue-900">سعر الشحن للدلتا والمحافظات الساحلية</label><input type="number" id="set-ship-delta" class="w-full border border-blue-300 p-2 text-sm bg-white outline-none rounded"></div>
                                     <div><label class="block text-xs font-bold mb-1 text-blue-900">سعر الشحن للصعيد وسيناء</label><input type="number" id="set-ship-upper" class="w-full border border-blue-300 p-2 text-sm bg-white outline-none rounded"></div>
                                     <div><label class="block text-xs font-bold mb-1 text-blue-900">حد الشحن المجاني (مثال: 1500)</label><input type="number" id="set-free-ship" class="w-full border border-blue-300 p-2 text-sm bg-white outline-none rounded"></div>
@@ -465,18 +466,28 @@
         }
         function renderOrdersTable(ordersToRender) {
             const list = document.getElementById('orders-list'); list.innerHTML = '';
-            if(ordersToRender.length === 0) { list.innerHTML = '<tr><td colspan="8" class="text-center p-4 text-gray-500">لا يوجد طلبات.</td></tr>'; return; }
+            if(ordersToRender.length === 0) { list.innerHTML = '<tr><td colspan="9" class="text-center p-4 text-gray-500">لا يوجد طلبات.</td></tr>'; return; }
             ordersToRender.forEach(order => {
                 const date = new Date(order.created_at).toLocaleDateString('ar-EG');
                 const statusColors = { pending: 'bg-gray-200 text-gray-800', shipped: 'bg-blue-100 text-blue-700', delivered: 'bg-green-100 text-green-700', cancelled: 'bg-red-100 text-red-700' };
                 const couponBadge = order.coupon_code ? `<span class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-bold" title="خصم ${order.discount_amount} ج.م">${order.coupon_code}</span>` : '<span class="text-gray-400 text-xs">-</span>';
-                list.innerHTML += `<tr class="hover:bg-gray-50 border-b"><td class="p-4 text-xs text-gray-500">${date}</td><td class="p-4 font-bold text-xs">${censorText(order.customer_name)}</td><td class="p-4 text-blue-600 text-xs" dir="ltr">${order.phone}</td><td class="p-4 text-xs font-bold text-gray-700">${censorText(order.city)}</td><td class="p-4 font-bold text-xs">${order.total_price} ج.م</td><td class="p-4">${couponBadge}</td><td class="p-4"><select onchange="updateOrderStatus(${order.id}, this.value)" class="border p-1 text-xs font-bold outline-none ${statusColors[order.status]} rounded"><option value="pending" ${order.status === 'pending' ? 'selected' : ''}>انتظار</option><option value="shipped" ${order.status === 'shipped' ? 'selected' : ''}>شحن</option><option value="delivered" ${order.status === 'delivered' ? 'selected' : ''}>تسليم</option><option value="cancelled" ${order.status === 'cancelled' ? 'selected' : ''}>ملغي</option></select></td><td class="p-4"><button onclick='openOrderModal(${JSON.stringify(order).replace(/'/g, "&#39;")})' class="bg-black text-white px-3 py-1 font-bold text-xs hover:bg-gray-800 rounded">عرض</button></td></tr>`;
+                const shippingCost = order.shipping_cost || 0;
+                list.innerHTML += `<tr class="hover:bg-gray-50 border-b"><td class="p-4 text-xs text-gray-500">${date}</td><td class="p-4 font-bold text-xs">${censorText(order.customer_name)}</td><td class="p-4 text-blue-600 text-xs" dir="ltr">${order.phone}</td><td class="p-4 text-xs font-bold text-gray-700">${censorText(order.city)}</td><td class="p-4 text-xs font-bold text-gray-700">${shippingCost} ج.م</td><td class="p-4 font-bold text-xs">${order.total_price} ج.م</td><td class="p-4">${couponBadge}</td><td class="p-4"><select onchange="updateOrderStatus(${order.id}, this.value)" class="border p-1 text-xs font-bold outline-none ${statusColors[order.status]} rounded"><option value="pending" ${order.status === 'pending' ? 'selected' : ''}>انتظار</option><option value="shipped" ${order.status === 'shipped' ? 'selected' : ''}>شحن</option><option value="delivered" ${order.status === 'delivered' ? 'selected' : ''}>تسليم</option><option value="cancelled" ${order.status === 'cancelled' ? 'selected' : ''}>ملغي</option></select></td><td class="p-4"><button onclick='openOrderModal(${JSON.stringify(order).replace(/'/g, "&#39;")})' class="bg-black text-white px-3 py-1 font-bold text-xs hover:bg-gray-800 rounded">عرض</button></td></tr>`;
             });
         }
         function openOrderModal(order) {
             currentOrderId = order;
             let couponInfo = order.coupon_code ? `<p class="mt-2 text-green-600 font-bold border-t pt-2 border-green-200"><strong>كوبون مستخدم:</strong> ${order.coupon_code} (تم خصم ${order.discount_amount} ج.م)</p>` : '';
-            document.getElementById('order-customer-info').innerHTML = `<p><strong>الاسم:</strong> ${censorText(order.customer_name)}</p><p class="mt-1"><strong>الهاتف:</strong> ${order.phone}</p><p class="mt-1"><strong>المحافظة:</strong> ${censorText(order.city)}</p><p class="mt-1"><strong>العنوان:</strong> ${censorText(order.address)}</p>${couponInfo}`;
+            let shippingInfo = `<p class="mt-1"><strong>سعر الشحن:</strong> ${order.shipping_cost || 0} ج.م</p>`;
+            
+            document.getElementById('order-customer-info').innerHTML = `
+                <p><strong>الاسم:</strong> ${censorText(order.customer_name)}</p>
+                <p class="mt-1"><strong>الهاتف:</strong> ${order.phone}</p>
+                <p class="mt-1"><strong>المحافظة:</strong> ${censorText(order.city)}</p>
+                <p class="mt-1"><strong>العنوان:</strong> ${censorText(order.address)}</p>
+                ${shippingInfo}
+                ${couponInfo}
+            `;
             const itemsList = document.getElementById('order-items-list'); itemsList.innerHTML = '';
             let items = order.items; if(typeof items === 'string') items = JSON.parse(items);
             items.forEach(item => { itemsList.innerHTML += `<div class="flex justify-between border-b pb-2"><span>${censorText(item.name)} ${item.size ? `(${item.size})` : ''} × ${item.qty}</span><span class="font-bold">${item.price * item.qty} ج.م</span></div>`; });
@@ -494,15 +505,15 @@
             html += `<h2>فاتورة SELECT</h2><p><strong>رقم الطلب:</strong> #${order.id}</p><p><strong>العميل:</strong> ${order.customer_name}</p><p><strong>الهاتف:</strong> ${order.phone}</p><p><strong>المحافظة:</strong> ${order.city}</p><p><strong>العنوان:</strong> ${order.address}</p>`;
             html += `<table><thead><tr><th>المنتج</th><th>الكمية</th><th>السعر</th><th>الإجمالي</th></tr></thead><tbody>`;
             items.forEach(item => { html += `<tr><td>${item.name} (${item.size || ''})</td><td>${item.qty}</td><td>${item.price} ج.م</td><td>${item.price * item.qty} ج.م</td></tr>`; });
-            html += `</tbody></table><h3 style="text-align:left;margin-top:20px;">الإجمالي: ${order.total_price} ج.م</h3></body></html>`;
+            html += `</tbody></table><h3 style="text-align:left;margin-top:20px;">الشحن: ${order.shipping_cost || 0} ج.م</h3><h3 style="text-align:left;margin-top:10px;">الإجمالي: ${order.total_price} ج.م</h3></body></html>`;
             printWindow.document.write(html); printWindow.document.close(); printWindow.print();
         }
 
         function exportOrdersToCSV() {
             if(allOrders.length === 0) return alert('لا يوجد طلبات للتصدير');
-            let csv = '\uFEFFالتاريخ,العميل,الهاتف,المحافظة,العنوان,الإجمالي,الكوبون,الخصم,الحالة\n';
+            let csv = '\uFEFFالتاريخ,العميل,الهاتف,المحافظة,العنوان,الشحن,الإجمالي,الكوبون,الخصم,الحالة\n';
             allOrders.forEach(o => {
-                csv += `${new Date(o.created_at).toLocaleDateString('ar-EG')},"${o.customer_name}","${o.phone}","${o.city}","${o.address}",${o.total_price},"${o.coupon_code || ''}",${o.discount_amount || 0},"${o.status}"\n`;
+                csv += `${new Date(o.created_at).toLocaleDateString('ar-EG')},"${o.customer_name}","${o.phone}","${o.city}","${o.address}",${o.shipping_cost || 0},${o.total_price},"${o.coupon_code || ''}",${o.discount_amount || 0},"${o.status}"\n`;
             });
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement("a");
