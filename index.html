@@ -31,6 +31,8 @@
     <style>
         body { font-family: 'Tajawal', sans-serif; background-color: #FFFFFF; color: #0A0A0A; scroll-behavior: smooth; overflow-x: hidden;}
         .brand-english { font-family: 'Playfair Display', serif; font-weight: 800; letter-spacing: 0.05em; }
+        /* إصلاح الخط العربي */
+        .arabic-text { letter-spacing: normal !important; }
         .cart-open { transform: translateX(0) !important; }
         .modal-open { opacity: 1 !important; pointer-events: auto !important; }
         .modal-content { transform: translateY(0) scale(1) !important; }
@@ -48,7 +50,7 @@
         .group:hover .img-zoom { transform: scale(1.08); }
     </style>
 </head>
-<body class="relative min-h-screen flex flex-col selection:bg-brandBlack selection:text-brandWhite">
+<body class="relative min-h-screen flex flex-col selection:bg-brandBlack selection:text-brandWhite arabic-text">
 
     <div id="toast">تمت العملية بنجاح!</div>
 
@@ -57,9 +59,8 @@
         <div class="container mx-auto px-4 md:px-8 py-4 flex justify-between items-center relative">
             
             <div class="flex items-center cursor-pointer z-20" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
-                <!-- تعديل حجم اللوجو هنا -->
-                <img id="site-logo" src="" class="h-10 md:h-14 object-contain hidden transition-transform hover:scale-105" alt="SELECT Logo">
-                <h1 id="site-name" class="text-2xl md:text-3xl brand-english text-brandBlack">SELECT</h1>
+                <img id="site-logo" src="" class="h-12 md:h-16 object-contain hidden transition-transform hover:scale-105" alt="SELECT Logo">
+                <h1 id="site-name" class="text-2xl md:text-4xl brand-english text-brandBlack">SELECT</h1>
             </div>
 
             <div class="hidden md:flex items-center justify-center gap-10 absolute left-1/2 -translate-x-1/2">
@@ -88,16 +89,18 @@
     </nav>
 
     <!-- ==================== Hero Section ==================== -->
+    <!-- تم تغيير صورة البانر لعطر فخم -->
     <header class="relative bg-brandBlack text-center flex items-center justify-center min-h-[85vh] md:min-h-screen overflow-hidden">
-        <div id="hero-bg" class="absolute inset-0 bg-cover bg-center transition-transform duration-[30s] hover:scale-105" style="background-image: url('https://images.unsplash.com/photo-1616949755610-8c9bbc08f138?q=80&w=2070&auto=format&fit=crop');"></div>
+        <div id="hero-bg" class="absolute inset-0 bg-cover bg-center transition-transform duration-[30s] hover:scale-105" style="background-image: url('https://images.unsplash.com/photo-1594035910387-fea47794261f?q=80&w=2070&auto=format&fit=crop');"></div>
         <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/30"></div>
         
         <img id="hero-watermark-logo" src="" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] max-w-4xl opacity-10 pointer-events-none hidden mix-blend-overlay">
         
         <div class="relative z-10 px-6 max-w-4xl mx-auto flex flex-col items-center mt-10">
-            <span class="text-xs md:text-sm font-bold tracking-[0.4em] text-white/80 mb-6 uppercase">The Essence of Luxury</span>
-            <h2 id="hero-title" class="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-[1.2]">اكتشف عطرك المميز</h2>
-            <p id="hero-subtitle" class="text-gray-300 text-base md:text-xl mb-10 max-w-xl mx-auto font-light leading-relaxed">نقدم لك أفخم العطور الشرقية والفرنسية، لتترك أثراً لا يُنسى أينما ذهبت.</p>
+            <span class="text-xs md:text-sm font-bold tracking-[0.4em] text-white/80 mb-6 uppercase font-english">The Essence of Luxury</span>
+            <!-- إزالة tracking-widest من النص العربي -->
+            <h2 id="hero-title" class="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-[1.2] arabic-text">اكتشف عطرك المميز</h2>
+            <p id="hero-subtitle" class="text-gray-300 text-base md:text-xl mb-10 max-w-xl mx-auto font-light leading-relaxed arabic-text">نقدم لك أفخم العطور الشرقية والفرنسية، لتترك أثراً لا يُنسى أينما ذهبت.</p>
             <button onclick="document.getElementById('products').scrollIntoView({behavior: 'smooth'})" id="hero-btn" class="bg-white text-brandBlack px-10 md:px-14 py-4 font-bold text-sm tracking-widest hover:bg-brandBlack hover:text-white border border-white transition-all duration-300">تسوق الآن</button>
         </div>
     </header>
@@ -159,6 +162,7 @@
     <a id="whatsapp-btn" href="#" target="_blank" class="hidden fixed bottom-6 right-6 bg-[#25D366] text-white w-14 h-14 flex items-center justify-center text-2xl shadow-2xl hover:bg-[#20b858] transition-transform transform hover:scale-110 z-40 rounded-full"><i class="fa-brands fa-whatsapp"></i></a>
 
     <!-- ==================== Modals & Sidebars ==================== -->
+    <!-- ... (باقي المودالز زي ما هي) ... -->
     <div id="overlay" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 hidden transition-opacity" onclick="toggleCart()"></div>
     <div id="cart-sidebar" class="fixed inset-y-0 left-0 w-full md:w-[400px] bg-white shadow-2xl transform -translate-x-full transition-transform duration-500 z-50 flex flex-col border-l border-brandBorder">
         <div class="p-6 border-b border-brandBorder flex justify-between items-center">
@@ -300,17 +304,18 @@
         function renderLatestReviews() {
             const container = document.getElementById('latest-reviews-container'); container.innerHTML = '';
             const latest = allReviews.slice(-3).reverse(); 
-            if(latest.length === 0) { container.innerHTML = '<p class="text-brandText col-span-3 text-center text-sm">كن أول من يشاركنا رأيه!</p>'; return; }
+            if(latest.length === 0) { container.innerHTML = '<p class="text-brandText col-span-3 text-center text-sm font-bold">كن أول من يشاركنا رأيه!</p>'; return; }
             latest.forEach(r => {
                 const product = allProducts.find(p => p.id === r.product_id);
                 container.innerHTML += `
-                <div class="bg-white p-6 border border-brandBorder hover:shadow-lg transition duration-300">
-                    <div class="flex justify-between items-center mb-3">
+                <div class="bg-white p-6 border border-brandBorder hover:shadow-xl transition duration-300 relative">
+                    <i class="fa-solid fa-quote-right absolute top-4 left-4 text-4xl text-gray-100"></i>
+                    <div class="flex justify-between items-center mb-3 relative z-10">
                         <span class="font-bold text-brandBlack text-sm">${censorText(r.customer_name)}</span>
-                        <span class="text-brandBlack text-xs">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</span>
+                        <span class="text-brandBlack text-xs bg-gray-50 px-2 py-1 rounded">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</span>
                     </div>
-                    <p class="text-brandText text-sm italic mb-4 leading-relaxed">"${censorText(r.comment)}"</p>
-                    <div class="text-xs text-gray-400 border-t border-brandBorder pt-3 flex items-center gap-2"><i class="fa-solid fa-check"></i> اشترى: ${product ? censorText(product.name) : 'منتج'}</div>
+                    <p class="text-brandText text-sm italic mb-4 leading-relaxed relative z-10">"${censorText(r.comment)}"</p>
+                    <div class="text-xs text-gray-400 border-t border-brandBorder pt-3 flex items-center gap-2"><i class="fa-solid fa-check-circle text-green-500"></i> اشترى: ${product ? censorText(product.name) : 'منتج'}</div>
                 </div>`;
             });
         }
@@ -338,17 +343,24 @@
             else if (priceFilter === 'mid') filtered = filtered.filter(p => p.price >= 500 && p.price <= 1000);
             else if (priceFilter === 'high') filtered = filtered.filter(p => p.price > 1000);
 
+            // صورة بديلة في حالة عدم وجود صورة للمنتج
+            const defaultImage = 'https://images.unsplash.com/photo-1541643600914-78b084683601?q=80&w=1000&auto=format&fit=crop';
+
             filtered.forEach(product => {
                 const isOutOfStock = product.stock <= 0;
                 const productReviews = allReviews.filter(r => r.product_id === product.id);
                 let ratingHTML = productReviews.length > 0 ? 
-                    `<div class="flex items-center gap-1 text-[11px] text-brandBlack font-bold"><i class="fa-solid fa-star text-[9px]"></i> ${(productReviews.reduce((sum, r) => sum + r.rating, 0) / productReviews.length).toFixed(1)} <span class="text-gray-400 font-normal">(${productReviews.length})</span></div>` : 
+                    `<div class="flex items-center gap-1 text-[11px] text-brandBlack font-bold"><i class="fa-solid fa-star text-[9px] text-yellow-500"></i> ${(productReviews.reduce((sum, r) => sum + r.rating, 0) / productReviews.length).toFixed(1)} <span class="text-gray-400 font-normal">(${productReviews.length})</span></div>` : 
                     `<div class="text-[11px] text-gray-400">لا يوجد تقييمات</div>`;
                 
+                // زر إضافة التقييم
+                const reviewBtn = `<button onclick="openReviews(${product.id})" class="text-[10px] text-brandText underline hover:text-brandBlack transition">أضف تقييمك</button>`;
+                const imgUrl = product.image_url ? product.image_url : defaultImage;
+
                 grid.innerHTML += `
-                    <div class="group flex flex-col hover-lift ${isOutOfStock ? 'opacity-60 grayscale' : ''}">
+                    <div class="group flex flex-col hover-lift ${isOutOfStock ? 'opacity-60 grayscale' : ''} bg-white p-3 border border-brandBorder hover:border-brandBlack transition-colors">
                         <div class="relative overflow-hidden aspect-[4/5] bg-brandGray mb-4">
-                            <img src="${product.image_url}" class="w-full h-full object-cover img-zoom">
+                            <img src="${imgUrl}" onerror="this.src='${defaultImage}'" class="w-full h-full object-cover img-zoom">
                             <div class="absolute top-3 right-3 bg-white/90 backdrop-blur px-2 py-1 text-[10px] font-bold text-brandBlack tracking-widest uppercase border border-brandBorder">${censorText(product.brand)}</div>
                             <div class="absolute top-3 left-3 bg-black/80 backdrop-blur px-2 py-1 text-[10px] font-bold text-white tracking-widest uppercase">${product.size || '100ml'}</div>
                             
@@ -364,9 +376,12 @@
                                 <h4 class="text-sm md:text-base font-bold text-brandBlack line-clamp-1">${censorText(product.name)}</h4>
                                 <span class="text-brandBlack font-bold text-sm md:text-base">${product.price} <span class="text-[10px] font-normal">ج.م</span></span>
                             </div>
-                            <div class="flex justify-between items-center">
+                            <div class="flex justify-between items-center mb-2">
                                 <p class="text-brandText text-[11px] line-clamp-1">${censorText(product.notes)}</p>
                                 ${ratingHTML}
+                            </div>
+                            <div class="mt-auto pt-2 border-t border-brandBorder flex justify-end">
+                                ${reviewBtn}
                             </div>
                         </div>
                     </div>`;
@@ -380,7 +395,7 @@
             e.preventDefault();
             const data = { product_id: parseInt(document.getElementById('review-product-id').value), rating: parseInt(document.getElementById('review-rating').value), customer_name: censorText(document.getElementById('review-name').value), comment: censorText(document.getElementById('review-comment').value) };
             const { error } = await supabaseClient.from('reviews').insert([data]);
-            if(error) showToast('حدث خطأ!'); else { showToast('شكراً لتقييمك!'); document.getElementById('reviews-modal').classList.remove('modal-open'); }
+            if(error) showToast('حدث خطأ!'); else { showToast('شكراً لتقييمك! سيظهر بعد المراجعة.'); document.getElementById('reviews-modal').classList.remove('modal-open'); }
         }
 
         function openTrackingModal() { document.getElementById('tracking-modal').classList.add('modal-open'); }
@@ -465,7 +480,6 @@
             updateCartUI(); 
         }
         
-        // ✅ دالة تأكيد الطلب المعدلة (بتمنع استخدام الكوبون أكتر من مرة لنفس الرقم + تحديث عداد الكوبون)
         async function submitOrder(e) { 
             e.preventDefault(); 
             const btn = document.getElementById('submit-btn'); 
@@ -474,7 +488,6 @@
 
             const phone = document.getElementById('phone').value;
 
-            // لو فيه كوبون متطبق، نتأكد إن الرقم ده مستخدمهوش قبل كده
             if (appliedCouponCode) {
                 const { data: previousOrders, error: checkError } = await supabaseClient
                     .from('orders')
@@ -521,7 +534,6 @@
                 showToast('حدث خطأ!'); btn.innerText = 'تأكيد الطلب'; btn.disabled = false; return; 
             } 
 
-            // ✅ التعديل هنا: زيادة عداد استخدام الكوبون في قاعدة البيانات
             if (appliedCouponCode) {
                 const { data: couponData } = await supabaseClient
                     .from('coupons')
