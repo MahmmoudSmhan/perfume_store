@@ -162,7 +162,6 @@
     <a id="whatsapp-btn" href="#" target="_blank" class="hidden fixed bottom-6 right-6 bg-[#25D366] text-white w-14 h-14 flex items-center justify-center text-2xl shadow-2xl hover:bg-[#20b858] transition-transform transform hover:scale-110 z-40 rounded-full"><i class="fa-brands fa-whatsapp"></i></a>
 
     <!-- ==================== Modals & Sidebars ==================== -->
-    <!-- ... (باقي المودالز زي ما هي) ... -->
     <div id="overlay" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 hidden transition-opacity" onclick="toggleCart()"></div>
     <div id="cart-sidebar" class="fixed inset-y-0 left-0 w-full md:w-[400px] bg-white shadow-2xl transform -translate-x-full transition-transform duration-500 z-50 flex flex-col border-l border-brandBorder">
         <div class="p-6 border-b border-brandBorder flex justify-between items-center">
@@ -343,7 +342,6 @@
             else if (priceFilter === 'mid') filtered = filtered.filter(p => p.price >= 500 && p.price <= 1000);
             else if (priceFilter === 'high') filtered = filtered.filter(p => p.price > 1000);
 
-            // صورة بديلة في حالة عدم وجود صورة للمنتج
             const defaultImage = 'https://images.unsplash.com/photo-1541643600914-78b084683601?q=80&w=1000&auto=format&fit=crop';
 
             filtered.forEach(product => {
@@ -353,7 +351,6 @@
                     `<div class="flex items-center gap-1 text-[11px] text-brandBlack font-bold"><i class="fa-solid fa-star text-[9px] text-yellow-500"></i> ${(productReviews.reduce((sum, r) => sum + r.rating, 0) / productReviews.length).toFixed(1)} <span class="text-gray-400 font-normal">(${productReviews.length})</span></div>` : 
                     `<div class="text-[11px] text-gray-400">لا يوجد تقييمات</div>`;
                 
-                // زر إضافة التقييم
                 const reviewBtn = `<button onclick="openReviews(${product.id})" class="text-[10px] text-brandText underline hover:text-brandBlack transition">أضف تقييمك</button>`;
                 const imgUrl = product.image_url ? product.image_url : defaultImage;
 
@@ -534,6 +531,7 @@
                 showToast('حدث خطأ!'); btn.innerText = 'تأكيد الطلب'; btn.disabled = false; return; 
             } 
 
+            // ✅ زيادة عداد استخدام الكوبون
             if (appliedCouponCode) {
                 const { data: couponData } = await supabaseClient
                     .from('coupons')
@@ -542,10 +540,14 @@
                     .single();
                 
                 if (couponData) {
-                    await supabaseClient
+                    const { error: updateError } = await supabaseClient
                         .from('coupons')
                         .update({ used_count: (couponData.used_count || 0) + 1 })
                         .eq('code', appliedCouponCode);
+                    
+                    if (updateError) {
+                        console.error("خطأ في تحديث عداد الكوبون:", updateError);
+                    }
                 }
             }
             
