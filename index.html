@@ -184,9 +184,7 @@
                 </div>
             </div>
             <div class="flex flex-col md:flex-row justify-between items-center gap-4 pt-8 text-[10px] md:text-xs text-gray-500 tracking-[0.1em] uppercase">
-                <!-- تم تعديل هذا السطر ليكون نص واحد متكامل -->
-                <p id="ui-footer-full-text">© SELECT FRAGRANCEC 2024 . جميع الحقوق محفوظة</p>
-                
+                <p>&copy; <span id="ui-footer-year">2024</span> <span id="footer-name"></span>. <span id="ui-footer-text">جميع الحقوق محفوظة</span></p>
                 <div class="flex gap-6 opacity-50 text-lg">
                     <i class="fa-brands fa-cc-visa"></i>
                     <i class="fa-brands fa-cc-mastercard"></i>
@@ -257,7 +255,6 @@
         </div>
     </div>
 
-    <!-- Checkout Modal with Summary -->
     <div id="checkout-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity p-4">
         <div class="bg-white w-full max-w-md shadow-2xl overflow-hidden transform scale-95 transition-transform duration-300 modal-content flex flex-col max-h-[95vh] md:max-h-[90vh] rounded-lg">
             <div class="p-4 md:p-6 border-b border-gray-100 flex justify-between items-center bg-brandCream"><h3 id="ui-checkout-title" class="text-lg md:text-xl editorial-title font-bold text-brandBlack">بيانات الشحن</h3><button onclick="closeCheckoutModal()" class="text-gray-400 hover:text-brandBlack"><i class="fa-solid fa-xmark text-xl"></i></button></div>
@@ -265,7 +262,6 @@
                 <form id="checkout-form" onsubmit="submitOrder(event)" class="space-y-4 md:space-y-6">
                     <div><label id="ui-lbl-name" class="block text-[10px] font-bold text-brandText mb-1 md:mb-2 uppercase tracking-widest">الاسم بالكامل</label><input type="text" id="customer_name" required class="w-full bg-brandCream border-b border-gray-200 p-2 md:p-3 text-sm text-brandBlack focus:border-brandGold outline-none transition"></div>
                     
-                    <!-- Phone validation: 11 digits, numbers only -->
                     <div>
                         <label id="ui-lbl-phone" class="block text-[10px] font-bold text-brandText mb-1 md:mb-2 uppercase tracking-widest">رقم الهاتف</label>
                         <input type="tel" id="phone" required pattern="[0-9]{11}" maxlength="11" title="رقم الهاتف يجب أن يكون 11 رقماً" oninput="this.value = this.value.replace(/[^0-9]/g, '')" class="w-full bg-brandCream border-b border-gray-200 p-2 md:p-3 text-sm text-brandBlack focus:border-brandGold outline-none transition">
@@ -276,13 +272,11 @@
                             <label id="ui-lbl-city" class="block text-[10px] font-bold text-brandText mb-1 md:mb-2 uppercase tracking-widest">المحافظة</label>
                             <select id="city" required onchange="calculateShipping()" class="w-full bg-brandCream border-b border-gray-200 p-2 md:p-3 text-sm text-brandBlack focus:border-brandGold outline-none transition cursor-pointer">
                                 <option value="" disabled selected>اختر المحافظة</option>
-                                <!-- سيتم ملؤها بالجافاسكريبت -->
                             </select>
                         </div>
                         <div><label id="ui-lbl-address" class="block text-[10px] font-bold text-brandText mb-1 md:mb-2 uppercase tracking-widest">العنوان</label><input type="text" id="address" required placeholder="الحي، الشارع، رقم العمارة..." class="w-full bg-brandCream border-b border-gray-200 p-2 md:p-3 text-sm text-brandBlack focus:border-brandGold outline-none transition"></div>
                     </div>
 
-                    <!-- Order Summary Box -->
                     <div class="bg-brandCream p-4 rounded border border-gray-200 mt-4">
                         <div class="flex justify-between text-xs mb-1 text-brandText">
                             <span>المنتجات:</span>
@@ -362,7 +356,7 @@
         let currentQuickViewProduct = null;
         let quizAnswers = { category: '', scent: '' };
         let settingsData = {}; 
-        let currentShippingCost = 0; // لحفظ سعر الشحن الحالي
+        let currentShippingCost = 0; 
 
         const governoratesData = {
             "القاهرة": "cairo", "الجيزة": "cairo", "القليوبية": "cairo",
@@ -391,17 +385,12 @@
             reveals.forEach(reveal => observer.observe(reveal));
         }
 
-        // دالة حساب الشحن
         function calculateShipping() {
             const citySelect = document.getElementById('city');
             const selectedCity = citySelect.value;
-            if (!selectedCity) {
-                currentShippingCost = 0;
-                updateCheckoutSummary();
-                return;
-            }
+            if (!selectedCity) { currentShippingCost = 0; updateCheckoutSummary(); return; }
 
-            const region = governoratesData[selectedCity] || 'delta'; // افتراضي دلتا لو مش موجود
+            const region = governoratesData[selectedCity] || 'delta'; 
             const regularTotal = cart.reduce((sum, item) => isBundle(item) ? sum : sum + (item.price * item.qty), 0);
             const bundleTotal = cart.reduce((sum, item) => isBundle(item) ? sum + (item.price * item.qty) : sum, 0);
             const subTotalBeforeShipping = regularTotal + bundleTotal - ((regularTotal * appliedDiscount) / 100);
@@ -415,11 +404,9 @@
                 else if (region === 'delta') currentShippingCost = settingsData.shipping_delta || 80;
                 else if (region === 'upper') currentShippingCost = settingsData.shipping_upper || 90;
             }
-
             updateCheckoutSummary();
         }
 
-        // دالة تحديث ملخص الطلب داخل صفحة الشحن
         function updateCheckoutSummary() {
             const regularTotal = cart.reduce((sum, item) => isBundle(item) ? sum : sum + (item.price * item.qty), 0);
             const bundleTotal = cart.reduce((sum, item) => isBundle(item) ? sum + (item.price * item.qty) : sum, 0);
@@ -447,11 +434,9 @@
             document.getElementById('checkout-total').innerText = finalTotal.toFixed(0) + ' EGP';
         }
 
-        // دالة فتح مودال الشحن
         function openCheckoutModal() {
             if (cart.length === 0) return showToast('السلة فارغة!');
             
-            // تفريغ وتعبئة قائمة المحافظات
             const citySelect = document.getElementById('city');
             if (citySelect.options.length <= 1) {
                 Object.keys(governoratesData).forEach(city => {
@@ -461,9 +446,9 @@
                     citySelect.appendChild(opt);
                 });
             }
-            citySelect.value = ""; // تصفير الاختيار
+            citySelect.value = ""; 
             currentShippingCost = 0;
-            updateCheckoutSummary(); // تحديث الملخص عشان يبان 0 قبل الاختيار
+            updateCheckoutSummary(); 
 
             document.getElementById('checkout-modal').classList.add('modal-open');
             document.getElementById('cart-sidebar').classList.remove('cart-open');
@@ -478,7 +463,7 @@
                 
                 if(settings.top_bar_text) document.getElementById('ui-top-bar').innerText = settings.top_bar_text;
                 if(settings.ui_top_title) document.getElementById('ui-top-title').innerText = settings.ui_top_title;
-                if(settings.site_name) { document.getElementById('site-name').innerText = settings.site_name; }
+                if(settings.site_name) { document.getElementById('site-name').innerText = settings.site_name; document.getElementById('footer-name').innerText = settings.site_name; }
                 if(settings.hero_title) document.getElementById('hero-title').innerText = settings.hero_title;
                 if(settings.hero_subtitle) document.getElementById('hero-subtitle').innerText = settings.hero_subtitle;
                 if(settings.hero_btn) document.getElementById('hero-btn').innerText = settings.hero_btn;
@@ -495,6 +480,8 @@
                 if(settings.filter_mid) document.getElementById('ui-filter-mid').innerText = settings.filter_mid;
                 if(settings.filter_high) document.getElementById('ui-filter-high').innerText = settings.filter_high;
                 if(settings.section_reviews_title) document.getElementById('ui-sec-reviews').innerText = settings.section_reviews_title;
+                if(settings.footer_text) document.getElementById('ui-footer-text').innerText = settings.footer_text;
+                if(settings.footer_year) document.getElementById('ui-footer-year').innerText = settings.footer_year;
                 if(settings.cart_title) document.getElementById('ui-cart-title').innerText = settings.cart_title;
                 if(settings.coupon_placeholder) document.getElementById('coupon-input').placeholder = settings.coupon_placeholder;
                 if(settings.coupon_btn) document.getElementById('ui-coupon-btn').innerText = settings.coupon_btn;
@@ -509,9 +496,6 @@
                 if(settings.city_placeholder_text) document.getElementById('city').options[0].innerText = settings.city_placeholder_text;
                 if(settings.address_placeholder_text) document.getElementById('address').placeholder = settings.address_placeholder_text;
                 if(settings.shipping_label_text) document.getElementById('ui-ship-label').innerText = settings.shipping_label_text;
-
-                // السطر الجديد الخاص بالفوتر
-                if(settings.footer_full_text) document.getElementById('ui-footer-full-text').innerText = settings.footer_full_text;
 
                 if(settings.show_quiz) document.getElementById('quiz-btn').classList.remove('hidden');
 
@@ -956,7 +940,6 @@
             const btn = document.getElementById('submit-btn'); btn.innerText = 'جاري التحقق...'; btn.disabled = true; 
             
             const phone = document.getElementById('phone').value;
-            // التحقق من طول رقم الهاتف
             if (phone.length !== 11 || !/^\d+$/.test(phone)) {
                 showToast('رقم الهاتف يجب أن يكون 11 رقماً (مثال: 01012345678)');
                 btn.innerText = 'تأكيد الطلب'; btn.disabled = false; return;
@@ -971,8 +954,6 @@
             const regularTotal = cart.reduce((sum, item) => isBundle(item) ? sum : sum + (item.price * item.qty), 0);
             const bundleTotal = cart.reduce((sum, item) => isBundle(item) ? sum + (item.price * item.qty) : sum, 0);
             const discountAmount = (regularTotal * appliedDiscount) / 100;
-            
-            // حساب الإجمالي النهائي باستخدام سعر الشحن المحفوظ
             const finalTotal = (regularTotal + bundleTotal) - discountAmount + currentShippingCost;
 
             if (appliedCouponCode && regularTotal > 0) {
@@ -985,10 +966,10 @@
             const orderData = { 
                 customer_name: censorText(document.getElementById('customer_name').value), 
                 phone: phone, 
-                city: city, // اختيار المحافظة من القائمة
+                city: city, 
                 address: censorText(document.getElementById('address').value), 
                 total_price: finalTotal, 
-                shipping_cost: currentShippingCost, // حفظ سعر الشحن
+                shipping_cost: currentShippingCost, 
                 coupon_code: (appliedCouponCode && regularTotal > 0) ? appliedCouponCode : null, 
                 discount_amount: discountAmount, 
                 items: cart, 
