@@ -117,10 +117,15 @@
         </div>
     </header>
 
-    <!-- قسم العروض (تم إزالة العنوان الكبير من فوق لتبدأ بالكروت مباشرة) -->
-    <section id="bundles-section" class="hidden bg-brandCharcoal py-16 md:py-32 border-b border-gray-800">
+    <!-- قسم العروض (تم إرجاع العنوان هنا) -->
+    <section id="bundles-section" class="hidden bg-brandCharcoal py-16 md:py-24 border-b border-gray-800">
         <div class="container mx-auto px-4 md:px-12">
-            <!-- تم إزالة العنوان الرئيسي للقسم بناءً على طلبك -->
+            <!-- العنوان اللي هيظهر في النص -->
+            <div class="flex flex-col items-center mb-12 md:mb-16 reveal">
+                <h3 id="bundles-section-title" class="text-3xl md:text-5xl editorial-title text-white mb-4 md:mb-6 text-center">عروضنا</h3>
+                <div class="w-12 md:w-16 h-[1px] bg-brandGold"></div>
+            </div>
+            
             <div id="bundles-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8 items-stretch"></div>
         </div>
     </section>
@@ -391,7 +396,6 @@
             const regularTotal = cart.reduce((sum, item) => isBundle(item) ? sum : sum + (item.price * item.qty), 0);
             const bundleTotal = cart.reduce((sum, item) => isBundle(item) ? sum + (item.price * item.qty) : sum, 0);
             
-            // التحقق من تفعيل الشحن المجاني
             let isFreeShippingEnabled = settingsData.enable_free_shipping === true; 
             let freeThreshold = settingsData.free_shipping_threshold || 1500;
             
@@ -470,9 +474,9 @@
                 if(settings.quiz_btn_text) document.getElementById('quiz-btn-text').innerText = settings.quiz_btn_text;
                 if(settings.section_products_title) document.getElementById('ui-sec-products').innerText = settings.section_products_title;
                 
-                // تم تعديل التحقق هنا لعدم حدوث خطأ في حال حذف العنصر
+                // تحديث عنوان قسم العروض
                 const bundlesTitleEl = document.getElementById('bundles-section-title');
-                if(bundlesTitleEl && settings.bundles_title) bundlesTitleEl.innerText = settings.bundles_title;
+                if(bundlesTitleEl) bundlesTitleEl.innerText = settings.bundles_title || 'عروضنا';
 
                 if(settings.cat_all) document.getElementById('ui-cat-all').innerText = settings.cat_all;
                 if(settings.cat_men) document.getElementById('ui-cat-men').innerText = settings.cat_men;
