@@ -96,10 +96,10 @@
     </header>
 
     <!-- ==================== Bundles Section ==================== -->
-    <section class="bg-white py-16 md:py-24 border-b border-brandBorder">
+    <!-- التعديل هنا: ضفنا كلاس hidden و id عشان نخفيه لو مفيش باقات -->
+    <section id="bundles-section" class="hidden bg-white py-16 md:py-24 border-b border-brandBorder">
         <div class="container mx-auto px-4 md:px-8">
             <div class="text-center mb-16">
-                <!-- العنوان هنا بقى ديناميكي -->
                 <h3 id="bundles-section-title" class="text-3xl md:text-5xl font-title font-bold text-brandBlack mb-4">عروض لا تُقاوم</h3>
                 <div class="w-16 h-[1px] bg-brandGold mx-auto"></div>
             </div>
@@ -282,8 +282,9 @@
                 document.getElementById('btn-checkout-dyn').innerText = censorText(settings.btn_checkout) || 'إتمام الطلب';
                 document.getElementById('footer-text').innerText = censorText(settings.footer_text) || 'جميع الحقوق محفوظة';
                 
-                // تحديث عنوان الباقات الديناميكي
-                document.getElementById('bundles-section-title').innerText = censorText(settings.bundles_title) || 'عروض لا تُقاوم';
+                if(settings.bundles_title) {
+                    document.getElementById('bundles-section-title').innerText = censorText(settings.bundles_title);
+                }
 
                 if(settings.hero_image) document.getElementById('hero-bg').style.backgroundImage = `url('${settings.hero_image}')`;
                 
@@ -300,6 +301,8 @@
             if(products) allProducts = products;
             const { data: reviews } = await supabaseClient.from('reviews').select('*').eq('status', 'approved');
             if(reviews) allReviews = reviews;
+            
+            // جلب الباقات
             const { data: bundles } = await supabaseClient.from('bundles').select('*').eq('active', true);
             if(bundles) allBundles = bundles;
 
@@ -307,9 +310,19 @@
         }
 
         function renderBundles() {
+            const section = document.getElementById('bundles-section');
             const grid = document.getElementById('bundles-grid'); 
-            if(!grid) return; grid.innerHTML = '';
-            if(allBundles.length === 0) { grid.innerHTML = '<p class="col-span-full text-center text-gray-500">لا يوجد عروض حالياً.</p>'; return; }
+            
+            // السحر كله هنا: لو مفيش باقات، القسم كله هيفضل مخفي
+            if(allBundles.length === 0) {
+                section.classList.add('hidden');
+                return; // اخرج من الدالة ومتعرضش حاجة
+            }
+
+            // لو فيه باقات، هنشيل كلاس hidden عشان القسم يظهر
+            section.classList.remove('hidden');
+            grid.innerHTML = '';
+            
             allBundles.forEach(b => {
                 grid.innerHTML += `
                     <div class="group relative bg-white border border-brandBorder p-4 hover:border-brandGold transition-all duration-300 flex flex-col items-center text-center">
