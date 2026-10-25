@@ -232,6 +232,13 @@
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div><label class="block text-xs font-bold mb-1">اسم الموقع</label><input type="text" id="set-name" class="w-full border p-2 text-sm bg-gray-50 outline-none rounded"></div>
                                     <div><label class="block text-xs font-bold mb-1">حقوق الفوتر</label><input type="text" id="set-footer" class="w-full border p-2 text-sm bg-gray-50 outline-none rounded"></div>
+                                    
+                                    <!-- الخانة الجديدة هنا -->
+                                    <div class="md:col-span-2">
+                                        <label class="block text-xs font-bold mb-1">النص الكامل لحقوق الفوتر (يظهر أسفل الموقع)</label>
+                                        <input type="text" id="set-footer-full-text" class="w-full border p-2 text-sm bg-gray-50 outline-none rounded" placeholder="© SELECT FRAGRANCEC 2024 . جميع الحقوق محفوظة">
+                                    </div>
+
                                     <div class="md:col-span-2 bg-gray-50 p-4 border border-gray-200 mt-2 rounded">
                                         <label class="block text-xs font-bold mb-2">شعار الموقع (اللوجو)</label>
                                         <div class="flex flex-col md:flex-row items-start md:items-center gap-4">
@@ -675,6 +682,8 @@
                 // الأساسية
                 document.getElementById('set-name').value = data.site_name || ''; 
                 document.getElementById('set-footer').value = data.footer_text || ''; 
+                document.getElementById('set-footer-full-text').value = data.footer_full_text || ''; // الخانة الجديدة
+                
                 document.getElementById('set-logo-url').value = data.logo_url || '';
                 const logoPreview = document.getElementById('current-logo-preview');
                 if(data.logo_url) { logoPreview.src = data.logo_url; logoPreview.classList.remove('hidden'); } else { logoPreview.classList.add('hidden'); }
@@ -778,13 +787,41 @@
                 show_related: document.getElementById('set-show-related').checked,
                 show_quiz: document.getElementById('set-show-quiz').checked,
 
-                site_name: censorText(document.getElementById('set-name').value), footer_text: censorText(document.getElementById('set-footer').value), logo_url: logoUrl, hero_title: censorText(document.getElementById('set-title').value), hero_subtitle: censorText(document.getElementById('set-subtitle').value), hero_btn: censorText(document.getElementById('set-hero-btn').value), hero_image: heroImageUrl,
-                top_bar_text: censorText(document.getElementById('set-top-bar').value), section_products_title: censorText(document.getElementById('set-sec-products').value), bundles_title: censorText(document.getElementById('set-bundles-title').value),
-                cat_all: censorText(document.getElementById('set-cat-all').value), cat_men: censorText(document.getElementById('set-cat-men').value), cat_women: censorText(document.getElementById('set-cat-women').value), cat_unisex: censorText(document.getElementById('set-cat-unisex').value),
-                search_placeholder: censorText(document.getElementById('set-search').value), filter_all: censorText(document.getElementById('set-filter-all').value), filter_low: censorText(document.getElementById('set-filter-low').value), filter_mid: censorText(document.getElementById('set-filter-mid').value), filter_high: censorText(document.getElementById('set-filter-high').value),
-                section_reviews_title: censorText(document.getElementById('set-sec-reviews').value), cart_title: censorText(document.getElementById('set-cart-title').value), coupon_placeholder: censorText(document.getElementById('set-coupon-ph').value), coupon_btn: censorText(document.getElementById('set-coupon-btn').value), cart_total_text: censorText(document.getElementById('set-cart-total').value), checkout_title: censorText(document.getElementById('set-checkout-title').value),
-                name_label: censorText(document.getElementById('set-lbl-name').value), phone_label: censorText(document.getElementById('set-lbl-phone').value), city_label: censorText(document.getElementById('set-lbl-city').value), address_label: censorText(document.getElementById('set-lbl-address').value), confirm_order_btn: censorText(document.getElementById('set-confirm-btn').value),
-                whatsapp_number: document.getElementById('set-whatsapp').value, facebook_url: document.getElementById('set-facebook').value, instagram_url: document.getElementById('set-instagram').value, tiktok_url: document.getElementById('set-tiktok').value 
+                site_name: censorText(document.getElementById('set-name').value), 
+                footer_text: censorText(document.getElementById('set-footer').value), 
+                footer_full_text: censorText(document.getElementById('set-footer-full-text').value), // تم إضافة الحفظ هنا
+                logo_url: logoUrl, 
+                hero_title: censorText(document.getElementById('set-title').value), 
+                hero_subtitle: censorText(document.getElementById('set-subtitle').value), 
+                hero_btn: censorText(document.getElementById('set-hero-btn').value), 
+                hero_image: heroImageUrl,
+                top_bar_text: censorText(document.getElementById('set-top-bar').value), 
+                section_products_title: censorText(document.getElementById('set-sec-products').value), 
+                bundles_title: censorText(document.getElementById('set-bundles-title').value),
+                cat_all: censorText(document.getElementById('set-cat-all').value), 
+                cat_men: censorText(document.getElementById('set-cat-men').value), 
+                cat_women: censorText(document.getElementById('set-cat-women').value), 
+                cat_unisex: censorText(document.getElementById('set-cat-unisex').value),
+                search_placeholder: censorText(document.getElementById('set-search').value), 
+                filter_all: censorText(document.getElementById('set-filter-all').value), 
+                filter_low: censorText(document.getElementById('set-filter-low').value), 
+                filter_mid: censorText(document.getElementById('set-filter-mid').value), 
+                filter_high: censorText(document.getElementById('set-filter-high').value),
+                section_reviews_title: censorText(document.getElementById('set-sec-reviews').value), 
+                cart_title: censorText(document.getElementById('set-cart-title').value), 
+                coupon_placeholder: censorText(document.getElementById('set-coupon-ph').value), 
+                coupon_btn: censorText(document.getElementById('set-coupon-btn').value), 
+                cart_total_text: censorText(document.getElementById('set-cart-total').value), 
+                checkout_title: censorText(document.getElementById('set-checkout-title').value),
+                name_label: censorText(document.getElementById('set-lbl-name').value), 
+                phone_label: censorText(document.getElementById('set-lbl-phone').value), 
+                city_label: censorText(document.getElementById('set-lbl-city').value), 
+                address_label: censorText(document.getElementById('set-lbl-address').value), 
+                confirm_order_btn: censorText(document.getElementById('set-confirm-btn').value),
+                whatsapp_number: document.getElementById('set-whatsapp').value, 
+                facebook_url: document.getElementById('set-facebook').value, 
+                instagram_url: document.getElementById('set-instagram').value, 
+                tiktok_url: document.getElementById('set-tiktok').value 
             };
             
             const { error } = await supabaseClient.from('settings').update(data).eq('id', 1);
