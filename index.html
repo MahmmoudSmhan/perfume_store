@@ -57,7 +57,8 @@
         <div class="container mx-auto px-4 md:px-8 py-4 flex justify-between items-center relative">
             
             <div class="flex items-center cursor-pointer z-20" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
-                <img id="site-logo" src="" class="h-8 md:h-10 object-contain hidden" alt="SELECT Logo">
+                <!-- تعديل حجم اللوجو هنا -->
+                <img id="site-logo" src="" class="h-10 md:h-14 object-contain hidden transition-transform hover:scale-105" alt="SELECT Logo">
                 <h1 id="site-name" class="text-2xl md:text-3xl brand-english text-brandBlack">SELECT</h1>
             </div>
 
@@ -464,7 +465,7 @@
             updateCartUI(); 
         }
         
-        // ✅ دالة تأكيد الطلب المعدلة (بتمنع استخدام الكوبون أكتر من مرة لنفس الرقم)
+        // ✅ دالة تأكيد الطلب المعدلة (بتمنع استخدام الكوبون أكتر من مرة لنفس الرقم + تحديث عداد الكوبون)
         async function submitOrder(e) { 
             e.preventDefault(); 
             const btn = document.getElementById('submit-btn'); 
@@ -491,11 +492,10 @@
                 if (previousOrders && previousOrders.length > 0) {
                     showToast('عذراً، لقد استخدمت هذا الكوبون من قبل! كل كوبون صالح لمرة واحدة لكل عميل.');
                     btn.innerText = 'تأكيد الطلب'; btn.disabled = false; 
-                    return; // وقف العملية
+                    return; 
                 }
             }
 
-            // لو تمام، نكمل تسجيل الطلب
             btn.innerText = 'جاري المعالجة...'; 
             
             const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.qty), 0); 
@@ -515,10 +515,27 @@
             }; 
             
             const { error } = await supabaseClient.from('orders').insert([orderData]); 
+            
             if (error) { 
                 console.error(error);
                 showToast('حدث خطأ!'); btn.innerText = 'تأكيد الطلب'; btn.disabled = false; return; 
             } 
+
+            // ✅ التعديل هنا: زيادة عداد استخدام الكوبون في قاعدة البيانات
+            if (appliedCouponCode) {
+                const { data: couponData } = await supabaseClient
+                    .from('coupons')
+                    .select('used_count')
+                    .eq('code', appliedCouponCode)
+                    .single();
+                
+                if (couponData) {
+                    await supabaseClient
+                        .from('coupons')
+                        .update({ used_count: (couponData.used_count || 0) + 1 })
+                        .eq('code', appliedCouponCode);
+                }
+            }
             
             closeCheckoutModal(); document.getElementById('success-modal').classList.add('modal-open');
             cart = []; appliedDiscount = 0; appliedCouponCode = ''; 
